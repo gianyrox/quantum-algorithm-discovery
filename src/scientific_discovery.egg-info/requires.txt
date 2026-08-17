@@ -1,9 +1,0 @@
-pydantic<3,>=2.8
-typer<1,>=0.12
-rich<15,>=13
-
-[dev]
-pytest<9,>=8
-pytest-cov<7,>=5
-ruff<1,>=0.6
-mypy<2,>=1.11
