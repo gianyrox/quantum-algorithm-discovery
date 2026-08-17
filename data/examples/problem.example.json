@@ -1,0 +1,92 @@
+{
+  "id": "problem-example-001",
+  "source_work_id": "example:work-001",
+  "source_version_id": null,
+  "natural_language_statement": "Estimate the dominant eigenvalue and associated eigenvector of a large sparse operator.",
+  "task_family": "eigenproblem",
+  "inputs": [
+    "A large sparse linear operator"
+  ],
+  "outputs": [
+    "Dominant eigenvalue",
+    "Associated eigenvector"
+  ],
+  "objective": "Estimate the leading spectral component of the operator.",
+  "constraints": [
+    "The operator may be too large to materialize densely."
+  ],
+  "state_space": "Finite-dimensional vector space",
+  "access_model": "Sparse matrix-vector product",
+  "data_model": null,
+  "mathematical_objects": [
+    {
+      "name": "Linear operator",
+      "object_type": "matrix_or_linear_operator",
+      "role": "problem_input",
+      "representation": "sparse",
+      "notes": null
+    }
+  ],
+  "operators": [
+    "matrix-vector multiplication"
+  ],
+  "equations": [
+    "A v = lambda v"
+  ],
+  "structural_properties": [
+    "sparsity",
+    "spectral structure"
+  ],
+  "algorithmic_operations": [
+    "matrix-vector multiplication",
+    "normalization",
+    "spectral estimation"
+  ],
+  "known_methods": [
+    {
+      "name": "Power iteration",
+      "method_type": "iterative_eigensolver",
+      "role": "baseline_method",
+      "approximation": true
+    }
+  ],
+  "classical_baselines": [
+    {
+      "name": "Power iteration",
+      "method_type": "iterative_eigensolver",
+      "role": "classical_baseline",
+      "approximation": true
+    }
+  ],
+  "scale_parameters": [
+    {
+      "name": "matrix_dimension",
+      "meaning": "Dimension of the linear operator",
+      "symbol": "n",
+      "regime": "large"
+    }
+  ],
+  "complexity_claims": [],
+  "reported_bottlenecks": [
+    "Repeated matrix-vector multiplication"
+  ],
+  "assumptions": [
+    "A dominant eigenvalue exists with sufficient spectral separation."
+  ],
+  "approximations": [],
+  "stochasticity": "deterministic",
+  "symmetry": [],
+  "sparsity": "sparse",
+  "locality": null,
+  "graph_structure": null,
+  "dimensionality": "high-dimensional",
+  "conditioning": null,
+  "evidence": [],
+  "extraction_method": "human",
+  "extractor": "initial-schema-example",
+  "extractor_version": "0.1",
+  "extraction_notes": "Synthetic example used only to validate the initial schema.",
+  "confidence": 1.0,
+  "review_status": "accepted",
+  "unresolved_questions": []
+}

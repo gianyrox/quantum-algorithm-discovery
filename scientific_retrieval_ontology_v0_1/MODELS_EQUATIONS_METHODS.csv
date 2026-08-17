@@ -1,0 +1,82 @@
+concept_id,name,type,discipline,related_concepts
+C000501,Gaussian distribution,model,probability and statistics,normal distribution; mean; variance
+C000502,Poisson distribution,model,probability and statistics,count data; Poisson process
+C000503,Bayesian network,model,statistics / artificial intelligence,probabilistic graphical model; conditional independence
+C000504,Markov model,model,probability / stochastic processes,Markov property; transition matrix
+C000505,hidden Markov model,model,statistics / signal processing,latent state; sequence model
+C000506,Bayesian filtering,method,statistics / control,state estimation; recursive inference
+C000507,particle filter,method,statistics / control,sequential Monte Carlo; nonlinear filtering
+C000508,extended Kalman filter,method,control / signal processing,nonlinear state estimation; linearization
+C000509,unscented Kalman filter,method,control / signal processing,sigma points; nonlinear state estimation
+C000510,numerical PDE method,method,numerical mathematics,partial differential equations; discretization
+C000511,finite element method,method,numerical mathematics / engineering,weak formulation; mesh; discretization
+C000512,finite volume method,method,numerical mathematics / fluid dynamics,control volume; conservation law
+C000513,numerical integration,method,numerical mathematics,quadrature; time integration
+C000514,Runge–Kutta method,method,numerical mathematics,ordinary differential equations; time stepping
+C000515,Fourier transform,transformation,mathematics / signal processing,frequency domain; spectral analysis
+C000516,fast Fourier transform,algorithm,numerical mathematics / signal processing,discrete Fourier transform; FFT
+C000517,Laplace transform,transformation,mathematics / systems theory,complex frequency; differential equations
+C000518,wavelet transform,transformation,mathematics / signal processing,multiresolution analysis; time-frequency localization
+C000519,Navier–Stokes equations,equation,mathematics / fluid dynamics,fluid dynamics; transport; nonlinearity
+C000520,variational principle,framework,mathematics / physics,functional; stationary action; optimization
+C000521,Euler–Lagrange equation,equation,calculus of variations / mechanics,variational principle; functional derivative
+C000522,diffusion equation,equation,mathematics / transport physics,diffusion; parabolic PDE; transport
+C000523,heat equation,equation,mathematics / thermal physics,thermal diffusion; parabolic PDE
+C000524,wave equation,equation,mathematics / wave physics,propagation; hyperbolic PDE
+C000525,hyperbolic partial differential equation,mathematical_structure,mathematics,wave propagation; characteristics
+C000526,conservation laws,framework,mathematics / physics,mass; momentum; energy; flux
+C000527,Maxwell's equations,equation,electromagnetism,electric field; magnetic field; electromagnetic waves
+C000528,electromagnetism,theory,physics,electricity; magnetism; electromagnetic field
+C000529,Einstein field equations,equation,general relativity,spacetime curvature; stress-energy tensor
+C000530,general relativity,theory,physics / gravitation,spacetime; gravitation; curvature
+C000531,Boltzmann equation,equation,kinetic theory / statistical physics,distribution function; collisions; transport
+C000532,kinetic theory,framework,statistical physics,particle distributions; transport; nonequilibrium
+C000533,algorithm discovery,method,scientific discovery / computer science,search; algorithm synthesis; automated discovery
+C000534,genetic algorithm,algorithm,evolutionary computation,selection; crossover; mutation
+C000535,automated reasoning,method,artificial intelligence / formal methods,logic; inference; proof search
+C000536,automated theorem proving,method,formal reasoning,proof search; logic; theorem proving
+C000537,program synthesis,method,computer science / automated programming,specification; program search; synthesis
+C000538,SAT solving,algorithm,computer science / logic,Boolean satisfiability; constraint solving
+C000539,symbolic regression,method,scientific discovery / machine learning,expression search; interpretable models
+C000540,equation discovery,method,scientific discovery,governing equations; data-driven discovery
+C000541,active learning,method,machine learning / experimental design,query strategy; label efficiency
+C000542,Bayesian optimization,method,optimization / machine learning,surrogate model; acquisition function
+C000543,reinforcement learning,framework,machine learning / decision making,policy; reward; sequential decision
+C000544,Q-learning,algorithm,reinforcement learning,action-value function; temporal-difference learning
+C000545,policy gradient,method,reinforcement learning,policy optimization; gradient estimator
+C000546,Monte Carlo tree search,algorithm,search / decision making,tree search; simulation; UCT
+C000547,graph search,method,computer science,state space; traversal; pathfinding
+C000548,A* search,algorithm,graph algorithms / artificial intelligence,heuristic search; shortest path
+C000549,PageRank,algorithm,network science / information retrieval,random walk; link analysis; centrality
+C000550,eigenvector centrality,model,network science,spectral centrality; adjacency matrix
+C000551,neural network architecture,framework,machine learning,layers; connectivity; representation learning
+C000552,transformer,model,machine learning / natural language processing,self-attention; sequence modeling
+C000553,convolutional neural network,model,machine learning / computer vision,convolution; feature maps; CNN
+C000554,neural architecture search,method,machine learning / automated design,architecture optimization; NAS
+C000555,ensemble learning,framework,machine learning / statistics,model aggregation; variance reduction
+C000556,random forest,model,machine learning / statistics,decision trees; bagging; feature subsampling
+C000557,gradient boosting,method,machine learning / statistics,additive model; weak learners; boosting
+C000558,dimensionality reduction,method,statistics / machine learning,embedding; feature reduction
+C000559,principal component analysis,method,statistics / linear algebra,eigenvectors; variance; PCA
+C000560,t-SNE,method,machine learning / visualization,nonlinear embedding; neighborhood preservation
+C000561,UMAP,method,machine learning / topology,manifold learning; nonlinear embedding
+C000562,latent Dirichlet allocation,model,machine learning / text analysis,topic model; document-term distribution
+C000563,ordinary least squares,method,statistics / econometrics,linear regression; squared error; OLS
+C000564,logistic regression,model,statistics / machine learning,binary outcome; logit link
+C000565,generalized linear model,model,statistics,link function; exponential family; GLM
+C000566,Cox proportional hazards model,model,survival analysis / biostatistics,hazard ratio; censored data
+C000567,interrupted time series,method,causal inference / policy evaluation,level change; slope change; intervention
+C000568,quasi-experimental design,experimental_paradigm,causal inference / research design,nonrandomized comparison; identification
+C000569,regression discontinuity design,method,econometrics / causal inference,cutoff; local treatment effect; RDD
+C000570,instrumental variables,method,econometrics / causal inference,instrument; endogeneity; IV
+C000571,propensity score matching,method,causal inference / epidemiology,treatment assignment; matching; PSM
+C000572,randomized controlled trial,experimental_paradigm,experimental design / medicine,randomization; control group; RCT
+C000573,factorial design,experimental_paradigm,experimental design,factors; interactions; treatment combinations
+C000574,response surface methodology,method,experimental design / optimization,design of experiments; response surface; RSM
+C000612,surface code,model,quantum computing,topological stabilizer code; local checks; fault tolerance
+C000681,CRISPR–Cas,method,molecular biology / genetics,genome editing
+C000690,Kalman filter,method,control / signal processing,state estimation
+C000697,difference-in-differences,method,econometrics,causal inference
+C000718,Schrödinger equation,equation,quantum mechanics,Hamiltonian; wave function
+C000724,Shor's algorithm,algorithm,quantum computing,integer factorization; period finding
+C000734,Dijkstra's algorithm,algorithm,graph algorithms,shortest path

@@ -1,0 +1,35 @@
+{
+  "zip": "/mnt/data/scientific_retrieval_ontology_v0_1.zip",
+  "zip_bytes": 324381,
+  "zip_sha256": "241e257bb68c2663e61a278873231b7b2e5301beb264c7be68cae1d23ca3689d",
+  "output_directory": "/mnt/data/scientific_retrieval_ontology_v0_1",
+  "counts": {
+    "DISCIPLINES": 2215,
+    "CONCEPTS": 2706,
+    "TERMS": 7149,
+    "MODELS_EQUATIONS_METHODS": 81,
+    "RELATIONSHIPS": 30,
+    "SEED_SOURCES": 34,
+    "COVERAGE": 29,
+    "ANZSRC_DIVISION_COUNTS": 23
+  },
+  "files": [
+    "ANZSRC_DIVISION_COUNTS.csv",
+    "ANZSRC_DIVISION_COUNTS.jsonl",
+    "CONCEPTS.csv",
+    "CONCEPTS.jsonl",
+    "COVERAGE.csv",
+    "COVERAGE.jsonl",
+    "DISCIPLINES.csv",
+    "DISCIPLINES.jsonl",
+    "MODELS_EQUATIONS_METHODS.csv",
+    "MODELS_EQUATIONS_METHODS.jsonl",
+    "README.md",
+    "RELATIONSHIPS.csv",
+    "RELATIONSHIPS.jsonl",
+    "SEED_SOURCES.csv",
+    "SEED_SOURCES.jsonl",
+    "TERMS.csv",
+    "TERMS.jsonl"
+  ]
+}

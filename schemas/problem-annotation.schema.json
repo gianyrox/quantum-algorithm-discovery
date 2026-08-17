@@ -1,0 +1,855 @@
+{
+  "$defs": {
+    "Annotator": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "kind": {
+          "default": "human",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Annotator",
+      "type": "object"
+    },
+    "ComplexityClaim": {
+      "additionalProperties": false,
+      "properties": {
+        "quantity": {
+          "title": "Quantity",
+          "type": "string"
+        },
+        "claim": {
+          "title": "Claim",
+          "type": "string"
+        },
+        "assumptions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Assumptions",
+          "type": "array"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "title": "Evidence",
+          "type": "array"
+        }
+      },
+      "required": [
+        "quantity",
+        "claim"
+      ],
+      "title": "ComplexityClaim",
+      "type": "object"
+    },
+    "Evidence": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "$ref": "#/$defs/EvidenceKind"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EvidenceLocation"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "source_url": {
+          "anyOf": [
+            {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Url"
+        },
+        "source_identifier": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Identifier"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "Evidence",
+      "type": "object"
+    },
+    "EvidenceKind": {
+      "enum": [
+        "title",
+        "abstract",
+        "introduction",
+        "methods",
+        "results",
+        "discussion",
+        "appendix",
+        "equation",
+        "figure",
+        "table",
+        "supplement",
+        "other"
+      ],
+      "title": "EvidenceKind",
+      "type": "string"
+    },
+    "EvidenceLocation": {
+      "additionalProperties": false,
+      "properties": {
+        "section": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Section"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        },
+        "paragraph": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Paragraph"
+        },
+        "equation_label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Equation Label"
+        },
+        "figure_label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Figure Label"
+        },
+        "table_label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Table Label"
+        },
+        "quote": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Quote"
+        }
+      },
+      "title": "EvidenceLocation",
+      "type": "object"
+    },
+    "ExtractionMethod": {
+      "enum": [
+        "human",
+        "llm",
+        "rule_based",
+        "hybrid",
+        "imported"
+      ],
+      "title": "ExtractionMethod",
+      "type": "string"
+    },
+    "MathematicalObject": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "object_type": {
+          "title": "Object Type",
+          "type": "string"
+        },
+        "role": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Role"
+        },
+        "representation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Representation"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        }
+      },
+      "required": [
+        "name",
+        "object_type"
+      ],
+      "title": "MathematicalObject",
+      "type": "object"
+    },
+    "ProblemInstance": {
+      "additionalProperties": false,
+      "description": "A structured representation of a computational problem evidenced by\na scientific work.\n\nThe paper/work is evidence for the problem representation; it is not\nitself the core research object.",
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "source_work_id": {
+          "title": "Source Work Id",
+          "type": "string"
+        },
+        "source_version_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Version Id"
+        },
+        "natural_language_statement": {
+          "title": "Natural Language Statement",
+          "type": "string"
+        },
+        "task_family": {
+          "$ref": "#/$defs/TaskFamily"
+        },
+        "inputs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Inputs",
+          "type": "array"
+        },
+        "outputs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Outputs",
+          "type": "array"
+        },
+        "objective": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Objective"
+        },
+        "constraints": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Constraints",
+          "type": "array"
+        },
+        "state_space": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State Space"
+        },
+        "access_model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Access Model"
+        },
+        "data_model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Data Model"
+        },
+        "mathematical_objects": {
+          "items": {
+            "$ref": "#/$defs/MathematicalObject"
+          },
+          "title": "Mathematical Objects",
+          "type": "array"
+        },
+        "operators": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Operators",
+          "type": "array"
+        },
+        "equations": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Equations",
+          "type": "array"
+        },
+        "structural_properties": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Structural Properties",
+          "type": "array"
+        },
+        "algorithmic_operations": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Algorithmic Operations",
+          "type": "array"
+        },
+        "known_methods": {
+          "items": {
+            "$ref": "#/$defs/ScientificMethod"
+          },
+          "title": "Known Methods",
+          "type": "array"
+        },
+        "classical_baselines": {
+          "items": {
+            "$ref": "#/$defs/ScientificMethod"
+          },
+          "title": "Classical Baselines",
+          "type": "array"
+        },
+        "scale_parameters": {
+          "items": {
+            "$ref": "#/$defs/ScaleParameter"
+          },
+          "title": "Scale Parameters",
+          "type": "array"
+        },
+        "complexity_claims": {
+          "items": {
+            "$ref": "#/$defs/ComplexityClaim"
+          },
+          "title": "Complexity Claims",
+          "type": "array"
+        },
+        "reported_bottlenecks": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Reported Bottlenecks",
+          "type": "array"
+        },
+        "assumptions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Assumptions",
+          "type": "array"
+        },
+        "approximations": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Approximations",
+          "type": "array"
+        },
+        "stochasticity": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stochasticity"
+        },
+        "symmetry": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Symmetry",
+          "type": "array"
+        },
+        "sparsity": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sparsity"
+        },
+        "locality": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locality"
+        },
+        "graph_structure": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Graph Structure"
+        },
+        "dimensionality": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dimensionality"
+        },
+        "conditioning": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Conditioning"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "extraction_method": {
+          "$ref": "#/$defs/ExtractionMethod"
+        },
+        "extractor": {
+          "title": "Extractor",
+          "type": "string"
+        },
+        "extractor_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Extractor Version"
+        },
+        "extraction_notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Extraction Notes"
+        },
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "review_status": {
+          "$ref": "#/$defs/ReviewStatus",
+          "default": "unreviewed"
+        },
+        "unresolved_questions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Unresolved Questions",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "source_work_id",
+        "natural_language_statement",
+        "task_family",
+        "extraction_method",
+        "extractor",
+        "confidence"
+      ],
+      "title": "ProblemInstance",
+      "type": "object"
+    },
+    "ReviewStatus": {
+      "enum": [
+        "unreviewed",
+        "human_reviewed",
+        "accepted",
+        "rejected",
+        "needs_revision"
+      ],
+      "title": "ReviewStatus",
+      "type": "string"
+    },
+    "ScaleParameter": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "meaning": {
+          "title": "Meaning",
+          "type": "string"
+        },
+        "symbol": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Symbol"
+        },
+        "regime": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Regime"
+        }
+      },
+      "required": [
+        "name",
+        "meaning"
+      ],
+      "title": "ScaleParameter",
+      "type": "object"
+    },
+    "ScientificMethod": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "method_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Method Type"
+        },
+        "role": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Role"
+        },
+        "approximation": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Approximation"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ScientificMethod",
+      "type": "object"
+    },
+    "TaskFamily": {
+      "enum": [
+        "optimization",
+        "search",
+        "sampling",
+        "estimation",
+        "inference",
+        "simulation",
+        "prediction",
+        "classification",
+        "control",
+        "inverse_problem",
+        "linear_system",
+        "eigenproblem",
+        "spectral_problem",
+        "differential_equation",
+        "stochastic_process",
+        "graph_problem",
+        "constraint_satisfaction",
+        "planning",
+        "dynamical_system",
+        "rare_event",
+        "integration",
+        "counting",
+        "other",
+        "unknown"
+      ],
+      "title": "TaskFamily",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "benchmark_id": {
+      "title": "Benchmark Id",
+      "type": "string"
+    },
+    "discipline": {
+      "title": "Discipline",
+      "type": "string"
+    },
+    "subdiscipline": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Subdiscipline"
+    },
+    "work_id": {
+      "title": "Work Id",
+      "type": "string"
+    },
+    "work_title": {
+      "title": "Work Title",
+      "type": "string"
+    },
+    "publication_year": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Publication Year"
+    },
+    "problem": {
+      "$ref": "#/$defs/ProblemInstance"
+    },
+    "annotator": {
+      "$ref": "#/$defs/Annotator"
+    },
+    "annotation_guideline_version": {
+      "default": "0.1",
+      "title": "Annotation Guideline Version",
+      "type": "string"
+    },
+    "annotated_at": {
+      "format": "date-time",
+      "title": "Annotated At",
+      "type": "string"
+    },
+    "notes": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Notes"
+    }
+  },
+  "required": [
+    "benchmark_id",
+    "discipline",
+    "work_id",
+    "work_title",
+    "problem",
+    "annotator"
+  ],
+  "title": "ProblemAnnotation",
+  "type": "object"
+}

@@ -1,0 +1,35 @@
+discipline_or_concept,source,year,DOI_or_URL,role
+Cross-disciplinary,ANZSRC Fields of Research,2020; data corrected 2025,https://www.abs.gov.au/statistics/classifications/australian-and-new-zealand-standard-research-classification-anzsrc/latest-release,Detailed disciplinary backbone
+Cross-disciplinary,OECD Fields of Research and Development (FORD) / Frascati Manual,2015,https://www.oecd.org/sti/inno/frascati-manual.htm,International high-level alignment
+Mathematics,Mathematics Subject Classification (MSC2020),2020; current,https://mathscinet.ams.org/msc/msc2020.html,Native mathematical literature classification and historical classes
+Physics,APS Physics Subject Headings (PhySH),current,https://physh.aps.org/,"Physics concepts, facets, and disciplines"
+Biology,Gene Ontology,continuously revised,http://geneontology.org/,"Concepts, relations, synonym scopes, alternate identifiers, and obsolescence"
+Medicine,Medical Subject Headings (MeSH),2026,https://www.nlm.nih.gov/mesh/meshhome.html,Biomedical indexing and retrieval vocabulary
+Chemistry,IUPAC Compendium of Chemical Terminology (Gold Book),2025 online edition,https://goldbook.iupac.org/,"Authoritative chemical terminology, nomenclature, symbols, and definitions"
+Agriculture and food,FAO AGROVOC,2026,https://www.fao.org/agrovoc/,"Multilingual agriculture, food, forestry, and environment thesaurus"
+Oceanography,NERC Vocabulary Server / BODC P01,current,https://vocab.nerc.ac.uk/,"Versioned marine parameter, instrument, platform, and observable terminology"
+Astronomy,Unified Astronomy Thesaurus,6.0.0,https://astrothesaurus.org/,Astronomy and astrophysics polyhierarchical thesaurus
+Quantum computing,ISO/IEC 4879:2024 Information technology — Quantum computing — Vocabulary,2024; published,https://www.iso.org/standard/80391.html,Standard quantum-computing vocabulary; redistribution licensing must be respected
+Robotics,IEEE 1872 robotics and automation ontology family,active/revising in 2026,https://standards.ieee.org/standard/1872-2015.html,"Robotics, autonomy, robot-task, and environment ontology standards"
+Computing,ACM Computing Classification System,2012; maintained,https://dl.acm.org/ccs,Canonical ACM computing subject classification
+Engineering and computing,IEEE Thesaurus / Technology Navigator,current,https://technav.ieee.org/,Broad engineering and technology terminology
+Earth science,NASA Global Change Master Directory Keywords,current,https://www.earthdata.nasa.gov/learn/find-data/idn/gcmd-keywords,"Earth science concepts, instruments, platforms, projects, and observation metadata"
+Environment,GEMET,current,https://www.eionet.europa.eu/gemet/,Multilingual environmental terminology
+Social sciences,CESSDA European Language Social Science Thesaurus (ELSST),current,https://elsst.cessda.eu/,Multilingual social-science retrieval vocabulary
+Economics,AEA JEL Classification System,current,https://www.aeaweb.org/econlit/jelCodes.php,Economics literature taxonomy
+Education,ERIC Thesaurus,current,https://eric.ed.gov/?ti=all,Controlled education-research terminology
+Psychology,APA Thesaurus of Psychological Index Terms,current,https://www.apa.org/pubs/databases/training/thesaurus,Psychology preferred and non-preferred indexing terms
+Cognitive science,Cognitive Atlas,current,https://www.cognitiveatlas.org/,"Cognitive constructs, tasks, and experimental paradigms"
+Linguistics,CLARIN Concept Registry and vocabulary infrastructure,current,https://www.clarin.eu/content/concept-registry,Linguistic annotation and metadata concepts
+Metrology,BIPM/JCGM International Vocabulary of Metrology (VIM),current; VIM4 in development,https://www.bipm.org/en/committees/jc/jcgm/publications,"Measurement, calibration, traceability, and uncertainty terminology"
+Metrology,JCGM Guide to the Expression of Uncertainty in Measurement (GUM),current,https://www.bipm.org/en/committees/jc/jcgm/publications,Measurement uncertainty framework and terminology
+Materials science,MatPortal,2026,https://matportal.org/,Materials-science ontology discovery and aggregation
+Philosophy,PhilPapers Categories,current,https://philpapers.org/categories.pl,Community-maintained philosophy subject structure
+Biomedical ontologies,OBO Foundry,continuously revised,https://obofoundry.org/,Open interoperable biomedical ontology ecosystem
+Biomedicine,Unified Medical Language System (UMLS),annual releases,https://www.nlm.nih.gov/research/umls/,Cross-vocabulary biomedical concepts and identifiers
+Clinical terminology,SNOMED CT,current,https://www.snomed.org/,Clinical concepts and relationships
+Disease classification,WHO ICD-11,current,https://icd.who.int/,Disease and health-condition classification terminology
+General knowledge organization,UNESCO Thesaurus,current,https://vocabularies.unesco.org/browser/thesaurus/en/,"Multidisciplinary controlled vocabulary spanning education, science, culture, and society"
+Semantic vocabularies,W3C Simple Knowledge Organization System (SKOS),2009 recommendation,https://www.w3.org/TR/skos-reference/,"Standard representation for thesauri, taxonomies, and concept schemes"
+Library science,Library of Congress Subject Headings,current,https://id.loc.gov/authorities/subjects.html,Broad subject-heading vocabulary and identifiers
+Transportation,Transportation Research Thesaurus,current,https://trt.trb.org/,Field-native transportation research and engineering terminology

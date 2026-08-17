@@ -1,0 +1,81 @@
+{"concept_id":"C000501","name":"Gaussian distribution","type":"model","discipline":"probability and statistics","related_concepts":"normal distribution; mean; variance"}
+{"concept_id":"C000502","name":"Poisson distribution","type":"model","discipline":"probability and statistics","related_concepts":"count data; Poisson process"}
+{"concept_id":"C000503","name":"Bayesian network","type":"model","discipline":"statistics / artificial intelligence","related_concepts":"probabilistic graphical model; conditional independence"}
+{"concept_id":"C000504","name":"Markov model","type":"model","discipline":"probability / stochastic processes","related_concepts":"Markov property; transition matrix"}
+{"concept_id":"C000505","name":"hidden Markov model","type":"model","discipline":"statistics / signal processing","related_concepts":"latent state; sequence model"}
+{"concept_id":"C000506","name":"Bayesian filtering","type":"method","discipline":"statistics / control","related_concepts":"state estimation; recursive inference"}
+{"concept_id":"C000507","name":"particle filter","type":"method","discipline":"statistics / control","related_concepts":"sequential Monte Carlo; nonlinear filtering"}
+{"concept_id":"C000508","name":"extended Kalman filter","type":"method","discipline":"control / signal processing","related_concepts":"nonlinear state estimation; linearization"}
+{"concept_id":"C000509","name":"unscented Kalman filter","type":"method","discipline":"control / signal processing","related_concepts":"sigma points; nonlinear state estimation"}
+{"concept_id":"C000510","name":"numerical PDE method","type":"method","discipline":"numerical mathematics","related_concepts":"partial differential equations; discretization"}
+{"concept_id":"C000511","name":"finite element method","type":"method","discipline":"numerical mathematics / engineering","related_concepts":"weak formulation; mesh; discretization"}
+{"concept_id":"C000512","name":"finite volume method","type":"method","discipline":"numerical mathematics / fluid dynamics","related_concepts":"control volume; conservation law"}
+{"concept_id":"C000513","name":"numerical integration","type":"method","discipline":"numerical mathematics","related_concepts":"quadrature; time integration"}
+{"concept_id":"C000514","name":"Runge–Kutta method","type":"method","discipline":"numerical mathematics","related_concepts":"ordinary differential equations; time stepping"}
+{"concept_id":"C000515","name":"Fourier transform","type":"transformation","discipline":"mathematics / signal processing","related_concepts":"frequency domain; spectral analysis"}
+{"concept_id":"C000516","name":"fast Fourier transform","type":"algorithm","discipline":"numerical mathematics / signal processing","related_concepts":"discrete Fourier transform; FFT"}
+{"concept_id":"C000517","name":"Laplace transform","type":"transformation","discipline":"mathematics / systems theory","related_concepts":"complex frequency; differential equations"}
+{"concept_id":"C000518","name":"wavelet transform","type":"transformation","discipline":"mathematics / signal processing","related_concepts":"multiresolution analysis; time-frequency localization"}
+{"concept_id":"C000519","name":"Navier–Stokes equations","type":"equation","discipline":"mathematics / fluid dynamics","related_concepts":"fluid dynamics; transport; nonlinearity"}
+{"concept_id":"C000520","name":"variational principle","type":"framework","discipline":"mathematics / physics","related_concepts":"functional; stationary action; optimization"}
+{"concept_id":"C000521","name":"Euler–Lagrange equation","type":"equation","discipline":"calculus of variations / mechanics","related_concepts":"variational principle; functional derivative"}
+{"concept_id":"C000522","name":"diffusion equation","type":"equation","discipline":"mathematics / transport physics","related_concepts":"diffusion; parabolic PDE; transport"}
+{"concept_id":"C000523","name":"heat equation","type":"equation","discipline":"mathematics / thermal physics","related_concepts":"thermal diffusion; parabolic PDE"}
+{"concept_id":"C000524","name":"wave equation","type":"equation","discipline":"mathematics / wave physics","related_concepts":"propagation; hyperbolic PDE"}
+{"concept_id":"C000525","name":"hyperbolic partial differential equation","type":"mathematical_structure","discipline":"mathematics","related_concepts":"wave propagation; characteristics"}
+{"concept_id":"C000526","name":"conservation laws","type":"framework","discipline":"mathematics / physics","related_concepts":"mass; momentum; energy; flux"}
+{"concept_id":"C000527","name":"Maxwell's equations","type":"equation","discipline":"electromagnetism","related_concepts":"electric field; magnetic field; electromagnetic waves"}
+{"concept_id":"C000528","name":"electromagnetism","type":"theory","discipline":"physics","related_concepts":"electricity; magnetism; electromagnetic field"}
+{"concept_id":"C000529","name":"Einstein field equations","type":"equation","discipline":"general relativity","related_concepts":"spacetime curvature; stress-energy tensor"}
+{"concept_id":"C000530","name":"general relativity","type":"theory","discipline":"physics / gravitation","related_concepts":"spacetime; gravitation; curvature"}
+{"concept_id":"C000531","name":"Boltzmann equation","type":"equation","discipline":"kinetic theory / statistical physics","related_concepts":"distribution function; collisions; transport"}
+{"concept_id":"C000532","name":"kinetic theory","type":"framework","discipline":"statistical physics","related_concepts":"particle distributions; transport; nonequilibrium"}
+{"concept_id":"C000533","name":"algorithm discovery","type":"method","discipline":"scientific discovery / computer science","related_concepts":"search; algorithm synthesis; automated discovery"}
+{"concept_id":"C000534","name":"genetic algorithm","type":"algorithm","discipline":"evolutionary computation","related_concepts":"selection; crossover; mutation"}
+{"concept_id":"C000535","name":"automated reasoning","type":"method","discipline":"artificial intelligence / formal methods","related_concepts":"logic; inference; proof search"}
+{"concept_id":"C000536","name":"automated theorem proving","type":"method","discipline":"formal reasoning","related_concepts":"proof search; logic; theorem proving"}
+{"concept_id":"C000537","name":"program synthesis","type":"method","discipline":"computer science / automated programming","related_concepts":"specification; program search; synthesis"}
+{"concept_id":"C000538","name":"SAT solving","type":"algorithm","discipline":"computer science / logic","related_concepts":"Boolean satisfiability; constraint solving"}
+{"concept_id":"C000539","name":"symbolic regression","type":"method","discipline":"scientific discovery / machine learning","related_concepts":"expression search; interpretable models"}
+{"concept_id":"C000540","name":"equation discovery","type":"method","discipline":"scientific discovery","related_concepts":"governing equations; data-driven discovery"}
+{"concept_id":"C000541","name":"active learning","type":"method","discipline":"machine learning / experimental design","related_concepts":"query strategy; label efficiency"}
+{"concept_id":"C000542","name":"Bayesian optimization","type":"method","discipline":"optimization / machine learning","related_concepts":"surrogate model; acquisition function"}
+{"concept_id":"C000543","name":"reinforcement learning","type":"framework","discipline":"machine learning / decision making","related_concepts":"policy; reward; sequential decision"}
+{"concept_id":"C000544","name":"Q-learning","type":"algorithm","discipline":"reinforcement learning","related_concepts":"action-value function; temporal-difference learning"}
+{"concept_id":"C000545","name":"policy gradient","type":"method","discipline":"reinforcement learning","related_concepts":"policy optimization; gradient estimator"}
+{"concept_id":"C000546","name":"Monte Carlo tree search","type":"algorithm","discipline":"search / decision making","related_concepts":"tree search; simulation; UCT"}
+{"concept_id":"C000547","name":"graph search","type":"method","discipline":"computer science","related_concepts":"state space; traversal; pathfinding"}
+{"concept_id":"C000548","name":"A* search","type":"algorithm","discipline":"graph algorithms / artificial intelligence","related_concepts":"heuristic search; shortest path"}
+{"concept_id":"C000549","name":"PageRank","type":"algorithm","discipline":"network science / information retrieval","related_concepts":"random walk; link analysis; centrality"}
+{"concept_id":"C000550","name":"eigenvector centrality","type":"model","discipline":"network science","related_concepts":"spectral centrality; adjacency matrix"}
+{"concept_id":"C000551","name":"neural network architecture","type":"framework","discipline":"machine learning","related_concepts":"layers; connectivity; representation learning"}
+{"concept_id":"C000552","name":"transformer","type":"model","discipline":"machine learning / natural language processing","related_concepts":"self-attention; sequence modeling"}
+{"concept_id":"C000553","name":"convolutional neural network","type":"model","discipline":"machine learning / computer vision","related_concepts":"convolution; feature maps; CNN"}
+{"concept_id":"C000554","name":"neural architecture search","type":"method","discipline":"machine learning / automated design","related_concepts":"architecture optimization; NAS"}
+{"concept_id":"C000555","name":"ensemble learning","type":"framework","discipline":"machine learning / statistics","related_concepts":"model aggregation; variance reduction"}
+{"concept_id":"C000556","name":"random forest","type":"model","discipline":"machine learning / statistics","related_concepts":"decision trees; bagging; feature subsampling"}
+{"concept_id":"C000557","name":"gradient boosting","type":"method","discipline":"machine learning / statistics","related_concepts":"additive model; weak learners; boosting"}
+{"concept_id":"C000558","name":"dimensionality reduction","type":"method","discipline":"statistics / machine learning","related_concepts":"embedding; feature reduction"}
+{"concept_id":"C000559","name":"principal component analysis","type":"method","discipline":"statistics / linear algebra","related_concepts":"eigenvectors; variance; PCA"}
+{"concept_id":"C000560","name":"t-SNE","type":"method","discipline":"machine learning / visualization","related_concepts":"nonlinear embedding; neighborhood preservation"}
+{"concept_id":"C000561","name":"UMAP","type":"method","discipline":"machine learning / topology","related_concepts":"manifold learning; nonlinear embedding"}
+{"concept_id":"C000562","name":"latent Dirichlet allocation","type":"model","discipline":"machine learning / text analysis","related_concepts":"topic model; document-term distribution"}
+{"concept_id":"C000563","name":"ordinary least squares","type":"method","discipline":"statistics / econometrics","related_concepts":"linear regression; squared error; OLS"}
+{"concept_id":"C000564","name":"logistic regression","type":"model","discipline":"statistics / machine learning","related_concepts":"binary outcome; logit link"}
+{"concept_id":"C000565","name":"generalized linear model","type":"model","discipline":"statistics","related_concepts":"link function; exponential family; GLM"}
+{"concept_id":"C000566","name":"Cox proportional hazards model","type":"model","discipline":"survival analysis / biostatistics","related_concepts":"hazard ratio; censored data"}
+{"concept_id":"C000567","name":"interrupted time series","type":"method","discipline":"causal inference / policy evaluation","related_concepts":"level change; slope change; intervention"}
+{"concept_id":"C000568","name":"quasi-experimental design","type":"experimental_paradigm","discipline":"causal inference / research design","related_concepts":"nonrandomized comparison; identification"}
+{"concept_id":"C000569","name":"regression discontinuity design","type":"method","discipline":"econometrics / causal inference","related_concepts":"cutoff; local treatment effect; RDD"}
+{"concept_id":"C000570","name":"instrumental variables","type":"method","discipline":"econometrics / causal inference","related_concepts":"instrument; endogeneity; IV"}
+{"concept_id":"C000571","name":"propensity score matching","type":"method","discipline":"causal inference / epidemiology","related_concepts":"treatment assignment; matching; PSM"}
+{"concept_id":"C000572","name":"randomized controlled trial","type":"experimental_paradigm","discipline":"experimental design / medicine","related_concepts":"randomization; control group; RCT"}
+{"concept_id":"C000573","name":"factorial design","type":"experimental_paradigm","discipline":"experimental design","related_concepts":"factors; interactions; treatment combinations"}
+{"concept_id":"C000574","name":"response surface methodology","type":"method","discipline":"experimental design / optimization","related_concepts":"design of experiments; response surface; RSM"}
+{"concept_id":"C000612","name":"surface code","type":"model","discipline":"quantum computing","related_concepts":"topological stabilizer code; local checks; fault tolerance"}
+{"concept_id":"C000681","name":"CRISPR–Cas","type":"method","discipline":"molecular biology / genetics","related_concepts":"genome editing"}
+{"concept_id":"C000690","name":"Kalman filter","type":"method","discipline":"control / signal processing","related_concepts":"state estimation"}
+{"concept_id":"C000697","name":"difference-in-differences","type":"method","discipline":"econometrics","related_concepts":"causal inference"}
+{"concept_id":"C000718","name":"Schrödinger equation","type":"equation","discipline":"quantum mechanics","related_concepts":"Hamiltonian; wave function"}
+{"concept_id":"C000724","name":"Shor's algorithm","type":"algorithm","discipline":"quantum computing","related_concepts":"integer factorization; period finding"}
+{"concept_id":"C000734","name":"Dijkstra's algorithm","type":"algorithm","discipline":"graph algorithms","related_concepts":"shortest path"}
