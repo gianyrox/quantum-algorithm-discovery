@@ -10,6 +10,7 @@ from rich.table import Table
 
 from discovery.core.jsonl import read_jsonl
 from discovery.evaluation.benchmark import ProblemAnnotation
+from discovery.evaluation.corpus import BenchmarkCorpus
 from discovery.problems.schema import ProblemInstance
 
 app = typer.Typer(
@@ -91,6 +92,29 @@ def print_schema(
         raise typer.BadParameter("model must be 'problem' or 'annotation'")
 
     console.print_json(json.dumps(schema))
+
+
+@app.command("validate-corpus")
+def validate_corpus(path: Path) -> None:
+    """Validate a benchmark corpus selection file."""
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        corpus = BenchmarkCorpus.model_validate(payload)
+    except (json.JSONDecodeError, ValidationError) as exc:
+        console.print(f"[bold red]INVALID[/bold red] {path}")
+        console.print(str(exc))
+        raise typer.Exit(code=1) from exc
+
+    console.print(f"[bold green]VALID[/bold green] {corpus.benchmark_name}")
+    console.print(f"Version: {corpus.version}")
+    console.print(f"Works: {len(corpus.works)}")
+
+    disciplines = sorted({work.discipline for work in corpus.works})
+    console.print(f"Disciplines: {len(disciplines)}")
+
+    for discipline in disciplines:
+        count = sum(work.discipline == discipline for work in corpus.works)
+        console.print(f"  {discipline}: {count}")
 
 
 if __name__ == "__main__":

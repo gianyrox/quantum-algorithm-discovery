@@ -1,0 +1,241 @@
+{
+  "$defs": {
+    "BenchmarkSplit": {
+      "enum": [
+        "pilot",
+        "development",
+        "test"
+      ],
+      "title": "BenchmarkSplit",
+      "type": "string"
+    },
+    "BenchmarkWork": {
+      "additionalProperties": false,
+      "description": "A scientific work selected or considered for a benchmark.\n\nThis records benchmark sampling and source identity separately from\nany interpretation of the computational problems in the work.",
+      "properties": {
+        "benchmark_work_id": {
+          "minLength": 1,
+          "title": "Benchmark Work Id",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "discipline": {
+          "title": "Discipline",
+          "type": "string"
+        },
+        "subdiscipline": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subdiscipline"
+        },
+        "publication_year": {
+          "anyOf": [
+            {
+              "maximum": 2100,
+              "minimum": 1600,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Publication Year"
+        },
+        "doi": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Doi"
+        },
+        "arxiv_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Arxiv Id"
+        },
+        "pmid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pmid"
+        },
+        "openalex_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Openalex Id"
+        },
+        "canonical_url": {
+          "anyOf": [
+            {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Canonical Url"
+        },
+        "authors": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Authors",
+          "type": "array"
+        },
+        "split": {
+          "$ref": "#/$defs/BenchmarkSplit",
+          "default": "pilot"
+        },
+        "status": {
+          "$ref": "#/$defs/SelectionStatus",
+          "default": "candidate"
+        },
+        "selection_reason": {
+          "title": "Selection Reason",
+          "type": "string"
+        },
+        "selection_method": {
+          "title": "Selection Method",
+          "type": "string"
+        },
+        "desired_diversity_axes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Desired Diversity Axes",
+          "type": "array"
+        },
+        "source_available": {
+          "default": false,
+          "title": "Source Available",
+          "type": "boolean"
+        },
+        "full_text_available": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Full Text Available"
+        },
+        "rejection_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rejection Reason"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        }
+      },
+      "required": [
+        "benchmark_work_id",
+        "title",
+        "discipline",
+        "selection_reason",
+        "selection_method"
+      ],
+      "title": "BenchmarkWork",
+      "type": "object"
+    },
+    "SelectionStatus": {
+      "enum": [
+        "candidate",
+        "selected",
+        "rejected",
+        "annotating",
+        "annotated"
+      ],
+      "title": "SelectionStatus",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "benchmark_name": {
+      "title": "Benchmark Name",
+      "type": "string"
+    },
+    "version": {
+      "title": "Version",
+      "type": "string"
+    },
+    "description": {
+      "title": "Description",
+      "type": "string"
+    },
+    "works": {
+      "items": {
+        "$ref": "#/$defs/BenchmarkWork"
+      },
+      "title": "Works",
+      "type": "array"
+    }
+  },
+  "required": [
+    "benchmark_name",
+    "version",
+    "description"
+  ],
+  "title": "BenchmarkCorpus",
+  "type": "object"
+}

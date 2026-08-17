@@ -1,0 +1,6 @@
+{
+  "benchmark_name": "cross-disciplinary-scientific-problems",
+  "version": "0.1",
+  "description": "Breadth-first pilot benchmark for testing field-independent representation of scientific computational problems.",
+  "works": []
+}
