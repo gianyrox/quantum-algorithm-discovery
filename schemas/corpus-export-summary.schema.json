@@ -1,0 +1,44 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "works": {
+      "minimum": 0,
+      "title": "Works",
+      "type": "integer"
+    },
+    "identifiers": {
+      "minimum": 0,
+      "title": "Identifiers",
+      "type": "integer"
+    },
+    "assets": {
+      "minimum": 0,
+      "title": "Assets",
+      "type": "integer"
+    },
+    "citations": {
+      "minimum": 0,
+      "title": "Citations",
+      "type": "integer"
+    },
+    "problems": {
+      "minimum": 0,
+      "title": "Problems",
+      "type": "integer"
+    },
+    "output_path": {
+      "title": "Output Path",
+      "type": "string"
+    }
+  },
+  "required": [
+    "works",
+    "identifiers",
+    "assets",
+    "citations",
+    "problems",
+    "output_path"
+  ],
+  "title": "CorpusExportSummary",
+  "type": "object"
+}

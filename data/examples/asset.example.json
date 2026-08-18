@@ -1,0 +1,18 @@
+{
+  "id": "smoke-asset-tex",
+  "representation": "tex",
+  "provider": "local-fixture",
+  "mime_type": "text/x-tex",
+  "availability": "supplied",
+  "rights": {
+    "metadata_license": null,
+    "content_license": "local-test-fixture",
+    "redistribution": "allowed",
+    "tdm": "allowed",
+    "model_training": "unknown",
+    "retention": "allowed",
+    "terms_url": null,
+    "retrieved_at": null
+  },
+  "checksum": null
+}

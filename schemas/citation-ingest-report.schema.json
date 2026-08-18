@@ -1,0 +1,27 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "observed_edges": {
+      "minimum": 0,
+      "title": "Observed Edges",
+      "type": "integer"
+    },
+    "canonical_edges": {
+      "minimum": 0,
+      "title": "Canonical Edges",
+      "type": "integer"
+    },
+    "unresolved_edges": {
+      "minimum": 0,
+      "title": "Unresolved Edges",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "observed_edges",
+    "canonical_edges",
+    "unresolved_edges"
+  ],
+  "title": "CitationIngestReport",
+  "type": "object"
+}

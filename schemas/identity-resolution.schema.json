@@ -1,0 +1,82 @@
+{
+  "$defs": {
+    "IdentityAssertion": {
+      "additionalProperties": true,
+      "properties": {
+        "source_identifier": {
+          "title": "Source Identifier",
+          "type": "string"
+        },
+        "relation_type": {
+          "title": "Relation Type",
+          "type": "string"
+        },
+        "target_identifier": {
+          "title": "Target Identifier",
+          "type": "string"
+        },
+        "provider": {
+          "title": "Provider",
+          "type": "string"
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confidence"
+        },
+        "payload": {
+          "additionalProperties": true,
+          "title": "Payload",
+          "type": "object"
+        }
+      },
+      "required": [
+        "source_identifier",
+        "relation_type",
+        "target_identifier",
+        "provider"
+      ],
+      "title": "IdentityAssertion",
+      "type": "object"
+    }
+  },
+  "additionalProperties": true,
+  "properties": {
+    "query_identifier": {
+      "title": "Query Identifier",
+      "type": "string"
+    },
+    "assertions": {
+      "items": {
+        "$ref": "#/$defs/IdentityAssertion"
+      },
+      "title": "Assertions",
+      "type": "array"
+    },
+    "provider_reports": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Provider Reports",
+      "type": "array"
+    },
+    "raw_envelope": {
+      "additionalProperties": true,
+      "title": "Raw Envelope",
+      "type": "object"
+    }
+  },
+  "required": [
+    "query_identifier"
+  ],
+  "title": "IdentityResolution",
+  "type": "object"
+}

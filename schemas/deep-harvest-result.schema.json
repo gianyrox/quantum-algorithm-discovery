@@ -1,0 +1,154 @@
+{
+  "$defs": {
+    "SaturationObservation": {
+      "additionalProperties": false,
+      "properties": {
+        "iteration": {
+          "minimum": 1,
+          "title": "Iteration",
+          "type": "integer"
+        },
+        "retrieved": {
+          "minimum": 0,
+          "title": "Retrieved",
+          "type": "integer"
+        },
+        "new_unique_works": {
+          "minimum": 0,
+          "title": "New Unique Works",
+          "type": "integer"
+        },
+        "cumulative_unique_works": {
+          "minimum": 0,
+          "title": "Cumulative Unique Works",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "iteration",
+        "retrieved",
+        "new_unique_works",
+        "cumulative_unique_works"
+      ],
+      "title": "SaturationObservation",
+      "type": "object"
+    },
+    "SearchQuery": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "limit": {
+          "default": 25,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "providers": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Providers",
+          "type": "array"
+        },
+        "filters": {
+          "additionalProperties": true,
+          "title": "Filters",
+          "type": "object"
+        },
+        "max_cost_usd": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Cost Usd"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "SearchQuery",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "provider": {
+      "title": "Provider",
+      "type": "string"
+    },
+    "query": {
+      "$ref": "#/$defs/SearchQuery"
+    },
+    "pages": {
+      "minimum": 0,
+      "title": "Pages",
+      "type": "integer"
+    },
+    "hits": {
+      "minimum": 0,
+      "title": "Hits",
+      "type": "integer"
+    },
+    "unique_work_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Unique Work Ids",
+      "type": "array"
+    },
+    "exhausted": {
+      "default": false,
+      "title": "Exhausted",
+      "type": "boolean"
+    },
+    "stopped_for_saturation": {
+      "default": false,
+      "title": "Stopped For Saturation",
+      "type": "boolean"
+    },
+    "next_cursor": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Next Cursor"
+    },
+    "observations": {
+      "items": {
+        "$ref": "#/$defs/SaturationObservation"
+      },
+      "title": "Observations",
+      "type": "array"
+    },
+    "errors": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Errors",
+      "type": "array"
+    }
+  },
+  "required": [
+    "provider",
+    "query",
+    "pages",
+    "hits"
+  ],
+  "title": "DeepHarvestResult",
+  "type": "object"
+}

@@ -1,0 +1,81 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "provider": {
+      "title": "Provider",
+      "type": "string"
+    },
+    "transport": {
+      "title": "Transport",
+      "type": "string"
+    },
+    "status": {
+      "default": "unknown",
+      "title": "Status",
+      "type": "string"
+    },
+    "capabilities": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Capabilities",
+      "type": "array"
+    },
+    "identifier_schemes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Identifier Schemes",
+      "type": "array"
+    },
+    "metadata_rights": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Metadata Rights"
+    },
+    "content_rights": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Content Rights"
+    },
+    "last_verified": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Last Verified"
+    },
+    "notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Notes",
+      "type": "array"
+    }
+  },
+  "required": [
+    "provider",
+    "transport"
+  ],
+  "title": "ProviderDescriptor",
+  "type": "object"
+}

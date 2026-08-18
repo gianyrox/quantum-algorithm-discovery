@@ -1,0 +1,32 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "max_pages": {
+      "default": 100,
+      "maximum": 100000,
+      "minimum": 1,
+      "title": "Max Pages",
+      "type": "integer"
+    },
+    "max_records": {
+      "anyOf": [
+        {
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Max Records"
+    },
+    "stop_on_error": {
+      "default": true,
+      "title": "Stop On Error",
+      "type": "boolean"
+    }
+  },
+  "title": "GatewayCursorHarvestPolicy",
+  "type": "object"
+}

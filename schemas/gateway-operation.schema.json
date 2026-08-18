@@ -6,8 +6,16 @@
       "type": "string"
     },
     "capability": {
+      "default": "unknown",
       "title": "Capability",
       "type": "string"
+    },
+    "capabilities": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Capabilities",
+      "type": "array"
     },
     "path": {
       "title": "Path",
@@ -69,7 +77,6 @@
   },
   "required": [
     "operation_id",
-    "capability",
     "path"
   ],
   "title": "GatewayOperation",

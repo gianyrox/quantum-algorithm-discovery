@@ -1,0 +1,59 @@
+{
+  "additionalProperties": true,
+  "properties": {
+    "subject_identifier": {
+      "title": "Subject Identifier",
+      "type": "string"
+    },
+    "relation_type": {
+      "title": "Relation Type",
+      "type": "string"
+    },
+    "object_identifier": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Object Identifier"
+    },
+    "provider": {
+      "title": "Provider",
+      "type": "string"
+    },
+    "notice_date": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Notice Date"
+    },
+    "status": {
+      "default": "asserted",
+      "title": "Status",
+      "type": "string"
+    },
+    "payload": {
+      "additionalProperties": true,
+      "title": "Payload",
+      "type": "object"
+    }
+  },
+  "required": [
+    "subject_identifier",
+    "relation_type",
+    "provider"
+  ],
+  "title": "IntegrityAssertion",
+  "type": "object"
+}

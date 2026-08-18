@@ -1,0 +1,75 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "provider_requests": {
+      "minimum": 0,
+      "title": "Provider Requests",
+      "type": "integer"
+    },
+    "provider_request_failures": {
+      "minimum": 0,
+      "title": "Provider Request Failures",
+      "type": "integer"
+    },
+    "assets": {
+      "minimum": 0,
+      "title": "Assets",
+      "type": "integer"
+    },
+    "documents": {
+      "minimum": 0,
+      "title": "Documents",
+      "type": "integer"
+    },
+    "canonical_citations": {
+      "minimum": 0,
+      "title": "Canonical Citations",
+      "type": "integer"
+    },
+    "unresolved_citation_assertions": {
+      "minimum": 0,
+      "title": "Unresolved Citation Assertions",
+      "type": "integer"
+    },
+    "identity_assertions": {
+      "minimum": 0,
+      "title": "Identity Assertions",
+      "type": "integer"
+    },
+    "integrity_assertions": {
+      "minimum": 0,
+      "title": "Integrity Assertions",
+      "type": "integer"
+    },
+    "asset_acquisitions": {
+      "minimum": 0,
+      "title": "Asset Acquisitions",
+      "type": "integer"
+    },
+    "pending_jobs": {
+      "minimum": 0,
+      "title": "Pending Jobs",
+      "type": "integer"
+    },
+    "failed_jobs": {
+      "minimum": 0,
+      "title": "Failed Jobs",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "provider_requests",
+    "provider_request_failures",
+    "assets",
+    "documents",
+    "canonical_citations",
+    "unresolved_citation_assertions",
+    "identity_assertions",
+    "integrity_assertions",
+    "asset_acquisitions",
+    "pending_jobs",
+    "failed_jobs"
+  ],
+  "title": "OperationalSnapshot",
+  "type": "object"
+}

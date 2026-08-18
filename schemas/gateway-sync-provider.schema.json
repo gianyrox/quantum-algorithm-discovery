@@ -1,0 +1,53 @@
+{
+  "additionalProperties": true,
+  "properties": {
+    "provider": {
+      "title": "Provider",
+      "type": "string"
+    },
+    "status": {
+      "default": "unknown",
+      "title": "Status",
+      "type": "string"
+    },
+    "capabilities": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Capabilities",
+      "type": "array"
+    },
+    "bulk": {
+      "additionalProperties": true,
+      "title": "Bulk",
+      "type": "object"
+    },
+    "incremental": {
+      "additionalProperties": true,
+      "title": "Incremental",
+      "type": "object"
+    },
+    "last_verified": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Last Verified"
+    },
+    "payload": {
+      "additionalProperties": true,
+      "title": "Payload",
+      "type": "object"
+    }
+  },
+  "required": [
+    "provider"
+  ],
+  "title": "GatewaySyncProvider",
+  "type": "object"
+}

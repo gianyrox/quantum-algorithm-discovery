@@ -1,4 +1,4 @@
-.PHONY: install test lint typecheck check smoke smoke-v03 db-init ontology-import schemas
+.PHONY: install test lint typecheck check smoke smoke-v03 smoke-v04 db-init ontology-import schemas
 
 install:
 	python -m pip install -e '.[dev]'
@@ -15,10 +15,13 @@ typecheck:
 check: test lint typecheck
 
 smoke:
-	bash scripts/smoke_v03.sh
+	bash scripts/smoke_v04.sh
 
 smoke-v03:
 	bash scripts/smoke_v03.sh
+
+smoke-v04:
+	bash scripts/smoke_v04.sh
 
 db-init:
 	discovery db init

@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import json
+from contextlib import ExitStack
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, cast
 
 import typer
 from pydantic import ValidationError
@@ -17,7 +18,9 @@ from discovery.analysis.local_embeddings import HashingEmbeddingProvider
 from discovery.analysis.similarity import baseline_problem_similarity
 from discovery.config import Settings
 from discovery.core.jsonl import read_jsonl, write_jsonl
-from discovery.corpus.schema import Asset
+from discovery.corpus.integrity import IntegrityService
+from discovery.corpus.resolution import IdentityGraphService
+from discovery.corpus.schema import Asset, Work
 from discovery.documents.fetcher import RightsAwareAssetFetcher
 from discovery.documents.ingestion import DocumentIngestionService
 from discovery.documents.schema import ParsedDocument
@@ -25,9 +28,16 @@ from discovery.documents.service import DocumentService
 from discovery.evaluation.benchmark import Annotator, ProblemAnnotation, ProblemAnnotationBundle
 from discovery.evaluation.completeness import problem_completeness
 from discovery.evaluation.corpus import BenchmarkCorpus, BenchmarkWork
+from discovery.execution.campaign import CampaignService
+from discovery.execution.corpus_io import CorpusExporter
+from discovery.execution.processing import CanonicalResearchProcessor
+from discovery.execution.queue import ProcessingQueue
+from discovery.execution.schema import CampaignConfig, CampaignScope, ProcessingStage
+from discovery.execution.worker import LocalProcessingWorker
 from discovery.experiments.tracker import ExperimentTracker
 from discovery.observability.coverage import CoverageService
 from discovery.observability.health import DoctorReport, database_counts
+from discovery.observability.operations import OperationalObservabilityService
 from discovery.ontology.gaps import UnknownVocabularyMiner
 from discovery.ontology.importer import OntologySeedImporter
 from discovery.ontology.native import (
@@ -46,10 +56,25 @@ from discovery.quantum.catalog import QuantumCatalog, QuantumCatalogRepository
 from discovery.quantum.matching import baseline_quantum_match
 from discovery.quantum.schema import QuantumAlgorithm
 from discovery.quantum.screening import QuantumScreeningService
+from discovery.retrieval.audit import BufferedRequestObserver
+from discovery.retrieval.coordinator import DirectHarvestCoordinator, MultiProviderHarvestPolicy
+from discovery.retrieval.deep_harvest import DeepHarvestEngine, DeepHarvestPolicy
 from discovery.retrieval.gateway import GatewayProvider
+from discovery.retrieval.gateway_harvest import (
+    GatewayCursorHarvestEngine,
+    GatewayCursorHarvestPolicy,
+)
 from discovery.retrieval.harvest import HarvestPolicy, ResearchHarvestEngine
 from discovery.retrieval.models import SearchQuery
+from discovery.retrieval.paging import PagedResearchProvider
 from discovery.retrieval.planning import batch_query_plan
+from discovery.retrieval.registry import ProviderRegistryService
+from discovery.retrieval.runtime import (
+    DirectProviderConfig,
+    ProviderMode,
+    create_direct_provider,
+    create_gateway_provider,
+)
 from discovery.retrieval.saturation import SaturationPolicy
 from discovery.retrieval.service import RetrievalService
 from discovery.review.schema import ReviewDecision
@@ -64,7 +89,7 @@ from discovery.storage.database import (
 )
 from discovery.storage.models import DocumentRow, ProblemInstanceRow, RetrievalRunRow, WorkRow
 from discovery.storage.object_store import LocalContentAddressedStore
-from discovery.storage.repositories import ProblemRepository
+from discovery.storage.repositories import ProblemRepository, WorkRepository
 
 app = typer.Typer(
     name="discovery",
@@ -85,6 +110,9 @@ experiment_app = typer.Typer(help="Reproducible experiment tracking.")
 benchmark_app = typer.Typer(help="Benchmark sampling and annotation workflow.")
 coverage_app = typer.Typer(help="Coverage, gaps, and research observability.")
 review_app = typer.Typer(help="Human review events for research objects.")
+provider_app = typer.Typer(help="Gateway and direct-provider capability operations.")
+campaign_app = typer.Typer(help="Durable scientific retrieval campaigns.")
+queue_app = typer.Typer(help="Durable local processing queue.")
 
 app.add_typer(db_app, name="db")
 app.add_typer(ontology_app, name="ontology")
@@ -98,6 +126,9 @@ app.add_typer(experiment_app, name="experiment")
 app.add_typer(benchmark_app, name="benchmark")
 app.add_typer(coverage_app, name="coverage")
 app.add_typer(review_app, name="review")
+app.add_typer(provider_app, name="provider")
+app.add_typer(campaign_app, name="campaign")
+app.add_typer(queue_app, name="queue")
 
 
 def _settings(database_url: str | None = None) -> Settings:
@@ -114,6 +145,22 @@ def _factory(
     engine = create_database_engine(settings.database_url)
     init_db(engine)
     return settings, engine, make_session_factory(engine)
+
+
+
+def _direct_provider_config(
+    settings: Settings, providers: str | None = None
+) -> DirectProviderConfig:
+    selected = (
+        [item.strip() for item in providers.split(",") if item.strip()]
+        if providers is not None
+        else settings.direct_providers
+    )
+    return DirectProviderConfig(
+        providers=selected,
+        openalex_api_key=settings.openalex_api_key,
+        contact_email=settings.contact_email,
+    )
 
 
 def _load_problem(path: Path) -> ProblemInstance:
@@ -490,6 +537,18 @@ def corpus_stats(database_url: str | None = typer.Option(None, "--database")) ->
         console.print(f"Problems: {problems}")
 
 
+@corpus_app.command("import-work")
+def corpus_import_work(
+    path: Path,
+    database_url: Annotated[str | None, typer.Option("--database")] = None,
+) -> None:
+    work = Work.model_validate_json(path.read_text(encoding="utf-8"))
+    _settings_value, _engine, factory = _factory(database_url)
+    with session_scope(factory) as session:
+        row = WorkRepository(session).upsert(work)
+    console.print(row.id)
+
+
 @corpus_app.command("add-problem")
 def corpus_add_problem(
     path: Path,
@@ -762,6 +821,16 @@ def coverage_snapshot(database_url: str | None = typer.Option(None, "--database"
     console.print_json(snapshot.model_dump_json(indent=2))
 
 
+@coverage_app.command("operations")
+def coverage_operations(
+    database_url: Annotated[str | None, typer.Option("--database")] = None,
+) -> None:
+    _settings_value, _engine, factory = _factory(database_url)
+    with session_scope(factory) as session:
+        snapshot = OperationalObservabilityService(session).snapshot()
+    console.print_json(snapshot.model_dump_json(indent=2))
+
+
 @review_app.command("record")
 def review_record(
     object_type: str,
@@ -797,6 +866,394 @@ def process_file(
         result = ScientificDiscoveryPipeline(session).process_document(
             work_id=work_id,
             asset_id=asset_id,
+            source_format=source_format,
+            content=input_path.read_bytes(),
+        )
+    console.print_json(result.model_dump_json(indent=2))
+
+
+@provider_app.command("direct-search")
+def provider_direct_search(
+    query: str,
+    providers: Annotated[str | None, typer.Option("--providers")] = None,
+    limit: Annotated[int, typer.Option(min=1, max=1000)] = 25,
+    database_url: Annotated[str | None, typer.Option("--database")] = None,
+) -> None:
+    """Search selected direct scholarly providers and persist canonical works."""
+    settings, _engine, factory = _factory(database_url)
+    audit = BufferedRequestObserver()
+    with session_scope(factory) as session:
+        config = _direct_provider_config(settings, providers)
+        with create_direct_provider(config, observer=audit) as research_provider:
+            response = RetrievalService(session, research_provider).execute(
+                SearchQuery(text=query, limit=limit, providers=config.providers)
+            )
+        audit.drain(
+            session,
+            object_store=LocalContentAddressedStore(settings.object_store_path),
+            persist_response_bodies=True,
+        )
+        payload = {
+            "hits": len(response.hits),
+            "providers": [item.model_dump(mode="json") for item in response.provider_reports],
+            "work_ids": [item.work.id for item in response.hits if item.work is not None],
+        }
+    console.print_json(json.dumps(payload))
+
+
+@provider_app.command("gateway-manifest")
+def provider_gateway_manifest(
+    gateway_url: Annotated[str | None, typer.Option("--gateway")] = None,
+    database_url: Annotated[str | None, typer.Option("--database")] = None,
+) -> None:
+    settings, _engine, factory = _factory(database_url)
+    resolved = gateway_url or settings.gateway_url
+    if resolved is None:
+        raise typer.BadParameter("set --gateway or DISCOVERY_GATEWAY_URL")
+    audit = BufferedRequestObserver()
+    with session_scope(factory) as session:
+        with create_gateway_provider(
+            resolved,
+            timeout_seconds=settings.gateway_timeout_seconds,
+            observer=audit,
+        ) as provider:
+            if not isinstance(provider, GatewayProvider):
+                raise RuntimeError("gateway factory returned an unexpected provider")
+            manifest = provider.manifest(refresh=True)
+        audit.drain(session)
+        ProviderRegistryService(session).store_gateway_manifest(manifest)
+    console.print_json(manifest.model_dump_json(indent=2))
+
+
+@provider_app.command("gateway-sync")
+def provider_gateway_sync(
+    gateway_url: Annotated[str | None, typer.Option("--gateway")] = None,
+    database_url: Annotated[str | None, typer.Option("--database")] = None,
+) -> None:
+    settings, _engine, factory = _factory(database_url)
+    resolved = gateway_url or settings.gateway_url
+    if resolved is None:
+        raise typer.BadParameter("set --gateway or DISCOVERY_GATEWAY_URL")
+    with session_scope(factory) as session:
+        gateway = GatewayProvider(resolved, timeout_seconds=settings.gateway_timeout_seconds)
+        try:
+            report = gateway.sync_status()
+        finally:
+            gateway.close()
+        ProviderRegistryService(session).store_sync_report(report)
+    console.print_json(report.model_dump_json(indent=2))
+
+
+@provider_app.command("gateway-coverage")
+def provider_gateway_coverage(
+    gateway_url: Annotated[str | None, typer.Option("--gateway")] = None,
+    field: Annotated[str | None, typer.Option("--field")] = None,
+) -> None:
+    settings = _settings()
+    resolved = gateway_url or settings.gateway_url
+    if resolved is None:
+        raise typer.BadParameter("set --gateway or DISCOVERY_GATEWAY_URL")
+    gateway = GatewayProvider(resolved, timeout_seconds=settings.gateway_timeout_seconds)
+    try:
+        params: dict[str, object] = {}
+        if field is not None:
+            params["field"] = field
+        report = gateway.coverage_report(**params)
+    finally:
+        gateway.close()
+    console.print_json(report.model_dump_json(indent=2))
+
+
+@provider_app.command("resolve")
+def provider_resolve_identity(
+    identifier: str,
+    gateway_url: Annotated[str | None, typer.Option("--gateway")] = None,
+    database_url: Annotated[str | None, typer.Option("--database")] = None,
+) -> None:
+    settings, _engine, factory = _factory(database_url)
+    resolved = gateway_url or settings.gateway_url
+    if resolved is None:
+        raise typer.BadParameter("set --gateway or DISCOVERY_GATEWAY_URL")
+    gateway = GatewayProvider(resolved, timeout_seconds=settings.gateway_timeout_seconds)
+    try:
+        report = gateway.resolve_identity(identifier)
+    finally:
+        gateway.close()
+    with session_scope(factory) as session:
+        ingest = IdentityGraphService(session).ingest(report)
+    console.print_json(
+        json.dumps(
+            {
+                "resolution": report.model_dump(mode="json"),
+                "ingest": ingest.model_dump(mode="json"),
+            }
+        )
+    )
+
+
+@provider_app.command("integrity")
+def provider_integrity(
+    identifier: str,
+    gateway_url: Annotated[str | None, typer.Option("--gateway")] = None,
+    database_url: Annotated[str | None, typer.Option("--database")] = None,
+) -> None:
+    settings, _engine, factory = _factory(database_url)
+    resolved = gateway_url or settings.gateway_url
+    if resolved is None:
+        raise typer.BadParameter("set --gateway or DISCOVERY_GATEWAY_URL")
+    gateway = GatewayProvider(resolved, timeout_seconds=settings.gateway_timeout_seconds)
+    try:
+        report = gateway.integrity(identifier)
+    finally:
+        gateway.close()
+    with session_scope(factory) as session:
+        count = IntegrityService(session).ingest(report)
+    console.print_json(
+        json.dumps({"report": report.model_dump(mode="json"), "assertions_persisted": count})
+    )
+
+
+@retrieval_app.command("deep-search")
+def retrieval_deep_search(
+    provider_name: str,
+    query: str,
+    pages: Annotated[int, typer.Option("--pages", min=1, max=100000)] = 10,
+    page_size: Annotated[int, typer.Option("--page-size", min=1, max=1000)] = 100,
+    database_url: Annotated[str | None, typer.Option("--database")] = None,
+) -> None:
+    """Cursor/offset harvest one direct provider with resumable page checkpoints."""
+    settings, _engine, factory = _factory(database_url)
+    audit = BufferedRequestObserver()
+    with session_scope(factory) as session:
+        with create_direct_provider(
+            _direct_provider_config(settings, provider_name),
+            observer=audit,
+        ) as provider:
+            if not hasattr(provider, "search_page"):
+                raise typer.BadParameter(f"provider {provider_name!r} does not support paging")
+            paged_provider = cast(PagedResearchProvider, provider)
+            result = DeepHarvestEngine(session, paged_provider).execute(
+                SearchQuery(text=query, limit=page_size, providers=[provider_name]),
+                policy=DeepHarvestPolicy(max_pages=pages),
+            )
+        audit.drain(
+            session,
+            object_store=LocalContentAddressedStore(settings.object_store_path),
+            persist_response_bodies=True,
+        )
+    console.print_json(result.model_dump_json(indent=2))
+
+
+@retrieval_app.command("deep-federated")
+def retrieval_deep_federated(
+    query: str,
+    providers: Annotated[str | None, typer.Option("--providers")] = None,
+    pages_per_provider: Annotated[
+        int, typer.Option("--pages-per-provider", min=1, max=100000)
+    ] = 20,
+    page_size: Annotated[int, typer.Option("--page-size", min=1, max=1000)] = 100,
+    database_url: Annotated[str | None, typer.Option("--database")] = None,
+) -> None:
+    """Run resumable provider-native paging across multiple direct sources."""
+    settings, _engine, factory = _factory(database_url)
+    config = _direct_provider_config(settings, providers)
+    audit = BufferedRequestObserver()
+    with session_scope(factory) as session:
+        with ExitStack() as stack:
+            paged: dict[str, PagedResearchProvider] = {}
+            for provider_name in config.providers:
+                manager = create_direct_provider(
+                    config.model_copy(update={"providers": [provider_name]}),
+                    observer=audit,
+                )
+                provider = stack.enter_context(manager)
+                if not hasattr(provider, "search_page"):
+                    raise typer.BadParameter(
+                        f"provider {provider_name!r} does not support paging"
+                    )
+                paged[provider_name] = cast(PagedResearchProvider, provider)
+            result = DirectHarvestCoordinator(session).execute(
+                SearchQuery(text=query, limit=page_size, providers=config.providers),
+                paged,
+                policy=MultiProviderHarvestPolicy(
+                    max_pages_per_provider=pages_per_provider
+                ),
+            )
+        audit.drain(
+            session,
+            object_store=LocalContentAddressedStore(settings.object_store_path),
+            persist_response_bodies=True,
+        )
+    console.print_json(result.model_dump_json(indent=2))
+
+
+@retrieval_app.command("gateway-harvest")
+def retrieval_gateway_harvest(
+    payload_path: Path,
+    pages: Annotated[int, typer.Option("--pages", min=1, max=100000)] = 100,
+    gateway_url: Annotated[str | None, typer.Option("--gateway")] = None,
+    database_url: Annotated[str | None, typer.Option("--database")] = None,
+) -> None:
+    settings, _engine, factory = _factory(database_url)
+    resolved = gateway_url or settings.gateway_url
+    if resolved is None:
+        raise typer.BadParameter("set --gateway or DISCOVERY_GATEWAY_URL")
+    payload = json.loads(payload_path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise typer.BadParameter("gateway harvest payload must be a JSON object")
+    gateway = GatewayProvider(resolved, timeout_seconds=settings.gateway_timeout_seconds)
+    try:
+        with session_scope(factory) as session:
+            result = GatewayCursorHarvestEngine(session, gateway).execute(
+                payload,
+                policy=GatewayCursorHarvestPolicy(max_pages=pages),
+            )
+    finally:
+        gateway.close()
+    console.print_json(result.model_dump_json(indent=2))
+
+
+@campaign_app.command("create")
+def campaign_create(
+    scope_type: CampaignScope,
+    scope_id: str,
+    name: Annotated[str | None, typer.Option("--name")] = None,
+    providers: Annotated[str | None, typer.Option("--providers")] = None,
+    result_limit: Annotated[int, typer.Option("--limit", min=1, max=1000)] = 50,
+    enrich_identity: Annotated[bool, typer.Option("--identity/--no-identity")] = False,
+    enrich_integrity: Annotated[bool, typer.Option("--integrity/--no-integrity")] = False,
+    enqueue_assets: Annotated[bool, typer.Option("--enqueue-assets/--no-enqueue-assets")] = False,
+    database_url: Annotated[str | None, typer.Option("--database")] = None,
+) -> None:
+    _settings_value, _engine, factory = _factory(database_url)
+    selected = [item.strip() for item in providers.split(",") if item.strip()] if providers else []
+    config = CampaignConfig(
+        scope_type=scope_type,
+        scope_id=scope_id,
+        name=name,
+        result_limit=result_limit,
+        providers=selected,
+        enrich_identity=enrich_identity,
+        enrich_integrity=enrich_integrity,
+        enqueue_asset_processing=enqueue_assets,
+    )
+    with session_scope(factory) as session:
+        row = CampaignService(session).create(config)
+    console.print(row.id)
+
+
+@campaign_app.command("run")
+def campaign_run(
+    campaign_id: str,
+    mode: Annotated[ProviderMode, typer.Option("--mode")] = ProviderMode.DIRECT,
+    providers: Annotated[str | None, typer.Option("--providers")] = None,
+    gateway_url: Annotated[str | None, typer.Option("--gateway")] = None,
+    database_url: Annotated[str | None, typer.Option("--database")] = None,
+) -> None:
+    settings, _engine, factory = _factory(database_url)
+    audit = BufferedRequestObserver()
+    with session_scope(factory) as session:
+        if mode == ProviderMode.DIRECT:
+            manager = create_direct_provider(
+                _direct_provider_config(settings, providers),
+                observer=audit,
+            )
+        else:
+            resolved = gateway_url or settings.gateway_url
+            if resolved is None:
+                raise typer.BadParameter("set --gateway or DISCOVERY_GATEWAY_URL")
+            manager = create_gateway_provider(
+                resolved,
+                timeout_seconds=settings.gateway_timeout_seconds,
+                observer=audit,
+            )
+        with manager as provider:
+            enrichment = provider if isinstance(provider, GatewayProvider) else None
+            result = CampaignService(session).run(
+                campaign_id,
+                provider,
+                gateway_enrichment=enrichment,
+            )
+        audit.drain(
+            session,
+            object_store=LocalContentAddressedStore(settings.object_store_path),
+            persist_response_bodies=True,
+        )
+    console.print_json(result.model_dump_json(indent=2))
+
+
+@queue_app.command("enqueue")
+def queue_enqueue(
+    work_id: str,
+    stage: ProcessingStage,
+    asset_id: Annotated[str | None, typer.Option("--asset-id")] = None,
+    priority: Annotated[int, typer.Option("--priority")] = 0,
+    database_url: Annotated[str | None, typer.Option("--database")] = None,
+) -> None:
+    _settings_value, _engine, factory = _factory(database_url)
+    with session_scope(factory) as session:
+        job = ProcessingQueue(session).enqueue(
+            work_id=work_id,
+            asset_id=asset_id,
+            stage=stage,
+            priority=priority,
+        )
+    console.print_json(job.model_dump_json(indent=2))
+
+
+@queue_app.command("stats")
+def queue_stats(
+    database_url: Annotated[str | None, typer.Option("--database")] = None,
+) -> None:
+    _settings_value, _engine, factory = _factory(database_url)
+    with session_scope(factory) as session:
+        stats = ProcessingQueue(session).stats()
+    console.print_json(stats.model_dump_json(indent=2))
+
+
+@queue_app.command("work-once")
+def queue_work_once(
+    database_url: Annotated[str | None, typer.Option("--database")] = None,
+) -> None:
+    settings, _engine, factory = _factory(database_url)
+    fetcher = RightsAwareAssetFetcher()
+    try:
+        with session_scope(factory) as session:
+            result = LocalProcessingWorker(
+                session,
+                LocalContentAddressedStore(settings.object_store_path),
+                fetcher,
+            ).run_once()
+    finally:
+        fetcher.close()
+    console.print_json(result.model_dump_json(indent=2))
+
+
+@corpus_app.command("export")
+def corpus_export(
+    output_path: Path,
+    database_url: Annotated[str | None, typer.Option("--database")] = None,
+) -> None:
+    _settings_value, _engine, factory = _factory(database_url)
+    with session_scope(factory) as session:
+        summary = CorpusExporter(session).export(output_path)
+    console.print_json(summary.model_dump_json(indent=2))
+
+
+@documents_app.command("process-canonical")
+def documents_process_canonical(
+    work_id: str,
+    asset_path: Path,
+    source_format: str,
+    input_path: Path,
+    database_url: Annotated[str | None, typer.Option("--database")] = None,
+) -> None:
+    asset = Asset.model_validate_json(asset_path.read_text(encoding="utf-8"))
+    _settings_value, _engine, factory = _factory(database_url)
+    with session_scope(factory) as session:
+        result = CanonicalResearchProcessor(session).process_bytes(
+            work_id=work_id,
+            asset=asset,
             source_format=source_format,
             content=input_path.read_bytes(),
         )

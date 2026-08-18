@@ -1,0 +1,95 @@
+{
+  "$defs": {
+    "IntegrityAssertion": {
+      "additionalProperties": true,
+      "properties": {
+        "subject_identifier": {
+          "title": "Subject Identifier",
+          "type": "string"
+        },
+        "relation_type": {
+          "title": "Relation Type",
+          "type": "string"
+        },
+        "object_identifier": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Object Identifier"
+        },
+        "provider": {
+          "title": "Provider",
+          "type": "string"
+        },
+        "notice_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notice Date"
+        },
+        "status": {
+          "default": "asserted",
+          "title": "Status",
+          "type": "string"
+        },
+        "payload": {
+          "additionalProperties": true,
+          "title": "Payload",
+          "type": "object"
+        }
+      },
+      "required": [
+        "subject_identifier",
+        "relation_type",
+        "provider"
+      ],
+      "title": "IntegrityAssertion",
+      "type": "object"
+    }
+  },
+  "additionalProperties": true,
+  "properties": {
+    "query_identifier": {
+      "title": "Query Identifier",
+      "type": "string"
+    },
+    "assertions": {
+      "items": {
+        "$ref": "#/$defs/IntegrityAssertion"
+      },
+      "title": "Assertions",
+      "type": "array"
+    },
+    "provider_reports": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Provider Reports",
+      "type": "array"
+    },
+    "raw_envelope": {
+      "additionalProperties": true,
+      "title": "Raw Envelope",
+      "type": "object"
+    }
+  },
+  "required": [
+    "query_identifier"
+  ],
+  "title": "IntegrityReport",
+  "type": "object"
+}

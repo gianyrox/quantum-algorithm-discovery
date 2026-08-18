@@ -1,0 +1,64 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "pages": {
+      "minimum": 0,
+      "title": "Pages",
+      "type": "integer"
+    },
+    "records": {
+      "minimum": 0,
+      "title": "Records",
+      "type": "integer"
+    },
+    "unique_work_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Unique Work Ids",
+      "type": "array"
+    },
+    "next_cursor": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Next Cursor"
+    },
+    "exhausted": {
+      "default": false,
+      "title": "Exhausted",
+      "type": "boolean"
+    },
+    "cursor_ephemeral": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Cursor Ephemeral"
+    },
+    "errors": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Errors",
+      "type": "array"
+    }
+  },
+  "required": [
+    "pages",
+    "records"
+  ],
+  "title": "GatewayCursorHarvestResult",
+  "type": "object"
+}

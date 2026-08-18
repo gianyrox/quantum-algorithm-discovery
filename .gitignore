@@ -18,6 +18,9 @@ runs/*
 data/raw/
 data/cache/
 data/assets/
+data/objects/
+data/exports/
+data/tmp/
 data/*.db
 data/*.sqlite
 data/*.sqlite3

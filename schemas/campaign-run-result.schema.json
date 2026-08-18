@@ -1,0 +1,98 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "campaign_id": {
+      "title": "Campaign Id",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "status": {
+      "title": "Status",
+      "type": "string"
+    },
+    "started_at": {
+      "format": "date-time",
+      "title": "Started At",
+      "type": "string"
+    },
+    "completed_at": {
+      "format": "date-time",
+      "title": "Completed At",
+      "type": "string"
+    },
+    "query_plan_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Query Plan Id"
+    },
+    "query_batch_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Query Batch Id"
+    },
+    "unique_work_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Unique Work Ids",
+      "type": "array"
+    },
+    "retrieval_hits": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Retrieval Hits",
+      "type": "integer"
+    },
+    "identity_assertions": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Identity Assertions",
+      "type": "integer"
+    },
+    "integrity_assertions": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Integrity Assertions",
+      "type": "integer"
+    },
+    "jobs_enqueued": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Jobs Enqueued",
+      "type": "integer"
+    },
+    "errors": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Errors",
+      "type": "array"
+    }
+  },
+  "required": [
+    "campaign_id",
+    "run_id",
+    "status",
+    "started_at",
+    "completed_at"
+  ],
+  "title": "CampaignRunResult",
+  "type": "object"
+}

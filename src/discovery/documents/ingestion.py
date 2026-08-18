@@ -7,6 +7,7 @@ from discovery.corpus.schema import Asset
 from discovery.documents.fetcher import RightsAwareAssetFetcher
 from discovery.documents.schema import ParsedDocument
 from discovery.documents.service import DocumentService
+from discovery.storage.models import WorkRow
 from discovery.storage.object_store import ObjectStore, StoredObject
 from discovery.storage.repositories import AssetRepository
 
@@ -61,6 +62,8 @@ class DocumentIngestionService:
         source_format: str | None = None,
         persist_raw: bool = True,
     ) -> DocumentIngestionResult:
+        if self.session.get(WorkRow, work_id) is None:
+            raise KeyError(f"unknown canonical work: {work_id}")
         content = self.fetcher.fetch(asset, require_retention=persist_raw)
         stored: StoredObject | None = None
         resolved_asset = asset

@@ -7,6 +7,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from discovery.core.ids import stable_id
+from discovery.corpus.citations import CitationIngestionService
 from discovery.retrieval.models import QueryPlan, SearchResponse
 from discovery.retrieval.planning import QueryBatch
 from discovery.retrieval.provider import ResearchProvider
@@ -18,7 +19,7 @@ from discovery.storage.models import (
     RetrievalQueryRow,
     WorkIdentifierRow,
 )
-from discovery.storage.repositories import AssetRepository, CitationRepository
+from discovery.storage.repositories import AssetRepository
 
 
 class HarvestPolicy(BaseModel):
@@ -62,7 +63,7 @@ class ResearchHarvestEngine:
         self.session = session
         self.provider = provider
         self.retrieval = RetrievalService(session, provider)
-        self.citations = CitationRepository(session)
+        self.citations = CitationIngestionService(session)
         self.assets = AssetRepository(session)
 
     def execute(
@@ -268,15 +269,9 @@ class ResearchHarvestEngine:
                 if direction == "references"
                 else self.provider.cited_by(identifier)
             )
-            for edge in response.edges[: policy.citation_edge_limit]:
-                self.citations.upsert_edge(
-                    source_work_id=edge.source_id,
-                    target_work_id=edge.target_id,
-                    provider=edge.provider,
-                    provider_edge_id=edge.provider_edge_id,
-                    metadata=edge.metadata,
-                )
-            return len(response.edges)
+            selected = response.edges[: policy.citation_edge_limit]
+            self.citations.ingest(selected)
+            return len(selected)
         except Exception as exc:
             errors.append(f"citation:{direction}:{identifier}:{type(exc).__name__}:{exc}")
             if policy.stop_on_error:

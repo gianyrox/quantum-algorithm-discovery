@@ -1,0 +1,30 @@
+{
+  "additionalProperties": true,
+  "properties": {
+    "fetched_at": {
+      "format": "date-time",
+      "title": "Fetched At",
+      "type": "string"
+    },
+    "dimensions": {
+      "additionalProperties": true,
+      "title": "Dimensions",
+      "type": "object"
+    },
+    "gaps": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Gaps",
+      "type": "array"
+    },
+    "raw_envelope": {
+      "additionalProperties": true,
+      "title": "Raw Envelope",
+      "type": "object"
+    }
+  },
+  "title": "GatewayCoverageReport",
+  "type": "object"
+}

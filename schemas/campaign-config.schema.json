@@ -1,0 +1,191 @@
+{
+  "$defs": {
+    "CampaignScope": {
+      "enum": [
+        "concept",
+        "discipline",
+        "query"
+      ],
+      "title": "CampaignScope",
+      "type": "string"
+    },
+    "HarvestPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "expand_references": {
+          "default": false,
+          "title": "Expand References",
+          "type": "boolean"
+        },
+        "expand_cited_by": {
+          "default": false,
+          "title": "Expand Cited By",
+          "type": "boolean"
+        },
+        "discover_assets": {
+          "default": false,
+          "title": "Discover Assets",
+          "type": "boolean"
+        },
+        "citation_seed_limit": {
+          "default": 25,
+          "maximum": 1000,
+          "minimum": 0,
+          "title": "Citation Seed Limit",
+          "type": "integer"
+        },
+        "citation_edge_limit": {
+          "default": 250,
+          "maximum": 10000,
+          "minimum": 0,
+          "title": "Citation Edge Limit",
+          "type": "integer"
+        },
+        "saturation": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SaturationPolicy"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "stop_on_error": {
+          "default": false,
+          "title": "Stop On Error",
+          "type": "boolean"
+        }
+      },
+      "title": "HarvestPolicy",
+      "type": "object"
+    },
+    "SaturationPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "minimum_iterations": {
+          "default": 3,
+          "minimum": 1,
+          "title": "Minimum Iterations",
+          "type": "integer"
+        },
+        "window": {
+          "default": 3,
+          "minimum": 1,
+          "title": "Window",
+          "type": "integer"
+        },
+        "novelty_threshold": {
+          "default": 0.03,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Novelty Threshold",
+          "type": "number"
+        }
+      },
+      "title": "SaturationPolicy",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Immutable execution intent for one scientific retrieval campaign.",
+  "properties": {
+    "scope_type": {
+      "$ref": "#/$defs/CampaignScope"
+    },
+    "scope_id": {
+      "title": "Scope Id",
+      "type": "string"
+    },
+    "name": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Name"
+    },
+    "terms_per_query": {
+      "default": 8,
+      "maximum": 100,
+      "minimum": 1,
+      "title": "Terms Per Query",
+      "type": "integer"
+    },
+    "result_limit": {
+      "default": 50,
+      "maximum": 1000,
+      "minimum": 1,
+      "title": "Result Limit",
+      "type": "integer"
+    },
+    "max_concepts": {
+      "default": 100,
+      "maximum": 5000,
+      "minimum": 1,
+      "title": "Max Concepts",
+      "type": "integer"
+    },
+    "providers": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Providers",
+      "type": "array"
+    },
+    "max_cost_usd": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Max Cost Usd"
+    },
+    "harvest_policy": {
+      "$ref": "#/$defs/HarvestPolicy"
+    },
+    "enrich_identity": {
+      "default": false,
+      "title": "Enrich Identity",
+      "type": "boolean"
+    },
+    "enrich_integrity": {
+      "default": false,
+      "title": "Enrich Integrity",
+      "type": "boolean"
+    },
+    "enqueue_asset_processing": {
+      "default": false,
+      "title": "Enqueue Asset Processing",
+      "type": "boolean"
+    },
+    "enrichment_limit": {
+      "default": 100,
+      "maximum": 10000,
+      "minimum": 0,
+      "title": "Enrichment Limit",
+      "type": "integer"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "scope_type",
+    "scope_id"
+  ],
+  "title": "CampaignConfig",
+  "type": "object"
+}

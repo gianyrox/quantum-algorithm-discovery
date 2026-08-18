@@ -1,0 +1,34 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "pending": {
+      "default": 0,
+      "title": "Pending",
+      "type": "integer"
+    },
+    "running": {
+      "default": 0,
+      "title": "Running",
+      "type": "integer"
+    },
+    "completed": {
+      "default": 0,
+      "title": "Completed",
+      "type": "integer"
+    },
+    "failed": {
+      "default": 0,
+      "title": "Failed",
+      "type": "integer"
+    },
+    "by_stage": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "By Stage",
+      "type": "object"
+    }
+  },
+  "title": "QueueStats",
+  "type": "object"
+}

@@ -1,0 +1,31 @@
+Scientific Discovery v0.4 — Real-Data Execution Engine
+
+This overlay upgrades the committed v0.3 baseline to v0.4.0.
+
+Core additions
+- resilient/audited HTTP execution
+- direct OpenAlex/Crossref/Europe PMC/arXiv adapters
+- direct federation and provider-native deep harvest
+- gateway operational models and signed-cursor harvest
+- request/provider capability snapshots
+- conservative identity and integrity evidence ingestion
+- citation staging/materialization
+- durable research campaigns and processing queue
+- rights-aware asset acquisition and canonical processing
+- deterministic corpus export and operational observability
+- Alembic revision 0003
+- expanded JSON schema registry, tests, docs, and v0.4 validation scripts
+
+Canonical processing invariant
+Work -> Asset -> Document -> MathExpression / ProblemInstance
+
+Guardrails
+- no quantum relevance filter in general scientific retrieval
+- fuzzy identity does not auto-merge
+- unknown rights are not permission
+- provider absence is not scientific absence
+- structural similarity is not a quantum advantage claim
+
+Validate after overlay
+  source .venv/bin/activate
+  bash scripts/post_upgrade_v04.sh

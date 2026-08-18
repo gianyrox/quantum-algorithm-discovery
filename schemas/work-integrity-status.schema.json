@@ -1,0 +1,43 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "work_id": {
+      "title": "Work Id",
+      "type": "string"
+    },
+    "state": {
+      "title": "State",
+      "type": "string"
+    },
+    "relations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Relations",
+      "type": "array"
+    },
+    "assertions": {
+      "default": 0,
+      "title": "Assertions",
+      "type": "integer"
+    },
+    "warning": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Warning"
+    }
+  },
+  "required": [
+    "work_id",
+    "state"
+  ],
+  "title": "WorkIntegrityStatus",
+  "type": "object"
+}

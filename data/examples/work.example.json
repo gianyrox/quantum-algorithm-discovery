@@ -1,0 +1,21 @@
+{
+  "id": "smoke-work",
+  "title": "Canonical structured-document smoke work",
+  "abstract": "A local synthetic work used only to validate the canonical execution path.",
+  "publication_year": 2026,
+  "work_type": "test-fixture",
+  "primary_language": "en",
+  "identifiers": [
+    {
+      "scheme": "doi",
+      "value": "10.0000/scientific-discovery-smoke",
+      "provider": "local-fixture"
+    }
+  ],
+  "authors": [],
+  "assets": [],
+  "provenance": [],
+  "metadata": {
+    "fixture": true
+  }
+}

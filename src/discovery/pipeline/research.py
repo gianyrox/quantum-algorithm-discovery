@@ -6,9 +6,11 @@ from sqlalchemy.orm import Session
 from discovery.analysis.candidates import generate_cross_domain_candidates
 from discovery.analysis.engine import SimilarityEngine
 from discovery.analysis.local_embeddings import HashingEmbeddingProvider
+from discovery.corpus.schema import Asset
 from discovery.discovery.repository import DiscoveryRepository
 from discovery.discovery.schema import CrossDomainCandidate
 from discovery.documents.service import DocumentService
+from discovery.execution.processing import CanonicalResearchProcessor
 from discovery.mathematics.service import MathematicsService
 from discovery.ontology.query_compiler import OntologyQueryCompiler
 from discovery.problems.baseline_extractor import TransparentBaselineProblemExtractor
@@ -100,6 +102,29 @@ class ScientificDiscoveryPipeline:
             document_id=document_row.id,
             equation_count=len(expressions),
             problem_ids=[item.id for item in problems],
+        )
+
+
+    def process_canonical_document(
+        self,
+        *,
+        work_id: str,
+        asset: Asset,
+        source_format: str,
+        content: bytes,
+    ) -> DocumentProcessingResult:
+        """Operational path that requires Work -> Asset -> Document linkage."""
+        result = CanonicalResearchProcessor(self.session).process_bytes(
+            work_id=work_id,
+            asset=asset,
+            source_format=source_format,
+            content=content,
+        )
+        return DocumentProcessingResult(
+            work_id=result.work_id,
+            document_id=result.document_id,
+            equation_count=result.equation_count,
+            problem_ids=result.problem_ids,
         )
 
     def analyze(

@@ -1,0 +1,246 @@
+{
+  "$defs": {
+    "Asset": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "representation": {
+          "title": "Representation",
+          "type": "string"
+        },
+        "provider": {
+          "title": "Provider",
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        },
+        "mime_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mime Type"
+        },
+        "availability": {
+          "default": "unknown",
+          "title": "Availability",
+          "type": "string"
+        },
+        "rights": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RightsStatement"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "checksum": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Checksum"
+        }
+      },
+      "required": [
+        "id",
+        "representation",
+        "provider"
+      ],
+      "title": "Asset",
+      "type": "object"
+    },
+    "RightsStatement": {
+      "additionalProperties": false,
+      "description": "Rights as observed, never inferred from access alone.",
+      "properties": {
+        "metadata_license": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata License"
+        },
+        "content_license": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content License"
+        },
+        "redistribution": {
+          "default": "unknown",
+          "title": "Redistribution",
+          "type": "string"
+        },
+        "tdm": {
+          "default": "unknown",
+          "title": "Tdm",
+          "type": "string"
+        },
+        "model_training": {
+          "default": "unknown",
+          "title": "Model Training",
+          "type": "string"
+        },
+        "retention": {
+          "default": "unknown",
+          "title": "Retention",
+          "type": "string"
+        },
+        "terms_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Terms Url"
+        },
+        "retrieved_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Retrieved At"
+        }
+      },
+      "title": "RightsStatement",
+      "type": "object"
+    },
+    "StoredObject": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "title": "Key",
+          "type": "string"
+        },
+        "sha256": {
+          "title": "Sha256",
+          "type": "string"
+        },
+        "size": {
+          "minimum": 0,
+          "title": "Size",
+          "type": "integer"
+        },
+        "path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Path"
+        },
+        "media_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Media Type"
+        }
+      },
+      "required": [
+        "key",
+        "sha256",
+        "size"
+      ],
+      "title": "StoredObject",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "acquisition_id": {
+      "title": "Acquisition Id",
+      "type": "string"
+    },
+    "work_id": {
+      "title": "Work Id",
+      "type": "string"
+    },
+    "asset": {
+      "$ref": "#/$defs/Asset"
+    },
+    "stored_object": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/StoredObject"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "status": {
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "acquisition_id",
+    "work_id",
+    "asset",
+    "status"
+  ],
+  "title": "AssetAcquisitionResult",
+  "type": "object"
+}

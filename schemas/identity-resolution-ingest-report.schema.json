@@ -1,0 +1,24 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "assertions_persisted": {
+      "default": 0,
+      "title": "Assertions Persisted",
+      "type": "integer"
+    },
+    "exact_aliases_attached": {
+      "default": 0,
+      "title": "Exact Aliases Attached",
+      "type": "integer"
+    },
+    "conflicts": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Conflicts",
+      "type": "array"
+    }
+  },
+  "title": "IdentityResolutionIngestReport",
+  "type": "object"
+}

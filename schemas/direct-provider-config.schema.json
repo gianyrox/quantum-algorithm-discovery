@@ -1,0 +1,45 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "providers": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Providers",
+      "type": "array"
+    },
+    "openalex_api_key": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Openalex Api Key"
+    },
+    "contact_email": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Contact Email"
+    },
+    "max_workers": {
+      "default": 4,
+      "maximum": 32,
+      "minimum": 1,
+      "title": "Max Workers",
+      "type": "integer"
+    }
+  },
+  "title": "DirectProviderConfig",
+  "type": "object"
+}

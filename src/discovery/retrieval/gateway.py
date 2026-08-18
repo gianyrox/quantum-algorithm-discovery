@@ -9,6 +9,17 @@ from pydantic import HttpUrl
 from discovery.core.ids import stable_id
 from discovery.core.provenance import ProvenanceRecord, RightsStatement, SoftwareIdentity
 from discovery.corpus.schema import Asset, IdentifierScheme, Work, WorkIdentifier, WorkVersion
+from discovery.retrieval.gateway_models import (
+    GatewayCoverageReport,
+    GatewayHarvestPage,
+    GatewaySyncProvider,
+    GatewaySyncReport,
+    IdentityAssertion,
+    IdentityResolution,
+    IntegrityAssertion,
+    IntegrityReport,
+)
+from discovery.retrieval.http import RequestObserver, ResilientHttpClient, RetryPolicy
 from discovery.retrieval.manifest import GatewayManifest, GatewayOperation, parse_gateway_manifest
 from discovery.retrieval.models import (
     AssetResponse,
@@ -160,10 +171,21 @@ class GatewayProvider:
         *,
         timeout_seconds: float = 30.0,
         client: httpx.Client | None = None,
+        retry_policy: RetryPolicy | None = None,
+        observer: RequestObserver | None = None,
+        headers: Mapping[str, str] | None = None,
     ) -> None:
         self.base_url = base_url.rstrip("/")
-        self.client = client or httpx.Client(base_url=self.base_url, timeout=timeout_seconds)
+        self.client = client or httpx.Client(
+            base_url=self.base_url,
+            timeout=timeout_seconds,
+            follow_redirects=True,
+            headers=dict(headers or {}),
+        )
         self._owns_client = client is None
+        self.http = ResilientHttpClient(
+            self.client, retry_policy=retry_policy, observer=observer
+        )
         self._manifest: GatewayManifest | None = None
 
     def close(self) -> None:
@@ -173,13 +195,21 @@ class GatewayProvider:
     def manifest(self, *, refresh: bool = False) -> GatewayManifest:
         if self._manifest is not None and not refresh:
             return self._manifest
-        response = self.client.get("/feed402.json")
-        response.raise_for_status()
-        payload = response.json()
-        if not isinstance(payload, dict):
-            raise GatewayProtocolError("gateway manifest is not an object")
-        self._manifest = parse_gateway_manifest(payload)
-        return self._manifest
+        errors: list[str] = []
+        for path in ("/.well-known/feed402.json", "/feed402.json"):
+            response = self.http.request(
+                "GET", path, provider=self.name, operation="manifest"
+            )
+            if response.status_code == 404:
+                errors.append(f"{path}:404")
+                continue
+            response.raise_for_status()
+            payload = response.json()
+            if not isinstance(payload, dict):
+                raise GatewayProtocolError("gateway manifest is not an object")
+            self._manifest = parse_gateway_manifest(payload)
+            return self._manifest
+        raise GatewayProtocolError("gateway manifest unavailable: " + ", ".join(errors))
 
     def operation(self, operation_id: str) -> GatewayOperation:
         for item in self.manifest().operations:
@@ -190,11 +220,21 @@ class GatewayProvider:
     def invoke(self, operation_id: str, payload: dict[str, object]) -> dict[str, object]:
         operation = self.operation(operation_id)
         if operation.method.upper() == "GET":
-            response = self.client.get(
-                operation.path, params={key: str(value) for key, value in payload.items()}
+            response = self.http.request(
+                "GET",
+                operation.path,
+                provider=self.name,
+                operation=operation_id,
+                params=payload,
             )
         else:
-            response = self.client.request(operation.method.upper(), operation.path, json=payload)
+            response = self.http.request(
+                operation.method.upper(),
+                operation.path,
+                provider=self.name,
+                operation=operation_id,
+                json_body=payload,
+            )
         response.raise_for_status()
         value = response.json()
         if not isinstance(value, dict):
@@ -205,7 +245,13 @@ class GatewayProvider:
         params: dict[str, str] = {"query": query.text, "limit": str(query.limit)}
         if query.max_cost_usd is not None:
             params["max_cost_usd"] = str(query.max_cost_usd)
-        response = self.client.get("/research/federated", params=params)
+        response = self.http.request(
+            "GET",
+            "/research/federated",
+            provider=self.name,
+            operation="federated-estimate",
+            params=params,
+        )
         response.raise_for_status()
         payload = response.json()
         if not isinstance(payload, dict):
@@ -213,12 +259,226 @@ class GatewayProvider:
         return payload
 
     def resolve(self, identifier: str) -> dict[str, object]:
-        response = self.client.post("/research/resolve", json={"identifier": identifier})
+        response = self.http.request(
+            "POST",
+            "/research/resolve",
+            provider=self.name,
+            operation="resolve",
+            json_body={"identifier": identifier},
+        )
         response.raise_for_status()
         payload = response.json()
         if not isinstance(payload, dict):
             raise GatewayProtocolError("gateway resolve returned a non-object")
         return payload
+
+    def resolve_identity(self, identifier: str) -> IdentityResolution:
+        envelope = self.resolve(identifier)
+        data = _as_mapping(envelope.get("data"))
+        raw_relations = data.get("relations", data.get("edges", data.get("assertions", [])))
+        relations = raw_relations if isinstance(raw_relations, list) else []
+        assertions: list[IdentityAssertion] = []
+        for raw in relations:
+            relation = _as_mapping(raw)
+            source = relation.get("source", relation.get("subject", identifier))
+            target = relation.get("target", relation.get("object"))
+            source_map = _as_mapping(source)
+            target_map = _as_mapping(target)
+            source_id = (
+                _first_string(source_map, ("raw_id", "id", "identifier"))
+                if source_map
+                else source if isinstance(source, str) else None
+            )
+            target_id = (
+                _first_string(target_map, ("raw_id", "id", "identifier"))
+                if target_map
+                else target if isinstance(target, str) else None
+            )
+            relation_type = _first_string(
+                relation, ("relation", "relation_type", "type")
+            )
+            provider = _first_string(
+                relation, ("provider", "asserting_provider", "source_provider")
+            ) or "unknown"
+            confidence_value = relation.get("confidence", relation.get("score"))
+            confidence = (
+                float(confidence_value)
+                if isinstance(confidence_value, int | float)
+                else None
+            )
+            if source_id and target_id and relation_type:
+                assertions.append(
+                    IdentityAssertion(
+                        source_identifier=source_id,
+                        relation_type=relation_type,
+                        target_identifier=target_id,
+                        provider=provider,
+                        confidence=confidence,
+                        payload=dict(relation),
+                    )
+                )
+        reports_obj = data.get("providers", data.get("provider_reports", []))
+        reports = (
+            [dict(item) for item in reports_obj if isinstance(item, Mapping)]
+            if isinstance(reports_obj, list)
+            else []
+        )
+        return IdentityResolution(
+            query_identifier=identifier,
+            assertions=assertions,
+            provider_reports=reports,
+            raw_envelope=envelope,
+        )
+
+    def integrity(self, identifier: str) -> IntegrityReport:
+        response = self.http.request(
+            "POST",
+            "/research/integrity",
+            provider=self.name,
+            operation="integrity",
+            json_body={"identifier": identifier},
+        )
+        response.raise_for_status()
+        envelope = response.json()
+        if not isinstance(envelope, dict):
+            raise GatewayProtocolError("gateway integrity returned a non-object")
+        data = _as_mapping(envelope.get("data"))
+        raw_assertions = data.get("relations", data.get("notices", data.get("assertions", [])))
+        values = raw_assertions if isinstance(raw_assertions, list) else []
+        assertions: list[IntegrityAssertion] = []
+        for raw in values:
+            value = _as_mapping(raw)
+            subject = value.get("subject", identifier)
+            target = value.get("target", value.get("object"))
+            subject_map = _as_mapping(subject)
+            target_map = _as_mapping(target)
+            subject_id = (
+                _first_string(subject_map, ("raw_id", "id", "identifier"))
+                if subject_map
+                else subject if isinstance(subject, str) else identifier
+            )
+            target_id = (
+                _first_string(target_map, ("raw_id", "id", "identifier"))
+                if target_map
+                else target if isinstance(target, str) else None
+            )
+            relation_type = _first_string(value, ("relation", "relation_type", "type", "status"))
+            if relation_type is None:
+                continue
+            assertions.append(
+                IntegrityAssertion(
+                    subject_identifier=subject_id or identifier,
+                    relation_type=relation_type,
+                    object_identifier=target_id,
+                    provider=_first_string(value, ("provider", "asserting_provider")) or "unknown",
+                    status=_first_string(value, ("status",)) or "asserted",
+                    payload=dict(value),
+                )
+            )
+        reports_obj = data.get("providers", data.get("provider_reports", []))
+        reports = (
+            [dict(item) for item in reports_obj if isinstance(item, Mapping)]
+            if isinstance(reports_obj, list)
+            else []
+        )
+        return IntegrityReport(
+            query_identifier=identifier,
+            assertions=assertions,
+            provider_reports=reports,
+            raw_envelope=envelope,
+        )
+
+    def sync_status(self) -> GatewaySyncReport:
+        response = self.http.request(
+            "GET", "/research/sync", provider=self.name, operation="sync-discovery"
+        )
+        response.raise_for_status()
+        envelope = response.json()
+        if not isinstance(envelope, dict):
+            raise GatewayProtocolError("gateway sync discovery returned a non-object")
+        data = _as_mapping(envelope.get("data")) or envelope
+        raw_providers = data.get("providers", [])
+        providers: list[GatewaySyncProvider] = []
+        if isinstance(raw_providers, list):
+            for raw in raw_providers:
+                value = _as_mapping(raw)
+                provider_name = _first_string(value, ("provider", "id", "name"))
+                if provider_name is None:
+                    continue
+                raw_caps = value.get("capabilities", [])
+                caps = [str(item) for item in raw_caps] if isinstance(raw_caps, list) else []
+                providers.append(
+                    GatewaySyncProvider(
+                        provider=provider_name,
+                        status=_first_string(value, ("status", "lifecycle")) or "unknown",
+                        capabilities=caps,
+                        bulk=dict(_as_mapping(value.get("bulk"))),
+                        incremental=dict(_as_mapping(value.get("incremental"))),
+                        last_verified=_first_string(value, ("last_verified",)),
+                        payload=dict(value),
+                    )
+                )
+        return GatewaySyncReport(providers=providers, raw_envelope=envelope)
+
+    def coverage_report(self, **params: object) -> GatewayCoverageReport:
+        response = self.http.request(
+            "GET",
+            "/research/coverage",
+            provider=self.name,
+            operation="coverage",
+            params=params,
+        )
+        response.raise_for_status()
+        envelope = response.json()
+        if not isinstance(envelope, dict):
+            raise GatewayProtocolError("gateway coverage returned a non-object")
+        data = _as_mapping(envelope.get("data")) or envelope
+        gaps_obj = data.get("gaps", [])
+        gaps = (
+            [dict(item) for item in gaps_obj if isinstance(item, Mapping)]
+            if isinstance(gaps_obj, list)
+            else []
+        )
+        dimensions = {
+            str(key): value
+            for key, value in data.items()
+            if key not in {"gaps", "providers", "provider_reports"}
+        }
+        return GatewayCoverageReport(
+            dimensions=dimensions, gaps=gaps, raw_envelope=envelope
+        )
+
+    def harvest_page(self, payload: dict[str, object]) -> GatewayHarvestPage:
+        response = self.http.request(
+            "POST",
+            "/research/harvest",
+            provider=self.name,
+            operation="harvest-page",
+            json_body=payload,
+        )
+        response.raise_for_status()
+        envelope = response.json()
+        if not isinstance(envelope, dict):
+            raise GatewayProtocolError("gateway harvest returned a non-object")
+        data = _as_mapping(envelope.get("data"))
+        raw_records = data.get("records", data.get("rows", data.get("hits", [])))
+        records = (
+            [dict(item) for item in raw_records if isinstance(item, Mapping)]
+            if isinstance(raw_records, list)
+            else []
+        )
+        cursor = _first_string(data, ("next_cursor", "cursor"))
+        exhausted_value = data.get("exhausted")
+        exhausted = bool(exhausted_value) if isinstance(exhausted_value, bool) else not bool(cursor)
+        ephemeral_value = data.get("cursor_ephemeral")
+        return GatewayHarvestPage(
+            provider=_first_string(data, ("provider",)),
+            records=records,
+            cursor=cursor,
+            exhausted=exhausted,
+            cursor_ephemeral=ephemeral_value if isinstance(ephemeral_value, bool) else None,
+            raw_envelope=envelope,
+        )
 
     def search(self, query: SearchQuery) -> SearchResponse:
         payload: dict[str, object] = {"query": query.text, "limit": query.limit}
@@ -229,7 +489,13 @@ class GatewayProvider:
         if query.max_cost_usd is not None:
             payload["max_cost_usd"] = query.max_cost_usd
 
-        response = self.client.post("/research/federated", json=payload)
+        response = self.http.request(
+            "POST",
+            "/research/federated",
+            provider=self.name,
+            operation="federated-search",
+            json_body=payload,
+        )
         response.raise_for_status()
         envelope = response.json()
         if not isinstance(envelope, dict):
@@ -333,8 +599,12 @@ class GatewayProvider:
         return self._citations(identifier, "cited_by")
 
     def _citations(self, identifier: str, direction: str) -> CitationResponse:
-        response = self.client.post(
-            "/research/citations", json={"identifier": identifier, "direction": direction}
+        response = self.http.request(
+            "POST",
+            "/research/citations",
+            provider=self.name,
+            operation="citations",
+            json_body={"identifier": identifier, "direction": direction},
         )
         response.raise_for_status()
         envelope = response.json()

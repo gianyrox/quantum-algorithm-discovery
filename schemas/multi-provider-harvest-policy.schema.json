@@ -1,0 +1,71 @@
+{
+  "$defs": {
+    "SaturationPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "minimum_iterations": {
+          "default": 3,
+          "minimum": 1,
+          "title": "Minimum Iterations",
+          "type": "integer"
+        },
+        "window": {
+          "default": 3,
+          "minimum": 1,
+          "title": "Window",
+          "type": "integer"
+        },
+        "novelty_threshold": {
+          "default": 0.03,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Novelty Threshold",
+          "type": "number"
+        }
+      },
+      "title": "SaturationPolicy",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "max_pages_per_provider": {
+      "default": 20,
+      "maximum": 100000,
+      "minimum": 1,
+      "title": "Max Pages Per Provider",
+      "type": "integer"
+    },
+    "max_records_per_provider": {
+      "anyOf": [
+        {
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Max Records Per Provider"
+    },
+    "saturation": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SaturationPolicy"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "continue_on_provider_error": {
+      "default": true,
+      "title": "Continue On Provider Error",
+      "type": "boolean"
+    }
+  },
+  "title": "MultiProviderHarvestPolicy",
+  "type": "object"
+}

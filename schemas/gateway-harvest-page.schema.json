@@ -1,0 +1,61 @@
+{
+  "additionalProperties": true,
+  "properties": {
+    "provider": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Provider"
+    },
+    "records": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Records",
+      "type": "array"
+    },
+    "cursor": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Cursor"
+    },
+    "exhausted": {
+      "default": false,
+      "title": "Exhausted",
+      "type": "boolean"
+    },
+    "cursor_ephemeral": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Cursor Ephemeral"
+    },
+    "raw_envelope": {
+      "additionalProperties": true,
+      "title": "Raw Envelope",
+      "type": "object"
+    }
+  },
+  "title": "GatewayHarvestPage",
+  "type": "object"
+}
