@@ -1,0 +1,71 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "description": {
+      "title": "Description",
+      "type": "string"
+    },
+    "problem_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Problem Ids",
+      "type": "array"
+    },
+    "shared_task_families": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Shared Task Families",
+      "type": "array"
+    },
+    "shared_mathematical_structures": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Shared Mathematical Structures",
+      "type": "array"
+    },
+    "shared_operations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Shared Operations",
+      "type": "array"
+    },
+    "distinguishing_features": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Distinguishing Features",
+      "type": "array"
+    },
+    "evidence": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence",
+      "type": "array"
+    },
+    "status": {
+      "default": "candidate",
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "description"
+  ],
+  "title": "ProblemFamily",
+  "type": "object"
+}

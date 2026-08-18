@@ -1,0 +1,104 @@
+{
+  "$defs": {
+    "QueryClause": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "concept_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Concept Id"
+        },
+        "term_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Term Type"
+        },
+        "weight": {
+          "default": 1.0,
+          "exclusiveMinimum": 0,
+          "title": "Weight",
+          "type": "number"
+        }
+      },
+      "required": [
+        "text",
+        "source"
+      ],
+      "title": "QueryClause",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "clauses": {
+      "items": {
+        "$ref": "#/$defs/QueryClause"
+      },
+      "title": "Clauses",
+      "type": "array"
+    },
+    "rendered_query": {
+      "title": "Rendered Query",
+      "type": "string"
+    },
+    "concept_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Concept Ids",
+      "type": "array"
+    },
+    "discipline_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Discipline Ids",
+      "type": "array"
+    },
+    "notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Notes",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "clauses",
+    "rendered_query"
+  ],
+  "title": "QueryPlan",
+  "type": "object"
+}

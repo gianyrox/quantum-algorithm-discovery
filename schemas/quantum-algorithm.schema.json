@@ -1,0 +1,226 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "family": {
+      "title": "Family",
+      "type": "string"
+    },
+    "problem_classes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Problem Classes",
+      "type": "array"
+    },
+    "input_model": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Input Model"
+    },
+    "access_model": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Access Model"
+    },
+    "output": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Output"
+    },
+    "primitive_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Primitive Ids",
+      "type": "array"
+    },
+    "required_structures": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Structures",
+      "type": "array"
+    },
+    "complexity": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Complexity"
+    },
+    "query_complexity": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Query Complexity"
+    },
+    "gate_complexity": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Gate Complexity"
+    },
+    "state_preparation": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "State Preparation"
+    },
+    "data_loading": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Data Loading"
+    },
+    "readout": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Readout"
+    },
+    "resource_requirements": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Resource Requirements",
+      "type": "array"
+    },
+    "classical_baselines": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Classical Baselines",
+      "type": "array"
+    },
+    "advantage_claim": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Advantage Claim"
+    },
+    "proof_status": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Proof Status"
+    },
+    "hardware_assumptions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Hardware Assumptions",
+      "type": "array"
+    },
+    "limitations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "dequantizations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Dequantizations",
+      "type": "array"
+    },
+    "no_go_results": {
+      "items": {
+        "type": "string"
+      },
+      "title": "No Go Results",
+      "type": "array"
+    },
+    "references": {
+      "items": {
+        "type": "string"
+      },
+      "title": "References",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "family"
+  ],
+  "title": "QuantumAlgorithm",
+  "type": "object"
+}

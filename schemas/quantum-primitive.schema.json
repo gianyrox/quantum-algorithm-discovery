@@ -1,0 +1,59 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "family": {
+      "title": "Family",
+      "type": "string"
+    },
+    "input_models": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Input Models",
+      "type": "array"
+    },
+    "operations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Operations",
+      "type": "array"
+    },
+    "required_structures": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Structures",
+      "type": "array"
+    },
+    "resource_notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Resource Notes",
+      "type": "array"
+    },
+    "references": {
+      "items": {
+        "type": "string"
+      },
+      "title": "References",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "family"
+  ],
+  "title": "QuantumPrimitive",
+  "type": "object"
+}

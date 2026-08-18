@@ -1,0 +1,91 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "lexical": {
+      "default": 0.0,
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Lexical",
+      "type": "number"
+    },
+    "semantic": {
+      "default": 0.0,
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Semantic",
+      "type": "number"
+    },
+    "task": {
+      "default": 0.0,
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Task",
+      "type": "number"
+    },
+    "mathematical": {
+      "default": 0.0,
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Mathematical",
+      "type": "number"
+    },
+    "operator": {
+      "default": 0.0,
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Operator",
+      "type": "number"
+    },
+    "constraint": {
+      "default": 0.0,
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Constraint",
+      "type": "number"
+    },
+    "topology": {
+      "default": 0.0,
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Topology",
+      "type": "number"
+    },
+    "stochastic": {
+      "default": 0.0,
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Stochastic",
+      "type": "number"
+    },
+    "complexity": {
+      "default": 0.0,
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Complexity",
+      "type": "number"
+    },
+    "method": {
+      "default": 0.0,
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Method",
+      "type": "number"
+    },
+    "citation_connectivity": {
+      "default": 0.0,
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Citation Connectivity",
+      "type": "number"
+    },
+    "notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Notes",
+      "type": "array"
+    }
+  },
+  "title": "SimilarityEvidence",
+  "type": "object"
+}

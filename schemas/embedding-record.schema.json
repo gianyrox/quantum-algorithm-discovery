@@ -1,0 +1,47 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "object_type": {
+      "title": "Object Type",
+      "type": "string"
+    },
+    "object_id": {
+      "title": "Object Id",
+      "type": "string"
+    },
+    "provider": {
+      "title": "Provider",
+      "type": "string"
+    },
+    "model": {
+      "title": "Model",
+      "type": "string"
+    },
+    "model_version": {
+      "default": "unknown",
+      "title": "Model Version",
+      "type": "string"
+    },
+    "vector": {
+      "items": {
+        "type": "number"
+      },
+      "title": "Vector",
+      "type": "array"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "object_type",
+    "object_id",
+    "provider",
+    "model",
+    "vector"
+  ],
+  "title": "EmbeddingRecord",
+  "type": "object"
+}

@@ -1,0 +1,125 @@
+{
+  "additionalProperties": false,
+  "description": "A hypothesis generated for evaluation, never a validated algorithm by construction.",
+  "properties": {
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "target_problem_family_id": {
+      "title": "Target Problem Family Id",
+      "type": "string"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "hypothesis": {
+      "title": "Hypothesis",
+      "type": "string"
+    },
+    "proposed_primitives": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Proposed Primitives",
+      "type": "array"
+    },
+    "construction_steps": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Construction Steps",
+      "type": "array"
+    },
+    "required_assumptions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Assumptions",
+      "type": "array"
+    },
+    "access_model": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Access Model"
+    },
+    "predicted_complexity": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Predicted Complexity"
+    },
+    "classical_baseline": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Classical Baseline"
+    },
+    "possible_advantage": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Possible Advantage"
+    },
+    "likely_failure_modes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Likely Failure Modes",
+      "type": "array"
+    },
+    "dequantization_checks": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Dequantization Checks",
+      "type": "array"
+    },
+    "proof_obligations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Proof Obligations",
+      "type": "array"
+    },
+    "status": {
+      "default": "hypothesis",
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "target_problem_family_id",
+    "title",
+    "hypothesis"
+  ],
+  "title": "AlgorithmProposal",
+  "type": "object"
+}

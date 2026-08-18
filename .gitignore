@@ -1,6 +1,7 @@
 .venv/
 __pycache__/
 *.py[cod]
+*.egg-info/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
@@ -17,6 +18,9 @@ runs/*
 data/raw/
 data/cache/
 data/assets/
+data/*.db
+data/*.sqlite
+data/*.sqlite3
 
 .DS_Store
 .idea/

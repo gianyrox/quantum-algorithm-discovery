@@ -1,0 +1,107 @@
+{
+  "$defs": {
+    "QuantumOpportunityCategory": {
+      "enum": [
+        "A_established",
+        "B_domain_transfer",
+        "C_structural_extension",
+        "D_algorithmic_gap",
+        "E_negative",
+        "U_unresolved"
+      ],
+      "title": "QuantumOpportunityCategory",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "problem_id": {
+      "title": "Problem Id",
+      "type": "string"
+    },
+    "algorithm_id": {
+      "title": "Algorithm Id",
+      "type": "string"
+    },
+    "category": {
+      "$ref": "#/$defs/QuantumOpportunityCategory",
+      "default": "U_unresolved"
+    },
+    "representational_compatibility": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Representational Compatibility",
+      "type": "number"
+    },
+    "access_model_compatibility": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Access Model Compatibility",
+      "type": "number"
+    },
+    "structural_compatibility": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Structural Compatibility",
+      "type": "number"
+    },
+    "classical_baseline_strength": {
+      "anyOf": [
+        {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Classical Baseline Strength"
+    },
+    "dequantization_risk": {
+      "anyOf": [
+        {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Dequantization Risk"
+    },
+    "end_to_end_feasibility": {
+      "anyOf": [
+        {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "End To End Feasibility"
+    },
+    "notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Notes",
+      "type": "array"
+    }
+  },
+  "required": [
+    "problem_id",
+    "algorithm_id",
+    "representational_compatibility",
+    "access_model_compatibility",
+    "structural_compatibility"
+  ],
+  "title": "QuantumMatch",
+  "type": "object"
+}

@@ -1,0 +1,58 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "proposal_id": {
+      "title": "Proposal Id",
+      "type": "string"
+    },
+    "representational_validity": {
+      "default": "unresolved",
+      "title": "Representational Validity",
+      "type": "string"
+    },
+    "complexity_validity": {
+      "default": "unresolved",
+      "title": "Complexity Validity",
+      "type": "string"
+    },
+    "classical_baseline_result": {
+      "default": "unresolved",
+      "title": "Classical Baseline Result",
+      "type": "string"
+    },
+    "dequantization_result": {
+      "default": "unresolved",
+      "title": "Dequantization Result",
+      "type": "string"
+    },
+    "simulation_result": {
+      "default": "unresolved",
+      "title": "Simulation Result",
+      "type": "string"
+    },
+    "proof_status": {
+      "default": "unresolved",
+      "title": "Proof Status",
+      "type": "string"
+    },
+    "conclusions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Conclusions",
+      "type": "array"
+    },
+    "evidence_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "proposal_id"
+  ],
+  "title": "ProposalEvaluation",
+  "type": "object"
+}

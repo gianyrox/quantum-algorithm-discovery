@@ -1,0 +1,29 @@
+Scientific Discovery v0.2 upgrade overlay
+
+Apply this archive at the root of the existing quatum_ai_research repository.
+It intentionally does not include or delete the large research reports, audit
+artifacts, or scientific_retrieval_ontology_v0_1 seed package already present.
+
+Major additions:
+- canonical SQLAlchemy storage schema + Alembic baseline migration
+- corpus identity and provenance models
+- ontology v0.1 idempotent importer and query compiler
+- retrieval provider boundary, fixture provider, gateway client, retrieval runs
+- document and mathematics representations
+- problem families and extraction contracts
+- structural similarity, embeddings interface, and clustering baseline
+- cross-domain candidate ranking
+- quantum algorithm/primitive/match representations
+- AI algorithm-proposal contracts
+- evaluation metrics and benchmark workflow
+- experiment tracking and pipeline orchestration
+- 22 generated JSON Schemas
+- expanded CLI, docs, tests, Makefile, smoke test
+
+After unzip:
+  source .venv/bin/activate
+  bash scripts/post_upgrade.sh
+
+If you prefer to inspect before installing dependencies:
+  git status --short
+  git diff --stat

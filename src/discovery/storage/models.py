@@ -1,0 +1,464 @@
+from __future__ import annotations
+
+from datetime import datetime
+from typing import Any
+
+from sqlalchemy import (
+    JSON,
+    DateTime,
+    Float,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+    UniqueConstraint,
+)
+from sqlalchemy.orm import Mapped, mapped_column
+
+from discovery.storage.base import Base
+
+
+class SourceRow(Base):
+    __tablename__ = "source"
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    name: Mapped[str] = mapped_column(String(300), nullable=False)
+    source_type: Mapped[str] = mapped_column(String(100), default="unknown", nullable=False)
+    status: Mapped[str] = mapped_column(String(60), default="seed", nullable=False)
+    metadata_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+
+
+class SourceReleaseRow(Base):
+    __tablename__ = "source_release"
+    __table_args__ = (UniqueConstraint("source_id", "release", name="uq_source_release"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    source_id: Mapped[str] = mapped_column(ForeignKey("source.id"), index=True)
+    release: Mapped[str] = mapped_column(String(160), nullable=False)
+    released_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    checksum: Mapped[str | None] = mapped_column(String(160))
+    metadata_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+
+
+class DisciplineRow(Base):
+    __tablename__ = "discipline"
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    name: Mapped[str] = mapped_column(String(500), index=True)
+    parent_id: Mapped[str | None] = mapped_column(String(160), index=True)
+    level: Mapped[int] = mapped_column(Integer, default=0)
+    description: Mapped[str | None] = mapped_column(Text)
+    source_id: Mapped[str] = mapped_column(String(160), default="ontology_v0_1")
+
+
+class ConceptRow(Base):
+    __tablename__ = "concept"
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    discipline_id: Mapped[str | None] = mapped_column(String(160), index=True)
+    canonical_concept: Mapped[str] = mapped_column(String(1000), index=True)
+    concept_type: Mapped[str] = mapped_column(String(120), default="other")
+    short_definition: Mapped[str | None] = mapped_column(Text)
+    origin: Mapped[str] = mapped_column(String(120), default="ontology_v0_1")
+    status: Mapped[str] = mapped_column(String(60), default="seed")
+    confidence: Mapped[str] = mapped_column(String(60), default="scaffold")
+
+
+class TermRow(Base):
+    __tablename__ = "term"
+    __table_args__ = (
+        UniqueConstraint("concept_id", "term", "term_type", "context", name="uq_term_identity"),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    concept_id: Mapped[str] = mapped_column(String(160), index=True)
+    term: Mapped[str] = mapped_column(String(1200), index=True)
+    term_type: Mapped[str] = mapped_column(String(100), index=True)
+    context: Mapped[str] = mapped_column(Text, default="")
+
+
+class ConceptRelationRow(Base):
+    __tablename__ = "concept_relation"
+    __table_args__ = (
+        UniqueConstraint(
+            "source_concept_id", "relationship", "target_concept_id", name="uq_concept_relation"
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    source_concept_id: Mapped[str] = mapped_column(String(160), index=True)
+    relationship: Mapped[str] = mapped_column(String(160), index=True)
+    target_concept_id: Mapped[str] = mapped_column(String(160), index=True)
+
+
+class ModelMethodRow(Base):
+    __tablename__ = "model_equation_method"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    concept_id: Mapped[str | None] = mapped_column(String(160), index=True)
+    name: Mapped[str] = mapped_column(String(1000), index=True)
+    object_type: Mapped[str] = mapped_column(String(100))
+    discipline: Mapped[str | None] = mapped_column(String(500))
+    related_concepts: Mapped[list[str]] = mapped_column(JSON, default=list, nullable=False)
+
+
+class WorkRow(Base):
+    __tablename__ = "work"
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    title: Mapped[str] = mapped_column(Text, nullable=False)
+    abstract: Mapped[str | None] = mapped_column(Text)
+    publication_year: Mapped[int | None] = mapped_column(Integer, index=True)
+    work_type: Mapped[str | None] = mapped_column(String(100), index=True)
+    primary_language: Mapped[str | None] = mapped_column(String(40))
+    metadata_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
+class WorkVersionRow(Base):
+    __tablename__ = "work_version"
+    __table_args__ = (UniqueConstraint("work_id", "version_label", name="uq_work_version"),)
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    work_id: Mapped[str] = mapped_column(ForeignKey("work.id"), index=True)
+    version_label: Mapped[str] = mapped_column(String(120), default="record")
+    version_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    provider: Mapped[str | None] = mapped_column(String(120), index=True)
+    raw_record: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+
+
+class WorkIdentifierRow(Base):
+    __tablename__ = "work_identifier"
+    __table_args__ = (UniqueConstraint("scheme", "value", name="uq_work_identifier"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    work_id: Mapped[str] = mapped_column(ForeignKey("work.id"), index=True)
+    scheme: Mapped[str] = mapped_column(String(80), index=True)
+    value: Mapped[str] = mapped_column(String(800), index=True)
+    version: Mapped[str | None] = mapped_column(String(80))
+    canonical_url: Mapped[str | None] = mapped_column(Text)
+    provider: Mapped[str | None] = mapped_column(String(120))
+    raw_value: Mapped[str | None] = mapped_column(Text)
+
+
+class AuthorRow(Base):
+    __tablename__ = "author"
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    display_name: Mapped[str] = mapped_column(String(500), index=True)
+    identifiers_json: Mapped[dict[str, str]] = mapped_column(JSON, default=dict, nullable=False)
+
+
+class OrganizationRow(Base):
+    __tablename__ = "organization"
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    display_name: Mapped[str] = mapped_column(String(500), index=True)
+    identifiers_json: Mapped[dict[str, str]] = mapped_column(JSON, default=dict, nullable=False)
+
+
+class AuthorshipRow(Base):
+    __tablename__ = "authorship"
+    __table_args__ = (UniqueConstraint("work_id", "author_id", "position", name="uq_authorship"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    work_id: Mapped[str] = mapped_column(ForeignKey("work.id"), index=True)
+    author_id: Mapped[str] = mapped_column(ForeignKey("author.id"), index=True)
+    position: Mapped[int] = mapped_column(Integer)
+    organization_ids: Mapped[list[str]] = mapped_column(JSON, default=list, nullable=False)
+
+
+class AssetRow(Base):
+    __tablename__ = "asset"
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    work_id: Mapped[str] = mapped_column(ForeignKey("work.id"), index=True)
+    provider: Mapped[str] = mapped_column(String(120), index=True)
+    representation: Mapped[str] = mapped_column(String(120), index=True)
+    url: Mapped[str | None] = mapped_column(Text)
+    mime_type: Mapped[str | None] = mapped_column(String(200))
+    availability: Mapped[str] = mapped_column(String(60), default="unknown")
+    rights_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+    checksum: Mapped[str | None] = mapped_column(String(200))
+
+
+class CitationRow(Base):
+    __tablename__ = "citation"
+    __table_args__ = (
+        UniqueConstraint("source_work_id", "target_work_id", "provider", name="uq_citation_edge"),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    source_work_id: Mapped[str] = mapped_column(String(160), index=True)
+    target_work_id: Mapped[str] = mapped_column(String(160), index=True)
+    provider: Mapped[str] = mapped_column(String(120), index=True)
+    provider_edge_id: Mapped[str | None] = mapped_column(String(300))
+    retrieved_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    metadata_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+
+
+class RetrievalRunRow(Base):
+    __tablename__ = "retrieval_run"
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    provider: Mapped[str] = mapped_column(String(120), index=True)
+    query_text: Mapped[str] = mapped_column(Text)
+    query_plan_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+    query_fingerprint: Mapped[str | None] = mapped_column(String(200), index=True)
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    status: Mapped[str] = mapped_column(String(60), default="running")
+    provider_reports_json: Mapped[list[dict[str, Any]]] = mapped_column(
+        JSON, default=list, nullable=False
+    )
+
+
+class RetrievalHitRow(Base):
+    __tablename__ = "retrieval_hit"
+    __table_args__ = (
+        UniqueConstraint("retrieval_run_id", "provider", "provider_rank", name="uq_hit_rank"),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    retrieval_run_id: Mapped[str] = mapped_column(ForeignKey("retrieval_run.id"), index=True)
+    work_id: Mapped[str | None] = mapped_column(String(160), index=True)
+    provider: Mapped[str] = mapped_column(String(120), index=True)
+    provider_rank: Mapped[int] = mapped_column(Integer)
+    provider_score: Mapped[float | None] = mapped_column(Float)
+    fused_rank: Mapped[int | None] = mapped_column(Integer)
+    raw_record: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+    provenance_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+
+
+class ProvenanceAssertionRow(Base):
+    __tablename__ = "provenance_assertion"
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    subject_type: Mapped[str] = mapped_column(String(100), index=True)
+    subject_id: Mapped[str] = mapped_column(String(160), index=True)
+    predicate: Mapped[str] = mapped_column(String(200), index=True)
+    value_json: Mapped[Any] = mapped_column(JSON, nullable=False)
+    provider: Mapped[str] = mapped_column(String(120), index=True)
+    retrieved_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    evidence_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+
+
+class DocumentRow(Base):
+    __tablename__ = "document"
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    work_id: Mapped[str] = mapped_column(String(160), index=True)
+    asset_id: Mapped[str] = mapped_column(String(160), index=True)
+    source_format: Mapped[str] = mapped_column(String(120), index=True)
+    parser: Mapped[str] = mapped_column(String(160), index=True)
+    parser_version: Mapped[str | None] = mapped_column(String(120))
+    payload_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+
+
+class MathExpressionRow(Base):
+    __tablename__ = "math_expression"
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    work_id: Mapped[str] = mapped_column(String(160), index=True)
+    document_id: Mapped[str | None] = mapped_column(String(160), index=True)
+    equation_label: Mapped[str | None] = mapped_column(String(160))
+    payload_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+
+
+class EmbeddingRow(Base):
+    __tablename__ = "embedding"
+    __table_args__ = (
+        UniqueConstraint(
+            "object_type",
+            "object_id",
+            "provider",
+            "model",
+            "model_version",
+            name="uq_embedding_identity",
+        ),
+    )
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    object_type: Mapped[str] = mapped_column(String(100), index=True)
+    object_id: Mapped[str] = mapped_column(String(160), index=True)
+    provider: Mapped[str] = mapped_column(String(160), index=True)
+    model: Mapped[str] = mapped_column(String(300), index=True)
+    model_version: Mapped[str] = mapped_column(String(160), default="unknown")
+    dimensions: Mapped[int] = mapped_column(Integer)
+    vector_json: Mapped[list[float]] = mapped_column(JSON, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
+class ProblemInstanceRow(Base):
+    __tablename__ = "problem_instance"
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    source_work_id: Mapped[str] = mapped_column(String(160), index=True)
+    task_family: Mapped[str] = mapped_column(String(100), index=True)
+    statement: Mapped[str] = mapped_column(Text)
+    payload_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    extraction_method: Mapped[str] = mapped_column(String(80))
+    confidence: Mapped[float] = mapped_column(Float)
+    review_status: Mapped[str] = mapped_column(String(80), index=True)
+
+
+class ProblemEvidenceRow(Base):
+    __tablename__ = "problem_evidence"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    problem_id: Mapped[str] = mapped_column(String(160), index=True)
+    evidence_index: Mapped[int] = mapped_column(Integer)
+    evidence_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+
+
+class MathematicalObjectRow(Base):
+    __tablename__ = "mathematical_object"
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    name: Mapped[str] = mapped_column(String(1000), index=True)
+    object_type: Mapped[str] = mapped_column(String(160), index=True)
+    canonical_form: Mapped[str | None] = mapped_column(Text)
+    payload_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+
+
+class ProblemMathRow(Base):
+    __tablename__ = "problem_math"
+    __table_args__ = (
+        UniqueConstraint("problem_id", "math_object_id", "role", name="uq_problem_math"),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    problem_id: Mapped[str] = mapped_column(String(160), index=True)
+    math_object_id: Mapped[str] = mapped_column(String(160), index=True)
+    role: Mapped[str] = mapped_column(String(160), default="unspecified")
+
+
+class ScientificMethodRow(Base):
+    __tablename__ = "scientific_method"
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    name: Mapped[str] = mapped_column(String(1000), index=True)
+    method_type: Mapped[str | None] = mapped_column(String(160), index=True)
+    payload_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+
+
+class ProblemMethodRow(Base):
+    __tablename__ = "problem_method"
+    __table_args__ = (
+        UniqueConstraint("problem_id", "method_id", "role", name="uq_problem_method"),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    problem_id: Mapped[str] = mapped_column(String(160), index=True)
+    method_id: Mapped[str] = mapped_column(String(160), index=True)
+    role: Mapped[str] = mapped_column(String(160), default="known_method")
+
+
+class SimilarityRunRow(Base):
+    __tablename__ = "similarity_run"
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    method: Mapped[str] = mapped_column(String(200), index=True)
+    parameters_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
+class ProblemSimilarityRow(Base):
+    __tablename__ = "problem_similarity"
+    __table_args__ = (
+        UniqueConstraint("run_id", "problem_a_id", "problem_b_id", name="uq_problem_similarity"),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    run_id: Mapped[str] = mapped_column(ForeignKey("similarity_run.id"), index=True)
+    problem_a_id: Mapped[str] = mapped_column(String(160), index=True)
+    problem_b_id: Mapped[str] = mapped_column(String(160), index=True)
+    score: Mapped[float] = mapped_column(Float, index=True)
+    evidence_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+
+
+class ProblemFamilyRow(Base):
+    __tablename__ = "problem_family"
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    name: Mapped[str] = mapped_column(String(500), index=True)
+    description: Mapped[str] = mapped_column(Text)
+    status: Mapped[str] = mapped_column(String(80), default="candidate")
+    payload_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+
+
+class ProblemFamilyMemberRow(Base):
+    __tablename__ = "problem_family_member"
+    __table_args__ = (UniqueConstraint("family_id", "problem_id", name="uq_problem_family_member"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    family_id: Mapped[str] = mapped_column(String(160), index=True)
+    problem_id: Mapped[str] = mapped_column(String(160), index=True)
+    membership_score: Mapped[float | None] = mapped_column(Float)
+    evidence_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+
+
+class CandidateRow(Base):
+    __tablename__ = "candidate"
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    candidate_type: Mapped[str] = mapped_column(String(100), index=True)
+    title: Mapped[str] = mapped_column(String(1000))
+    status: Mapped[str] = mapped_column(String(80), default="unreviewed", index=True)
+    score: Mapped[float | None] = mapped_column(Float, index=True)
+    payload_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+
+
+class CandidateEvidenceRow(Base):
+    __tablename__ = "candidate_evidence"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    candidate_id: Mapped[str] = mapped_column(String(160), index=True)
+    evidence_type: Mapped[str] = mapped_column(String(120), index=True)
+    evidence_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+
+
+class QuantumPrimitiveRow(Base):
+    __tablename__ = "quantum_primitive"
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    name: Mapped[str] = mapped_column(String(500), index=True)
+    family: Mapped[str | None] = mapped_column(String(200), index=True)
+    payload_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+
+
+class QuantumAlgorithmRow(Base):
+    __tablename__ = "quantum_algorithm"
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    name: Mapped[str] = mapped_column(String(500), index=True)
+    family: Mapped[str | None] = mapped_column(String(200), index=True)
+    payload_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+
+
+class QuantumMatchRow(Base):
+    __tablename__ = "quantum_match"
+    __table_args__ = (UniqueConstraint("problem_id", "algorithm_id", name="uq_quantum_match"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    problem_id: Mapped[str] = mapped_column(String(160), index=True)
+    algorithm_id: Mapped[str] = mapped_column(String(160), index=True)
+    category: Mapped[str] = mapped_column(String(80), index=True)
+    compatibility_score: Mapped[float] = mapped_column(Float, index=True)
+    payload_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+
+
+class ExperimentRunRow(Base):
+    __tablename__ = "experiment_run"
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    name: Mapped[str] = mapped_column(String(500), index=True)
+    experiment_type: Mapped[str] = mapped_column(String(160), index=True)
+    status: Mapped[str] = mapped_column(String(80), default="running", index=True)
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    config_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+    metrics_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+    artifacts_json: Mapped[list[dict[str, Any]]] = mapped_column(JSON, default=list, nullable=False)
+    notes: Mapped[str | None] = mapped_column(Text)

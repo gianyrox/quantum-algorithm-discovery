@@ -16,14 +16,10 @@ def read_jsonl(path: Path) -> Iterable[dict[str, Any]]:
             try:
                 value = json.loads(stripped)
             except json.JSONDecodeError as exc:
-                raise ValueError(
-                    f"Invalid JSON on line {line_number} of {path}: {exc}"
-                ) from exc
+                raise ValueError(f"Invalid JSON on line {line_number} of {path}: {exc}") from exc
 
             if not isinstance(value, dict):
-                raise ValueError(
-                    f"Expected JSON object on line {line_number} of {path}"
-                )
+                raise ValueError(f"Expected JSON object on line {line_number} of {path}")
 
             yield value
 
