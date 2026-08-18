@@ -8,6 +8,7 @@ from discovery.problems.enums import (
     ReviewStatus,
     TaskFamily,
 )
+from discovery.problems.evidence import EvidenceSpan, FieldConfidence
 
 
 class MathematicalObject(BaseModel):
@@ -36,6 +37,8 @@ class ComplexityClaim(BaseModel):
     claim: str
     assumptions: list[str] = Field(default_factory=list)
     evidence: list[Evidence] = Field(default_factory=list)
+    evidence_spans: list[EvidenceSpan] = Field(default_factory=list)
+    field_confidence: list[FieldConfidence] = Field(default_factory=list)
 
 
 class ScientificMethod(BaseModel):
@@ -110,6 +113,8 @@ class ProblemInstance(BaseModel):
 
     # Evidence and provenance
     evidence: list[Evidence] = Field(default_factory=list)
+    evidence_spans: list[EvidenceSpan] = Field(default_factory=list)
+    field_confidence: list[FieldConfidence] = Field(default_factory=list)
 
     extraction_method: ExtractionMethod
     extractor: str

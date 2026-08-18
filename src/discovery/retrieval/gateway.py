@@ -7,8 +7,16 @@ import httpx
 from pydantic import HttpUrl
 
 from discovery.core.ids import stable_id
-from discovery.core.provenance import ProvenanceRecord, RightsStatement, SoftwareIdentity
+from discovery.core.provenance import ProvenanceRecord, RightsStatement
 from discovery.corpus.schema import Asset, IdentifierScheme, Work, WorkIdentifier, WorkVersion
+from discovery.retrieval.feed402 import (
+    Feed402Asset,
+    Feed402Citation,
+    Feed402Envelope,
+    Feed402ProtocolError,
+    RecordedFeed402Envelope,
+    parse_optional_feed402_envelope,
+)
 from discovery.retrieval.gateway_models import (
     GatewayCoverageReport,
     GatewayHarvestPage,
@@ -90,80 +98,59 @@ def _provenance_from_citation(value: object) -> ProvenanceRecord | None:
     citation = _as_mapping(value)
     if not citation:
         return None
-    provider = _first_string(citation, ("provider", "source_id")) or "unknown"
-    execution = _as_mapping(citation.get("execution"))
-    software: SoftwareIdentity | None = None
-    software_name = execution.get("software")
-    if isinstance(software_name, str) and software_name:
-        software = SoftwareIdentity(
-            software=software_name,
-            software_version=execution.get("software_version")
-            if isinstance(execution.get("software_version"), str)
-            else None,
-            git_commit=execution.get("git_commit")
-            if isinstance(execution.get("git_commit"), str)
-            else None,
+    try:
+        return Feed402Citation.model_validate(citation).provenance()
+    except Exception:
+        provider = _first_string(citation, ("provider", "source_id")) or "unknown"
+        return ProvenanceRecord(
+            provider=provider,
+            source_identifier=_first_string(citation, ("source_id",)),
         )
-    return ProvenanceRecord(
-        provider=provider,
-        source_identifier=_first_string(citation, ("source_id",)),
-        provider_release=execution.get("provider_release")
-        if isinstance(execution.get("provider_release"), str)
-        else None,
-        request_id=execution.get("request_id")
-        if isinstance(execution.get("request_id"), str)
-        else None,
-        query_fingerprint=execution.get("query_fingerprint")
-        if isinstance(execution.get("query_fingerprint"), str)
-        else None,
-        provider_request_fingerprint=execution.get("provider_request_fingerprint")
-        if isinstance(execution.get("provider_request_fingerprint"), str)
-        else None,
-        response_sha256=execution.get("response_sha256")
-        if isinstance(execution.get("response_sha256"), str)
-        else None,
-        software=software,
-    )
 
 
 def _asset_from_mapping(value: Mapping[str, Any], work_id: str, provider: str) -> Asset:
-    rights = _as_mapping(value.get("rights"))
-    metadata_rights = _as_mapping(rights.get("metadata"))
-    content_rights = _as_mapping(rights.get("content"))
-    statement = RightsStatement(
-        metadata_license=_first_string(metadata_rights, ("license",)),
-        content_license=_first_string(content_rights, ("license",)),
-        redistribution=_first_string(content_rights, ("redistribution",)) or "unknown",
-        tdm=_first_string(content_rights, ("tdm",)) or "unknown",
-        model_training=_first_string(content_rights, ("model_training",)) or "unknown",
-        retention=_first_string(content_rights, ("retention",)) or "unknown",
-        terms_url=_first_string(content_rights, ("terms_url",)),
-    )
-    asset_id = _first_string(value, ("asset_id", "id")) or stable_id(
-        "asset", f"{work_id}:{provider}:{value.get('canonical_url')}:{value.get('representation')}"
-    )
-    raw_url = _first_string(value, ("canonical_url", "provider_url", "url"))
-    return Asset(
-        id=asset_id,
-        provider=provider,
-        representation=_first_string(value, ("representation", "content_type")) or "unknown",
-        url=HttpUrl(raw_url) if raw_url is not None else None,
-        mime_type=_first_string(value, ("mime_type", "content_type")),
-        availability=_first_string(value, ("availability",)) or "unknown",
-        rights=statement,
-        checksum=_first_string(value, ("checksum",)),
-    )
+    try:
+        feed_asset = Feed402Asset.model_validate(value)
+        return feed_asset.to_asset(work_id=work_id, provider=provider)
+    except Exception:
+        rights = _as_mapping(value.get("rights"))
+        metadata_rights = _as_mapping(rights.get("metadata"))
+        content_rights = _as_mapping(rights.get("content"))
+        statement = RightsStatement(
+            metadata_license=_first_string(metadata_rights, ("license",)),
+            content_license=_first_string(content_rights, ("license",)),
+            redistribution=_first_string(rights, ("redistribution",)) or "unknown",
+            tdm=_first_string(rights, ("tdm",)) or "unknown",
+            model_training=_first_string(rights, ("model_training",)) or "unknown",
+            retention=_first_string(rights, ("retention",)) or "unknown",
+            terms_url=_first_string(rights, ("terms_url",)),
+        )
+        asset_id = _first_string(value, ("asset_id", "id")) or stable_id(
+            "asset",
+            f"{work_id}:{provider}:{value.get('canonical_url')}:{value.get('representation')}",
+        )
+        raw_url = _first_string(value, ("canonical_url", "provider_url", "url"))
+        return Asset(
+            id=asset_id,
+            provider=provider,
+            representation=_first_string(value, ("representation", "content_type")) or "unknown",
+            url=HttpUrl(raw_url) if raw_url is not None else None,
+            mime_type=_first_string(value, ("mime_type", "content_type")),
+            availability=_first_string(value, ("availability",)) or "unknown",
+            rights=statement,
+            checksum=_first_string(value, ("checksum",)),
+        )
 
 
 class GatewayProvider:
-    """Client boundary for x402-research-gateway.
+    """Canonical external-research boundary for scientific-discovery.
 
-    The gateway remains a separate access service. This client discovers its
-    feed402 operations rather than duplicating provider-specific implementation
-    details in scientific-discovery.
+    Every paid scientific response is required to arrive as a feed402 envelope.
+    Provider-specific acquisition logic belongs behind x402-research-gateway.
     """
 
     name = "x402-research-gateway"
+    boundary_kind = "gateway"
 
     def __init__(
         self,
@@ -174,6 +161,7 @@ class GatewayProvider:
         retry_policy: RetryPolicy | None = None,
         observer: RequestObserver | None = None,
         headers: Mapping[str, str] | None = None,
+        strict_feed402: bool = True,
     ) -> None:
         self.base_url = base_url.rstrip("/")
         self.client = client or httpx.Client(
@@ -187,10 +175,39 @@ class GatewayProvider:
             self.client, retry_policy=retry_policy, observer=observer
         )
         self._manifest: GatewayManifest | None = None
+        self.strict_feed402 = strict_feed402
+        self._recorded_envelopes: list[RecordedFeed402Envelope] = []
 
     def close(self) -> None:
         if self._owns_client:
             self.client.close()
+
+    def _decode_feed402(
+        self,
+        operation: str,
+        payload: Mapping[str, Any],
+        *,
+        require_citations: bool = True,
+    ) -> Feed402Envelope:
+        try:
+            envelope = Feed402Envelope.from_mapping(
+                payload,
+                require_citations=require_citations and self.strict_feed402,
+                require_receipt=self.strict_feed402,
+            )
+        except Feed402ProtocolError as exc:
+            raise GatewayProtocolError(
+                f"{operation} returned a non-feed402 response: {exc}"
+            ) from exc
+        self._recorded_envelopes.append(
+            RecordedFeed402Envelope(operation=operation, envelope=envelope)
+        )
+        return envelope
+
+    def drain_feed402_envelopes(self) -> list[RecordedFeed402Envelope]:
+        recorded = list(self._recorded_envelopes)
+        self._recorded_envelopes.clear()
+        return recorded
 
     def manifest(self, *, refresh: bool = False) -> GatewayManifest:
         if self._manifest is not None and not refresh:
@@ -208,6 +225,13 @@ class GatewayProvider:
             if not isinstance(payload, dict):
                 raise GatewayProtocolError("gateway manifest is not an object")
             self._manifest = parse_gateway_manifest(payload)
+            if self.strict_feed402 and not (
+                self._manifest.spec is not None
+                and self._manifest.spec.startswith("feed402/")
+            ):
+                raise GatewayProtocolError(
+                    "gateway manifest does not advertise a feed402 protocol version"
+                )
             return self._manifest
         raise GatewayProtocolError("gateway manifest unavailable: " + ", ".join(errors))
 
@@ -239,6 +263,7 @@ class GatewayProvider:
         value = response.json()
         if not isinstance(value, dict):
             raise GatewayProtocolError(f"operation {operation_id} returned a non-object")
+        self._decode_feed402(operation_id, value)
         return value
 
     def estimate_search(self, query: SearchQuery) -> dict[str, object]:
@@ -270,6 +295,7 @@ class GatewayProvider:
         payload = response.json()
         if not isinstance(payload, dict):
             raise GatewayProtocolError("gateway resolve returned a non-object")
+        self._decode_feed402("resolve", payload)
         return payload
 
     def resolve_identity(self, identifier: str) -> IdentityResolution:
@@ -342,6 +368,7 @@ class GatewayProvider:
         envelope = response.json()
         if not isinstance(envelope, dict):
             raise GatewayProtocolError("gateway integrity returned a non-object")
+        self._decode_feed402("integrity", envelope)
         data = _as_mapping(envelope.get("data"))
         raw_assertions = data.get("relations", data.get("notices", data.get("assertions", [])))
         values = raw_assertions if isinstance(raw_assertions, list) else []
@@ -460,6 +487,7 @@ class GatewayProvider:
         envelope = response.json()
         if not isinstance(envelope, dict):
             raise GatewayProtocolError("gateway harvest returned a non-object")
+        self._decode_feed402("harvest-page", envelope)
         data = _as_mapping(envelope.get("data"))
         raw_records = data.get("records", data.get("rows", data.get("hits", [])))
         records = (
@@ -500,6 +528,7 @@ class GatewayProvider:
         envelope = response.json()
         if not isinstance(envelope, dict):
             raise GatewayProtocolError("gateway returned a non-object envelope")
+        self._decode_feed402("federated-search", envelope)
         return self.parse_search_response(query, envelope)
 
     @staticmethod
@@ -507,18 +536,21 @@ class GatewayProvider:
         data = _as_mapping(envelope.get("data"))
         results_obj = data.get("results", data.get("rows", data.get("hits", [])))
         results = results_obj if isinstance(results_obj, list) else []
-        citations_obj = envelope.get("citation", [])
-        citations = citations_obj if isinstance(citations_obj, list) else []
-        provider_provenance: dict[str, ProvenanceRecord] = {}
-        for value in citations:
-            provenance = _provenance_from_citation(value)
-            if provenance is not None:
-                provider_provenance.setdefault(provenance.provider, provenance)
+        typed_envelope = parse_optional_feed402_envelope(envelope)
 
         hits: list[RetrievalHit] = []
         for index, raw in enumerate(results, start=1):
             record = _as_mapping(raw)
-            provider = _first_string(record, ("provider", "source", "source_id")) or "unknown"
+            citation = (
+                typed_envelope.citation_for_result(index - 1)
+                if typed_envelope is not None
+                else None
+            )
+            provider = (
+                _first_string(record, ("provider", "source", "source_id"))
+                or (citation.provider if citation is not None else None)
+                or "unknown"
+            )
             raw_record = _as_mapping(record.get("raw_record", record.get("record", record)))
             rank_value = record.get("provider_rank", record.get("rank", index))
             rank = rank_value if isinstance(rank_value, int) and rank_value > 0 else index
@@ -535,7 +567,7 @@ class GatewayProvider:
                     fused_rank=fused_rank,
                     work=work,
                     raw_record=dict(raw_record),
-                    provenance=provider_provenance.get(provider),
+                    provenance=citation.provenance() if citation is not None else None,
                 )
             )
 
@@ -610,6 +642,7 @@ class GatewayProvider:
         envelope = response.json()
         if not isinstance(envelope, dict):
             raise GatewayProtocolError("gateway returned a non-object citation envelope")
+        self._decode_feed402(f"citations:{direction}", envelope)
         data = _as_mapping(envelope.get("data"))
         edge_objects = data.get("edges", [])
         edges: list[CitationEdge] = []
@@ -670,13 +703,45 @@ class GatewayProvider:
         envelope = self.invoke(operation_id, {identifier_field: identifier})
         data = _as_mapping(envelope.get("data"))
         raw_assets = data.get("assets", [])
-        provider = operation_id.split("-", 1)[0]
+        typed_envelope = Feed402Envelope.from_mapping(envelope)
+        source_citation = (
+            typed_envelope.source_citations[0]
+            if typed_envelope.source_citations
+            else None
+        )
+        provider = (
+            source_citation.provider
+            if source_citation is not None and source_citation.provider is not None
+            else operation_id.split("-", 1)[0]
+        )
         work_id = stable_id("external-work", identifier)
         assets: list[Asset] = []
-        if isinstance(raw_assets, list):
+        if isinstance(raw_assets, list) and raw_assets:
+            for item in raw_assets:
+                if not isinstance(item, Mapping):
+                    continue
+                try:
+                    feed_asset = Feed402Asset.model_validate(item)
+                    assets.append(
+                        feed_asset.to_asset(
+                            work_id=work_id,
+                            provider=provider,
+                            inherited_rights=(
+                                source_citation.rights
+                                if source_citation is not None
+                                else None
+                            ),
+                        )
+                    )
+                except Exception:
+                    assets.append(_asset_from_mapping(item, work_id, provider))
+        elif source_citation is not None:
             assets = [
-                _asset_from_mapping(_as_mapping(item), work_id, provider)
-                for item in raw_assets
-                if isinstance(item, Mapping)
+                item.to_asset(
+                    work_id=work_id,
+                    provider=provider,
+                    inherited_rights=source_citation.rights,
+                )
+                for item in source_citation.assets
             ]
         return AssetResponse(identifier=identifier, assets=assets)

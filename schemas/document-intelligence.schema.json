@@ -1,0 +1,86 @@
+{
+  "additionalProperties": false,
+  "description": "Loss-minimizing structural summary of a parsed scientific document.",
+  "properties": {
+    "work_id": {
+      "title": "Work Id",
+      "type": "string"
+    },
+    "section_count": {
+      "minimum": 0,
+      "title": "Section Count",
+      "type": "integer"
+    },
+    "equation_count": {
+      "minimum": 0,
+      "title": "Equation Count",
+      "type": "integer"
+    },
+    "figure_count": {
+      "minimum": 0,
+      "title": "Figure Count",
+      "type": "integer"
+    },
+    "table_count": {
+      "minimum": 0,
+      "title": "Table Count",
+      "type": "integer"
+    },
+    "reference_count": {
+      "minimum": 0,
+      "title": "Reference Count",
+      "type": "integer"
+    },
+    "word_count": {
+      "minimum": 0,
+      "title": "Word Count",
+      "type": "integer"
+    },
+    "section_types": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Section Types",
+      "type": "object"
+    },
+    "math_dense_sections": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Math Dense Sections",
+      "type": "array"
+    },
+    "likely_problem_sections": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Likely Problem Sections",
+      "type": "array"
+    },
+    "likely_method_sections": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Likely Method Sections",
+      "type": "array"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "work_id",
+    "section_count",
+    "equation_count",
+    "figure_count",
+    "table_count",
+    "reference_count",
+    "word_count"
+  ],
+  "title": "DocumentIntelligence",
+  "type": "object"
+}

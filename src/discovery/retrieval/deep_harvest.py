@@ -44,7 +44,9 @@ class DeepHarvestEngine:
     def __init__(self, session: Session, provider: PagedResearchProvider) -> None:
         self.session = session
         self.provider = provider
-        self.retrieval = RetrievalService(session, provider)
+        # This entire engine is retained only for v0.4-v0.10 direct-provider
+        # parity tests. The active v0.11 boundary uses GatewayCursorHarvestEngine.
+        self.retrieval = RetrievalService(session, provider, allow_legacy_direct=True)
 
     def execute(
         self,

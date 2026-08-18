@@ -246,6 +246,42 @@
           "minimum": 0,
           "title": "Confidence",
           "type": "number"
+        },
+        "context_before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Context Before"
+        },
+        "context_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Context After"
+        },
+        "source_section_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Section Id"
         }
       },
       "required": [
@@ -400,6 +436,42 @@
       "minimum": 0,
       "title": "Confidence",
       "type": "number"
+    },
+    "context_before": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Context Before"
+    },
+    "context_after": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Context After"
+    },
+    "source_section_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Section Id"
     }
   },
   "required": [

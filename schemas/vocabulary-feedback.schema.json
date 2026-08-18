@@ -1,0 +1,78 @@
+{
+  "$defs": {
+    "VocabularyFeedbackStatus": {
+      "enum": [
+        "candidate",
+        "accept_retrieval_term",
+        "map_existing_concept",
+        "new_concept_candidate",
+        "reject_ambiguous",
+        "reject_noise"
+      ],
+      "title": "VocabularyFeedbackStatus",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "candidate_id": {
+      "title": "Candidate Id",
+      "type": "string"
+    },
+    "term": {
+      "title": "Term",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/VocabularyFeedbackStatus",
+      "default": "candidate"
+    },
+    "concept_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Concept Id"
+    },
+    "reviewer": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Reviewer"
+    },
+    "rationale": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Rationale"
+    },
+    "retrieval_only": {
+      "default": true,
+      "title": "Retrieval Only",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "candidate_id",
+    "term"
+  ],
+  "title": "VocabularyFeedback",
+  "type": "object"
+}

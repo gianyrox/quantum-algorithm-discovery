@@ -1,0 +1,31 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "version": {
+      "title": "Version",
+      "type": "string"
+    },
+    "config_fingerprint": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Config Fingerprint"
+    }
+  },
+  "required": [
+    "name",
+    "version"
+  ],
+  "title": "SoftwareComponent",
+  "type": "object"
+}

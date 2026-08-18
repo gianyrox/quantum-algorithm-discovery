@@ -1,0 +1,65 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "left_expression_id": {
+      "title": "Left Expression Id",
+      "type": "string"
+    },
+    "right_expression_id": {
+      "title": "Right Expression Id",
+      "type": "string"
+    },
+    "expected_relation": {
+      "title": "Expected Relation",
+      "type": "string"
+    },
+    "expected_similar": {
+      "title": "Expected Similar",
+      "type": "boolean"
+    },
+    "discipline_left": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Discipline Left"
+    },
+    "discipline_right": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Discipline Right"
+    },
+    "notes": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Notes"
+    }
+  },
+  "required": [
+    "left_expression_id",
+    "right_expression_id",
+    "expected_relation",
+    "expected_similar"
+  ],
+  "title": "MathSimilarityExample",
+  "type": "object"
+}

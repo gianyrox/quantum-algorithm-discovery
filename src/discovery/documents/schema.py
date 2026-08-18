@@ -47,6 +47,30 @@ class TableOccurrence(BaseModel):
     structured_data: list[dict[str, object]] = Field(default_factory=list)
 
 
+class ReferenceOccurrence(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    id: str
+    order: int = Field(ge=0)
+    raw_text: str
+    title: str | None = None
+    authors: list[str] = Field(default_factory=list)
+    year: int | None = None
+    identifiers: dict[str, str] = Field(default_factory=dict)
+    target_work_id: str | None = None
+
+
+class CitationMention(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    id: str
+    section_id: str | None = None
+    reference_ids: list[str] = Field(default_factory=list)
+    text: str
+    start_char: int | None = Field(default=None, ge=0)
+    end_char: int | None = Field(default=None, ge=0)
+
+
 class ParsedDocument(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -59,5 +83,8 @@ class ParsedDocument(BaseModel):
     equations: list[EquationOccurrence] = Field(default_factory=list)
     figures: list[FigureOccurrence] = Field(default_factory=list)
     tables: list[TableOccurrence] = Field(default_factory=list)
+    references: list[ReferenceOccurrence] = Field(default_factory=list)
+    citation_mentions: list[CitationMention] = Field(default_factory=list)
+    metadata: dict[str, object] = Field(default_factory=dict)
     provenance: list[ProvenanceRecord] = Field(default_factory=list)
     warnings: list[str] = Field(default_factory=list)

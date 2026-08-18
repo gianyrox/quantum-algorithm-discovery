@@ -1,5 +1,69 @@
 {
   "$defs": {
+    "CitationMention": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "section_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Section Id"
+        },
+        "reference_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Reference Ids",
+          "type": "array"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "start_char": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Char"
+        },
+        "end_char": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End Char"
+        }
+      },
+      "required": [
+        "id",
+        "text"
+      ],
+      "title": "CitationMention",
+      "type": "object"
+    },
     "DocumentSection": {
       "additionalProperties": false,
       "properties": {
@@ -311,6 +375,81 @@
       "title": "ProvenanceRecord",
       "type": "object"
     },
+    "ReferenceOccurrence": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "order": {
+          "minimum": 0,
+          "title": "Order",
+          "type": "integer"
+        },
+        "raw_text": {
+          "title": "Raw Text",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "authors": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Authors",
+          "type": "array"
+        },
+        "year": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Year"
+        },
+        "identifiers": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Identifiers",
+          "type": "object"
+        },
+        "target_work_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Work Id"
+        }
+      },
+      "required": [
+        "id",
+        "order",
+        "raw_text"
+      ],
+      "title": "ReferenceOccurrence",
+      "type": "object"
+    },
     "SoftwareIdentity": {
       "additionalProperties": false,
       "properties": {
@@ -465,6 +604,25 @@
       },
       "title": "Tables",
       "type": "array"
+    },
+    "references": {
+      "items": {
+        "$ref": "#/$defs/ReferenceOccurrence"
+      },
+      "title": "References",
+      "type": "array"
+    },
+    "citation_mentions": {
+      "items": {
+        "$ref": "#/$defs/CitationMention"
+      },
+      "title": "Citation Mentions",
+      "type": "array"
+    },
+    "metadata": {
+      "additionalProperties": true,
+      "title": "Metadata",
+      "type": "object"
     },
     "provenance": {
       "items": {

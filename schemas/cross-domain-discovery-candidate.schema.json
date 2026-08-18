@@ -1,0 +1,269 @@
+{
+  "$defs": {
+    "CrossDomainRelation": {
+      "enum": [
+        "equivalent_formulation",
+        "shared_mathematical_form",
+        "shared_mechanism",
+        "shared_function_different_mechanism",
+        "historical_transmission",
+        "independent_rediscovery",
+        "analogy",
+        "lexical_resemblance",
+        "unresolved"
+      ],
+      "title": "CrossDomainRelation",
+      "type": "string"
+    },
+    "MultiViewSimilarity": {
+      "additionalProperties": false,
+      "properties": {
+        "problem_a_id": {
+          "title": "Problem A Id",
+          "type": "string"
+        },
+        "problem_b_id": {
+          "title": "Problem B Id",
+          "type": "string"
+        },
+        "evidence": {
+          "$ref": "#/$defs/SimilarityEvidence"
+        },
+        "aggregate_score": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Aggregate Score",
+          "type": "number"
+        },
+        "structural_score": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Structural Score",
+          "type": "number"
+        },
+        "independence_score": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Independence Score",
+          "type": "number"
+        },
+        "explanation": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Explanation",
+          "type": "array"
+        }
+      },
+      "required": [
+        "problem_a_id",
+        "problem_b_id",
+        "evidence",
+        "aggregate_score",
+        "structural_score",
+        "independence_score"
+      ],
+      "title": "MultiViewSimilarity",
+      "type": "object"
+    },
+    "RelationHypothesis": {
+      "additionalProperties": false,
+      "properties": {
+        "problem_a_id": {
+          "title": "Problem A Id",
+          "type": "string"
+        },
+        "problem_b_id": {
+          "title": "Problem B Id",
+          "type": "string"
+        },
+        "relation": {
+          "$ref": "#/$defs/CrossDomainRelation"
+        },
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "reasons": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Reasons",
+          "type": "array"
+        },
+        "requires_review": {
+          "default": true,
+          "title": "Requires Review",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "problem_a_id",
+        "problem_b_id",
+        "relation",
+        "confidence"
+      ],
+      "title": "RelationHypothesis",
+      "type": "object"
+    },
+    "SimilarityEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "lexical": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Lexical",
+          "type": "number"
+        },
+        "semantic": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Semantic",
+          "type": "number"
+        },
+        "task": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Task",
+          "type": "number"
+        },
+        "mathematical": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Mathematical",
+          "type": "number"
+        },
+        "operator": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Operator",
+          "type": "number"
+        },
+        "constraint": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Constraint",
+          "type": "number"
+        },
+        "topology": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Topology",
+          "type": "number"
+        },
+        "stochastic": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Stochastic",
+          "type": "number"
+        },
+        "complexity": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Complexity",
+          "type": "number"
+        },
+        "method": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Method",
+          "type": "number"
+        },
+        "citation_connectivity": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Citation Connectivity",
+          "type": "number"
+        },
+        "notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Notes",
+          "type": "array"
+        }
+      },
+      "title": "SimilarityEvidence",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "problem_a_id": {
+      "title": "Problem A Id",
+      "type": "string"
+    },
+    "problem_b_id": {
+      "title": "Problem B Id",
+      "type": "string"
+    },
+    "discipline_a": {
+      "title": "Discipline A",
+      "type": "string"
+    },
+    "discipline_b": {
+      "title": "Discipline B",
+      "type": "string"
+    },
+    "similarity": {
+      "$ref": "#/$defs/MultiViewSimilarity"
+    },
+    "relation_hypothesis": {
+      "$ref": "#/$defs/RelationHypothesis"
+    },
+    "candidate_score": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Candidate Score",
+      "type": "number"
+    },
+    "novelty_score": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Novelty Score",
+      "type": "number"
+    },
+    "rejection_reasons": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Rejection Reasons",
+      "type": "array"
+    },
+    "review_status": {
+      "default": "unreviewed",
+      "title": "Review Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "problem_a_id",
+    "problem_b_id",
+    "discipline_a",
+    "discipline_b",
+    "similarity",
+    "relation_hypothesis",
+    "candidate_score",
+    "novelty_score"
+  ],
+  "title": "CrossDomainDiscoveryCandidate",
+  "type": "object"
+}

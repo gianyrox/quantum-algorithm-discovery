@@ -1,0 +1,89 @@
+{
+  "additionalProperties": false,
+  "description": "Character-addressable evidence for one extracted problem field.",
+  "properties": {
+    "field": {
+      "title": "Field",
+      "type": "string"
+    },
+    "document_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Document Id"
+    },
+    "section_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Section Id"
+    },
+    "start_char": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Start Char"
+    },
+    "end_char": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "End Char"
+    },
+    "text": {
+      "title": "Text",
+      "type": "string"
+    },
+    "confidence": {
+      "default": 0.5,
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Confidence",
+      "type": "number"
+    },
+    "extraction_rule": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Extraction Rule"
+    }
+  },
+  "required": [
+    "field",
+    "text"
+  ],
+  "title": "EvidenceSpan",
+  "type": "object"
+}

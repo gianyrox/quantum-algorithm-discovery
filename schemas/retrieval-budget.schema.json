@@ -1,0 +1,50 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "maximum_requests": {
+      "default": 100,
+      "minimum": 1,
+      "title": "Maximum Requests",
+      "type": "integer"
+    },
+    "maximum_results": {
+      "default": 10000,
+      "minimum": 1,
+      "title": "Maximum Results",
+      "type": "integer"
+    },
+    "maximum_cost_usd": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Maximum Cost Usd"
+    },
+    "requests_used": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Requests Used",
+      "type": "integer"
+    },
+    "results_seen": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Results Seen",
+      "type": "integer"
+    },
+    "cost_usd": {
+      "default": 0.0,
+      "minimum": 0,
+      "title": "Cost Usd",
+      "type": "number"
+    }
+  },
+  "title": "RetrievalBudget",
+  "type": "object"
+}

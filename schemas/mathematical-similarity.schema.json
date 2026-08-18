@@ -1,0 +1,58 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "exact": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Exact",
+      "type": "number"
+    },
+    "alpha_equivalent": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Alpha Equivalent",
+      "type": "number"
+    },
+    "token_overlap": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Token Overlap",
+      "type": "number"
+    },
+    "operator_overlap": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Operator Overlap",
+      "type": "number"
+    },
+    "relation_match": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Relation Match",
+      "type": "number"
+    },
+    "structural_score": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Structural Score",
+      "type": "number"
+    },
+    "notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Notes",
+      "type": "array"
+    }
+  },
+  "required": [
+    "exact",
+    "alpha_equivalent",
+    "token_overlap",
+    "operator_overlap",
+    "relation_match",
+    "structural_score"
+  ],
+  "title": "MathematicalSimilarity",
+  "type": "object"
+}

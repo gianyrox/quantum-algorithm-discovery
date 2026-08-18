@@ -42,6 +42,7 @@ class CampaignConfig(BaseModel):
     enrich_identity: bool = False
     enrich_integrity: bool = False
     enqueue_asset_processing: bool = False
+    capture_gateway_coverage: bool = True
     enrichment_limit: int = Field(default=100, ge=0, le=10000)
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
@@ -61,6 +62,14 @@ class CampaignRunResult(BaseModel):
     identity_assertions: int = Field(default=0, ge=0)
     integrity_assertions: int = Field(default=0, ge=0)
     jobs_enqueued: int = Field(default=0, ge=0)
+    research_boundary: str = "gateway"
+    gateway_base_url: str | None = None
+    feed402_spec: str | None = None
+    gateway_manifest_sha256: str | None = None
+    feed402_envelope_count: int = Field(default=0, ge=0)
+    feed402_citation_count: int = Field(default=0, ge=0)
+    feed402_lineage_steps: int = Field(default=0, ge=0)
+    gateway_coverage: dict[str, object] = Field(default_factory=dict)
     errors: list[str] = Field(default_factory=list)
 
 

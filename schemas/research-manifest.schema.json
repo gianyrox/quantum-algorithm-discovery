@@ -1,0 +1,157 @@
+{
+  "$defs": {
+    "SoftwareComponent": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "version": {
+          "title": "Version",
+          "type": "string"
+        },
+        "config_fingerprint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Config Fingerprint"
+        }
+      },
+      "required": [
+        "name",
+        "version"
+      ],
+      "title": "SoftwareComponent",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "corpus_release": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Corpus Release"
+    },
+    "ontology_releases": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Ontology Releases",
+      "type": "object"
+    },
+    "query_plan_version": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Query Plan Version"
+    },
+    "extractor": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SoftwareComponent"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "math_normalizer": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SoftwareComponent"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "embedding": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SoftwareComponent"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "similarity": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SoftwareComponent"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "clustering": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SoftwareComponent"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "source_code_revision": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Code Revision"
+    },
+    "notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Notes",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id"
+  ],
+  "title": "ResearchManifest",
+  "type": "object"
+}

@@ -1,0 +1,62 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "task": {
+      "default": 0.14,
+      "title": "Task",
+      "type": "number"
+    },
+    "mathematical": {
+      "default": 0.2,
+      "title": "Mathematical",
+      "type": "number"
+    },
+    "operator": {
+      "default": 0.15,
+      "title": "Operator",
+      "type": "number"
+    },
+    "constraint": {
+      "default": 0.1,
+      "title": "Constraint",
+      "type": "number"
+    },
+    "topology": {
+      "default": 0.08,
+      "title": "Topology",
+      "type": "number"
+    },
+    "stochastic": {
+      "default": 0.07,
+      "title": "Stochastic",
+      "type": "number"
+    },
+    "complexity": {
+      "default": 0.08,
+      "title": "Complexity",
+      "type": "number"
+    },
+    "method": {
+      "default": 0.06,
+      "title": "Method",
+      "type": "number"
+    },
+    "semantic": {
+      "default": 0.07,
+      "title": "Semantic",
+      "type": "number"
+    },
+    "lexical_penalty": {
+      "default": 0.03,
+      "title": "Lexical Penalty",
+      "type": "number"
+    },
+    "citation_penalty": {
+      "default": 0.02,
+      "title": "Citation Penalty",
+      "type": "number"
+    }
+  },
+  "title": "SimilarityWeights",
+  "type": "object"
+}

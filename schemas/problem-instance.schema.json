@@ -24,6 +24,20 @@
           },
           "title": "Evidence",
           "type": "array"
+        },
+        "evidence_spans": {
+          "items": {
+            "$ref": "#/$defs/EvidenceSpan"
+          },
+          "title": "Evidence Spans",
+          "type": "array"
+        },
+        "field_confidence": {
+          "items": {
+            "$ref": "#/$defs/FieldConfidence"
+          },
+          "title": "Field Confidence",
+          "type": "array"
         }
       },
       "required": [
@@ -207,6 +221,95 @@
       "title": "EvidenceLocation",
       "type": "object"
     },
+    "EvidenceSpan": {
+      "additionalProperties": false,
+      "description": "Character-addressable evidence for one extracted problem field.",
+      "properties": {
+        "field": {
+          "title": "Field",
+          "type": "string"
+        },
+        "document_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Document Id"
+        },
+        "section_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Section Id"
+        },
+        "start_char": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Char"
+        },
+        "end_char": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End Char"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "confidence": {
+          "default": 0.5,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "extraction_rule": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Extraction Rule"
+        }
+      },
+      "required": [
+        "field",
+        "text"
+      ],
+      "title": "EvidenceSpan",
+      "type": "object"
+    },
     "ExtractionMethod": {
       "enum": [
         "human",
@@ -217,6 +320,38 @@
       ],
       "title": "ExtractionMethod",
       "type": "string"
+    },
+    "FieldConfidence": {
+      "additionalProperties": false,
+      "properties": {
+        "field": {
+          "title": "Field",
+          "type": "string"
+        },
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "evidence_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Evidence Count",
+          "type": "integer"
+        },
+        "unresolved": {
+          "default": false,
+          "title": "Unresolved",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "field",
+        "confidence"
+      ],
+      "title": "FieldConfidence",
+      "type": "object"
     },
     "MathematicalObject": {
       "additionalProperties": false,
@@ -676,6 +811,20 @@
         "$ref": "#/$defs/Evidence"
       },
       "title": "Evidence",
+      "type": "array"
+    },
+    "evidence_spans": {
+      "items": {
+        "$ref": "#/$defs/EvidenceSpan"
+      },
+      "title": "Evidence Spans",
+      "type": "array"
+    },
+    "field_confidence": {
+      "items": {
+        "$ref": "#/$defs/FieldConfidence"
+      },
+      "title": "Field Confidence",
       "type": "array"
     },
     "extraction_method": {

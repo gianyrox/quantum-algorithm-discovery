@@ -1,0 +1,105 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "concept_id": {
+      "title": "Concept Id",
+      "type": "string"
+    },
+    "term": {
+      "title": "Term",
+      "type": "string"
+    },
+    "vocabulary": {
+      "title": "Vocabulary",
+      "type": "string"
+    },
+    "source_release": {
+      "title": "Source Release",
+      "type": "string"
+    },
+    "valid_from": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Valid From"
+    },
+    "valid_until": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Valid Until"
+    },
+    "introduced_in": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Introduced In"
+    },
+    "deprecated_in": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Deprecated In"
+    },
+    "superseded_by": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Superseded By",
+      "type": "array"
+    },
+    "predecessor": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Predecessor",
+      "type": "array"
+    },
+    "successor": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Successor",
+      "type": "array"
+    },
+    "historical_aliases": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Historical Aliases",
+      "type": "array"
+    }
+  },
+  "required": [
+    "concept_id",
+    "term",
+    "vocabulary",
+    "source_release"
+  ],
+  "title": "HistoricalTerm",
+  "type": "object"
+}

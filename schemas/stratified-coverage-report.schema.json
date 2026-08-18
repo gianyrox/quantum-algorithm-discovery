@@ -1,0 +1,50 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "total_works": {
+      "minimum": 0,
+      "title": "Total Works",
+      "type": "integer"
+    },
+    "strata": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Strata",
+      "type": "object"
+    },
+    "provider_counts": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Provider Counts",
+      "type": "object"
+    },
+    "decade_counts": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Decade Counts",
+      "type": "object"
+    },
+    "missing_dimensions": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Missing Dimensions",
+      "type": "object"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "total_works"
+  ],
+  "title": "StratifiedCoverageReport",
+  "type": "object"
+}

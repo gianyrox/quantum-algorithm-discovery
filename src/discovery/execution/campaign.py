@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import hashlib
+import json
 from datetime import UTC, datetime
 from typing import Protocol
 from uuid import uuid4
@@ -18,6 +20,12 @@ from discovery.execution.schema import (
     ProcessingStage,
 )
 from discovery.ontology.query_compiler import OntologyQueryCompiler
+from discovery.retrieval.boundary import require_gateway_boundary
+from discovery.retrieval.feed402_store import (
+    Feed402EnvelopeRepository,
+    Feed402PersistenceSummary,
+)
+from discovery.retrieval.gateway import GatewayProvider
 from discovery.retrieval.gateway_models import IdentityResolution, IntegrityReport
 from discovery.retrieval.harvest import ResearchHarvestEngine
 from discovery.retrieval.models import QueryClause, QueryPlan
@@ -35,6 +43,11 @@ class GatewayEnrichmentProvider(Protocol):
     def resolve_identity(self, identifier: str) -> IdentityResolution: ...
 
     def integrity(self, identifier: str) -> IntegrityReport: ...
+
+
+def _manifest_fingerprint(payload: dict[str, object]) -> str:
+    encoded = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
+    return hashlib.sha256(encoded).hexdigest()
 
 
 class CampaignService:
@@ -80,6 +93,7 @@ class CampaignService:
         if campaign is None:
             raise KeyError(f"unknown research campaign: {campaign_id}")
         config = CampaignConfig.model_validate(campaign.config_json)
+        boundary = require_gateway_boundary(provider)
         started = datetime.now(UTC)
         run_id = str(uuid4())
         run = CampaignRunRow(
@@ -94,7 +108,25 @@ class CampaignService:
         self.session.add_all([run, campaign])
         self.session.flush()
         errors: list[str] = []
+        gateway = provider if isinstance(provider, GatewayProvider) else None
+        gateway_base_url: str | None = None
+        feed402_spec: str | None = None
+        gateway_manifest_sha256: str | None = None
+        gateway_coverage: dict[str, object] = {}
+        feed402_summary = Feed402PersistenceSummary([], 0, 0, 0, [])
+        feed402_repository = Feed402EnvelopeRepository(self.session)
         try:
+            if gateway is not None:
+                manifest = gateway.manifest()
+                gateway_base_url = gateway.base_url
+                feed402_spec = manifest.spec
+                gateway_manifest_sha256 = _manifest_fingerprint(manifest.raw)
+                if config.capture_gateway_coverage:
+                    try:
+                        coverage = gateway.coverage_report()
+                        gateway_coverage = coverage.model_dump(mode="json")
+                    except Exception as exc:
+                        errors.append(f"gateway-coverage:{type(exc).__name__}:{exc}")
             plan = self._compile(config)
             batch = batch_query_plan(
                 plan,
@@ -108,21 +140,38 @@ class CampaignService:
                 plan=plan,
                 policy=config.harvest_policy,
             )
+            feed402_repository.link_retrieval_runs_to_campaign(
+                run_id,
+                harvest.retrieval_run_ids,
+            )
             errors.extend(harvest.errors)
             identity_count = 0
             integrity_count = 0
-            if (config.enrich_identity or config.enrich_integrity) and gateway_enrichment is None:
+            enrichment_provider = gateway or gateway_enrichment
+            if (config.enrich_identity or config.enrich_integrity) and enrichment_provider is None:
                 errors.append(
-                    "gateway enrichment requested but no enrichment provider is configured"
+                    "gateway enrichment requested but the campaign is using an offline fixture"
                 )
-            if gateway_enrichment is not None:
+            if enrichment_provider is not None:
                 identity_count, integrity_count = self._enrich(
                     harvest.unique_work_ids,
                     config,
-                    gateway_enrichment,
+                    enrichment_provider,
                     errors,
                 )
             jobs = self._enqueue(harvest.unique_work_ids, config)
+            if gateway is not None:
+                feed402_repository.persist_campaign_run(
+                    run_id,
+                    gateway.drain_feed402_envelopes(),
+                    spec=feed402_spec,
+                    merchant=gateway.name,
+                )
+                feed402_summary = feed402_repository.summarize_campaign(run_id)
+                if harvest.hit_count > 0 and feed402_summary.envelope_count == 0:
+                    errors.append(
+                        "gateway campaign produced retrieval hits without feed402 envelopes"
+                    )
             completed = datetime.now(UTC)
             result = CampaignRunResult(
                 campaign_id=campaign_id,
@@ -137,6 +186,14 @@ class CampaignService:
                 identity_assertions=identity_count,
                 integrity_assertions=integrity_count,
                 jobs_enqueued=jobs,
+                research_boundary=boundary.boundary_kind,
+                gateway_base_url=gateway_base_url,
+                feed402_spec=feed402_spec,
+                gateway_manifest_sha256=gateway_manifest_sha256,
+                feed402_envelope_count=feed402_summary.envelope_count,
+                feed402_citation_count=feed402_summary.citation_count,
+                feed402_lineage_steps=feed402_summary.lineage_count,
+                gateway_coverage=gateway_coverage,
                 errors=errors,
             )
             run.status = result.status
@@ -148,6 +205,15 @@ class CampaignService:
             self.session.flush()
             return result
         except Exception as exc:
+            if gateway is not None:
+                pending = gateway.drain_feed402_envelopes()
+                if pending:
+                    feed402_repository.persist_campaign_run(
+                        run_id,
+                        pending,
+                        spec=feed402_spec,
+                        merchant=gateway.name,
+                    )
             completed = datetime.now(UTC)
             error = f"{type(exc).__name__}:{exc}"
             run.status = "failed"

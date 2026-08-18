@@ -14,6 +14,9 @@ class SymbolGrounding(BaseModel):
     units: str | None = None
     evidence_text: str | None = None
     confidence: float = Field(default=0.5, ge=0, le=1)
+    context_before: str | None = None
+    context_after: str | None = None
+    source_section_id: str | None = None
 
 
 class MathNode(BaseModel):
@@ -45,6 +48,9 @@ class MathExpression(BaseModel):
     cas_variants: list[str] = Field(default_factory=list)
     provenance: list[ProvenanceRecord] = Field(default_factory=list)
     confidence: float = Field(default=0.5, ge=0, le=1)
+    context_before: str | None = None
+    context_after: str | None = None
+    source_section_id: str | None = None
 
 
 class MathematicalStructure(BaseModel):

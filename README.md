@@ -1,6 +1,6 @@
 # Scientific Discovery
 
-Research software for discovering recurring computational and mathematical problem structures across scientific disciplines and evaluating their relationship to quantum computation.
+Research software for discovering recurring computational and mathematical problem structures across scientific disciplines.
 
 ## Research objective
 
@@ -19,14 +19,63 @@ The system deliberately keeps four stages separate:
 
 Quantum relevance does not bias construction of the general scientific corpus.
 
-## v0.4 real-data execution engine
+## v0.11 gateway-first research boundary
+
+v0.11 makes `x402-research-gateway` the canonical boundary for **all production external scientific acquisition**. `scientific-discovery` no longer chooses between local direct-provider clients and the gateway during normal research execution.
+
+```text
+scientific-discovery
+        |
+        | feed402/0.3
+        v
+x402-research-gateway
+        |
+        v
+scientific providers / vocabularies / object repositories
+```
+
+Every paid gateway result is parsed as feed402 before downstream scientific interpretation. Retrieval envelopes are persisted immutably and linked to `RetrievalRun`; campaigns link those same records to `CampaignRun` and record the gateway manifest fingerprint, protocol version, coverage context, citation count, and lineage count. Unknown rights remain not granted.
+
+Legacy direct OpenAlex/Crossref/Europe PMC/arXiv adapters remain temporarily for parity tests only. They are not exposed by the v0.11 CLI and the default runtime factory blocks direct execution.
+
+See `docs/ADR-001-GATEWAY-FIRST-RESEARCH.md`, `docs/GATEWAY_FIRST_V0.11.md`, and `docs/ROADMAP.md`.
+
+## v0.10 scientific structure discovery engine
+
+v0.10 combines the planned v0.5-v0.10 pre-quantum milestones into one integrated research engine. The active v0.10 pipeline ends at cross-disciplinary structural candidates, problem families, audited coverage, and retrieval feedback. It does **not** use quantum relevance to shape retrieval or discovery. Preexisting quantum modules remain only for backward compatibility and later separately researched work.
+
+Major v0.10 capabilities include document references/citation mentions, evidence-grounded problem extraction, extractor ensembles and quality metrics, mathematical fingerprints and similarity, multi-view problem similarity, family/candidate discovery, historical terminology, stratified coverage, audited saturation, active retrieval, reproducibility manifests, and iterative feedback.
+
+Useful commands:
+
+```bash
+discovery structure cascade
+discovery structure problem-quality path/to/problem.json
+discovery structure math-compare left.json right.json
+discovery structure discover problems.jsonl --discipline-map disciplines.json
+discovery structure coverage coverage_records.jsonl
+discovery structure prioritize retrieval_scopes.jsonl
+```
+
+Validation:
+
+```bash
+pytest -q
+ruff check .
+mypy src
+bash scripts/smoke_v011.sh
+```
+
+See `docs/ARCHITECTURE_V0.10.md` and `docs/PREQUANTUM_ENGINE_V0.10.md`.
+
+## Historical v0.4 real-data execution engine
 
 v0.4 turns the v0.3 architecture into a resumable real-data execution layer.
 
 ### Retrieval and provider boundary
 
-- Gateway mode consumes the `x402-research-gateway` capability contract for normalized federated search, identity evidence, citations, assets, integrity, signed-cursor harvest, sync metadata, and coverage reporting.
-- Direct mode supplies first-party adapters for OpenAlex, Crossref, Europe PMC, and arXiv for operational independence and single-provider harvesting.
+- Gateway mode consumed the `x402-research-gateway` capability contract for normalized federated search, identity evidence, citations, assets, integrity, signed-cursor harvest, sync metadata, and coverage reporting.
+- v0.4 also supplied first-party direct adapters for OpenAlex, Crossref, Europe PMC, and arXiv. v0.11 retires those as active acquisition paths and keeps them temporarily only for migration/parity testing.
 - `ResilientHttpClient` centralizes bounded retries, rate-limit backoff, URL-secret redaction, request fingerprints, response hashes, and request audit records.
 - Parallel direct federation preserves provider rank and raw records; reciprocal-rank fusion is a presentation rank and never an identity merge.
 - Deep provider harvesting and gateway signed-cursor harvesting persist checkpoints and resume without replaying completed pages.
@@ -74,10 +123,11 @@ python -m pip install -e '.[dev]'
 pytest -q
 ruff check .
 mypy src
-bash scripts/smoke_v04.sh
+bash scripts/smoke_v010.sh
+bash scripts/smoke_v011.sh
 ```
 
-The v0.4 smoke test verifies a canonical `Work -> Asset -> Document -> ProblemInstance` path and an Alembic migration through revision `0003`.
+The v0.11 smoke test verifies the gateway/feed402 boundary, schema generation, and Alembic migration through revision `0005`. The v0.10 smoke test remains as historical validation of the pre-quantum structure engine.
 
 ## Initialize database and ontology
 
@@ -96,47 +146,22 @@ discovery retrieval batch <CONCEPT_ID>
 
 The ontology remains retrieval language and scientific metadata; query compiler templates are execution artifacts, not authoritative scientific concepts.
 
-## Direct-provider retrieval
-
-```bash
-export DISCOVERY_CONTACT_EMAIL=you@example.org
-discovery provider direct-search "stochastic optimization" \
-  --providers openalex,crossref,europe_pmc,arxiv \
-  --limit 50
-```
-
-For all selected direct providers, use resumable provider-native paging:
-
-```bash
-discovery retrieval deep-federated "stochastic optimization" \
-  --providers openalex,crossref,europe_pmc,arxiv \
-  --pages-per-provider 20 \
-  --page-size 100
-```
-
-For one provider, use resumable paging:
-
-```bash
-discovery retrieval deep-search openalex "stochastic optimization" \
-  --pages 20 \
-  --page-size 100
-```
-
-Every final HTTP call can be persisted with a redacted URL, request fingerprint, attempts, status, response hash, and optionally retained raw response bytes.
-
 ## Gateway retrieval
 
 ```bash
 export DISCOVERY_GATEWAY_URL=https://your-gateway.example
+export DISCOVERY_GATEWAY_STRICT_FEED402=true
 
 discovery provider gateway-manifest
 discovery provider gateway-sync
 discovery provider gateway-coverage --field physics
 discovery provider resolve 10.1000/example
 discovery provider integrity 10.1000/example
+# Any newly advertised capability can be driven generically:
+discovery provider invoke <operation-id> payload.json
 ```
 
-Gateway payment/challenge handling is deployment-specific. Scientific Discovery consumes the gateway HTTP contract; it does not embed wallet custody into the research engine.
+Gateway payment/challenge handling is deployment-specific. Scientific Discovery does not embed wallet custody into the scientific analysis layer. Deployment-specific headers may be injected through `DISCOVERY_GATEWAY_HEADERS_JSON`, and library callers may provide a custom `httpx.Client` at the gateway boundary.
 
 A resumable gateway harvest accepts a JSON request payload:
 
@@ -153,10 +178,10 @@ CAMPAIGN_ID=$(discovery campaign create concept CF-300101 \
   --providers openalex,crossref,europe_pmc,arxiv \
   --limit 100)
 
-discovery campaign run "$CAMPAIGN_ID" --mode direct
+discovery campaign run "$CAMPAIGN_ID"
 ```
 
-Campaigns may later be enriched with gateway identity and integrity evidence. A campaign records what was attempted even when an external capability fails.
+The provider list is a gateway scope, not a request to instantiate local provider clients. Campaigns may also request gateway identity and integrity enrichment. A campaign records what was attempted even when an external capability fails.
 
 ## Canonical local processing
 
@@ -203,6 +228,11 @@ Structural compatibility is not quantum advantage. Matches remain unresolved unt
 
 ## Documentation
 
+- `docs/ADR-001-GATEWAY-FIRST-RESEARCH.md`
+- `docs/ROADMAP.md`
+- `docs/GATEWAY_FIRST_V0.11.md`
+- `docs/VALIDATION_V0.11.md`
+- `docs/UPGRADE_NOTES_V0.11.md`
 - `docs/RESEARCH_CHARTER.md`
 - `docs/ANNOTATION_PROTOCOL_V0.1.md`
 - `docs/BENCHMARK_DESIGN_V0.1.md`

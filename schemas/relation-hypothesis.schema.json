@@ -1,0 +1,59 @@
+{
+  "$defs": {
+    "CrossDomainRelation": {
+      "enum": [
+        "equivalent_formulation",
+        "shared_mathematical_form",
+        "shared_mechanism",
+        "shared_function_different_mechanism",
+        "historical_transmission",
+        "independent_rediscovery",
+        "analogy",
+        "lexical_resemblance",
+        "unresolved"
+      ],
+      "title": "CrossDomainRelation",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "problem_a_id": {
+      "title": "Problem A Id",
+      "type": "string"
+    },
+    "problem_b_id": {
+      "title": "Problem B Id",
+      "type": "string"
+    },
+    "relation": {
+      "$ref": "#/$defs/CrossDomainRelation"
+    },
+    "confidence": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Confidence",
+      "type": "number"
+    },
+    "reasons": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Reasons",
+      "type": "array"
+    },
+    "requires_review": {
+      "default": true,
+      "title": "Requires Review",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "problem_a_id",
+    "problem_b_id",
+    "relation",
+    "confidence"
+  ],
+  "title": "RelationHypothesis",
+  "type": "object"
+}

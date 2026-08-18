@@ -1,0 +1,52 @@
+{
+  "$defs": {
+    "FeedbackAction": {
+      "enum": [
+        "continue",
+        "expand_terms",
+        "expand_citations",
+        "add_provider",
+        "target_history",
+        "review_gap",
+        "saturated"
+      ],
+      "title": "FeedbackAction",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "action": {
+      "$ref": "#/$defs/FeedbackAction"
+    },
+    "reason": {
+      "title": "Reason",
+      "type": "string"
+    },
+    "priority_scope_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Priority Scope Id"
+    },
+    "suggested_terms": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Suggested Terms",
+      "type": "array"
+    }
+  },
+  "required": [
+    "action",
+    "reason"
+  ],
+  "title": "FeedbackDecision",
+  "type": "object"
+}

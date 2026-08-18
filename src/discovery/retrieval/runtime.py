@@ -7,6 +7,7 @@ from types import TracebackType
 import httpx
 from pydantic import BaseModel, ConfigDict, Field
 
+from discovery.retrieval.boundary import GatewayBoundaryError
 from discovery.retrieval.direct import (
     ArxivProvider,
     CrossrefProvider,
@@ -21,6 +22,8 @@ from discovery.retrieval.provider import ResearchProvider
 
 class ProviderMode(StrEnum):
     GATEWAY = "gateway"
+    # Retained only so historical configuration can be parsed during the
+    # v0.11 migration. Active research execution is gateway-only.
     DIRECT = "direct"
 
 
@@ -63,7 +66,13 @@ def create_direct_provider(
     *,
     retry_policy: RetryPolicy | None = None,
     observer: RequestObserver | None = None,
+    allow_legacy_direct: bool = False,
 ) -> ManagedResearchProvider:
+    if not allow_legacy_direct:
+        raise GatewayBoundaryError(
+            "direct provider execution is disabled in v0.11; "
+            "route external scientific acquisition through x402-research-gateway"
+        )
     resolved = config or DirectProviderConfig()
     names = set(resolved.providers)
     unknown = names - {"openalex", "crossref", "europe_pmc", "arxiv"}
@@ -115,6 +124,8 @@ def create_gateway_provider(
     retry_policy: RetryPolicy | None = None,
     observer: RequestObserver | None = None,
     client: httpx.Client | None = None,
+    headers: dict[str, str] | None = None,
+    strict_feed402: bool = True,
 ) -> ManagedResearchProvider:
     provider = GatewayProvider(
         base_url,
@@ -122,5 +133,7 @@ def create_gateway_provider(
         retry_policy=retry_policy,
         observer=observer,
         client=client,
+        headers=headers,
+        strict_feed402=strict_feed402,
     )
     return ManagedResearchProvider(provider, [provider])

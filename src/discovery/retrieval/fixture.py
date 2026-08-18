@@ -15,6 +15,7 @@ class FixtureProvider:
     """Deterministic offline provider used for tests and early pilots."""
 
     name = "fixture"
+    boundary_kind = "fixture"
 
     def __init__(
         self,

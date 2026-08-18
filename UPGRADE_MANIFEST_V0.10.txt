@@ -1,0 +1,12 @@
+Scientific Discovery v0.10 — combined pre-quantum upgrade from v0.4
+
+Capability milestones combined:
+- v0.5 real scientific campaign execution and high-recall cascade planning
+- v0.6 scientific document intelligence
+- v0.7 evidence-grounded ProblemInstance extraction/evaluation
+- v0.8 mathematical structure representation and similarity
+- v0.9 cross-disciplinary structural discovery and family construction
+- v0.10 coverage, audited saturation, active retrieval, and feedback
+
+The active v0.10 pipeline intentionally stops before quantum mapping.
+Run: bash scripts/post_upgrade_v010.sh

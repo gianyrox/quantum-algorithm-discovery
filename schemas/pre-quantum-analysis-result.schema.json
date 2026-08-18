@@ -1,0 +1,654 @@
+{
+  "$defs": {
+    "CrossDomainRelation": {
+      "enum": [
+        "equivalent_formulation",
+        "shared_mathematical_form",
+        "shared_mechanism",
+        "shared_function_different_mechanism",
+        "historical_transmission",
+        "independent_rediscovery",
+        "analogy",
+        "lexical_resemblance",
+        "unresolved"
+      ],
+      "title": "CrossDomainRelation",
+      "type": "string"
+    },
+    "DocumentIntelligence": {
+      "additionalProperties": false,
+      "description": "Loss-minimizing structural summary of a parsed scientific document.",
+      "properties": {
+        "work_id": {
+          "title": "Work Id",
+          "type": "string"
+        },
+        "section_count": {
+          "minimum": 0,
+          "title": "Section Count",
+          "type": "integer"
+        },
+        "equation_count": {
+          "minimum": 0,
+          "title": "Equation Count",
+          "type": "integer"
+        },
+        "figure_count": {
+          "minimum": 0,
+          "title": "Figure Count",
+          "type": "integer"
+        },
+        "table_count": {
+          "minimum": 0,
+          "title": "Table Count",
+          "type": "integer"
+        },
+        "reference_count": {
+          "minimum": 0,
+          "title": "Reference Count",
+          "type": "integer"
+        },
+        "word_count": {
+          "minimum": 0,
+          "title": "Word Count",
+          "type": "integer"
+        },
+        "section_types": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Section Types",
+          "type": "object"
+        },
+        "math_dense_sections": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Math Dense Sections",
+          "type": "array"
+        },
+        "likely_problem_sections": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Likely Problem Sections",
+          "type": "array"
+        },
+        "likely_method_sections": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Likely Method Sections",
+          "type": "array"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "work_id",
+        "section_count",
+        "equation_count",
+        "figure_count",
+        "table_count",
+        "reference_count",
+        "word_count"
+      ],
+      "title": "DocumentIntelligence",
+      "type": "object"
+    },
+    "FeedbackAction": {
+      "enum": [
+        "continue",
+        "expand_terms",
+        "expand_citations",
+        "add_provider",
+        "target_history",
+        "review_gap",
+        "saturated"
+      ],
+      "title": "FeedbackAction",
+      "type": "string"
+    },
+    "FeedbackDecision": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "$ref": "#/$defs/FeedbackAction"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "priority_scope_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority Scope Id"
+        },
+        "suggested_terms": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Suggested Terms",
+          "type": "array"
+        }
+      },
+      "required": [
+        "action",
+        "reason"
+      ],
+      "title": "FeedbackDecision",
+      "type": "object"
+    },
+    "MultiViewSimilarity": {
+      "additionalProperties": false,
+      "properties": {
+        "problem_a_id": {
+          "title": "Problem A Id",
+          "type": "string"
+        },
+        "problem_b_id": {
+          "title": "Problem B Id",
+          "type": "string"
+        },
+        "evidence": {
+          "$ref": "#/$defs/SimilarityEvidence"
+        },
+        "aggregate_score": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Aggregate Score",
+          "type": "number"
+        },
+        "structural_score": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Structural Score",
+          "type": "number"
+        },
+        "independence_score": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Independence Score",
+          "type": "number"
+        },
+        "explanation": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Explanation",
+          "type": "array"
+        }
+      },
+      "required": [
+        "problem_a_id",
+        "problem_b_id",
+        "evidence",
+        "aggregate_score",
+        "structural_score",
+        "independence_score"
+      ],
+      "title": "MultiViewSimilarity",
+      "type": "object"
+    },
+    "ProblemFamily": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "problem_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Problem Ids",
+          "type": "array"
+        },
+        "shared_task_families": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Shared Task Families",
+          "type": "array"
+        },
+        "shared_mathematical_structures": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Shared Mathematical Structures",
+          "type": "array"
+        },
+        "shared_operations": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Shared Operations",
+          "type": "array"
+        },
+        "distinguishing_features": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Distinguishing Features",
+          "type": "array"
+        },
+        "evidence": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "status": {
+          "default": "candidate",
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description"
+      ],
+      "title": "ProblemFamily",
+      "type": "object"
+    },
+    "ProblemQualityReport": {
+      "additionalProperties": false,
+      "properties": {
+        "problem_id": {
+          "title": "Problem Id",
+          "type": "string"
+        },
+        "completeness": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Completeness",
+          "type": "number"
+        },
+        "evidence_coverage": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Evidence Coverage",
+          "type": "number"
+        },
+        "ambiguity_flags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Ambiguity Flags",
+          "type": "array"
+        },
+        "missing_high_value_fields": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing High Value Fields",
+          "type": "array"
+        }
+      },
+      "required": [
+        "problem_id",
+        "completeness",
+        "evidence_coverage"
+      ],
+      "title": "ProblemQualityReport",
+      "type": "object"
+    },
+    "RelationHypothesis": {
+      "additionalProperties": false,
+      "properties": {
+        "problem_a_id": {
+          "title": "Problem A Id",
+          "type": "string"
+        },
+        "problem_b_id": {
+          "title": "Problem B Id",
+          "type": "string"
+        },
+        "relation": {
+          "$ref": "#/$defs/CrossDomainRelation"
+        },
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "reasons": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Reasons",
+          "type": "array"
+        },
+        "requires_review": {
+          "default": true,
+          "title": "Requires Review",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "problem_a_id",
+        "problem_b_id",
+        "relation",
+        "confidence"
+      ],
+      "title": "RelationHypothesis",
+      "type": "object"
+    },
+    "RetrievalPriority": {
+      "additionalProperties": false,
+      "properties": {
+        "scope_id": {
+          "title": "Scope Id",
+          "type": "string"
+        },
+        "uncertainty": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Uncertainty",
+          "type": "number"
+        },
+        "novelty": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Novelty",
+          "type": "number"
+        },
+        "coverage_gap": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Coverage Gap",
+          "type": "number"
+        },
+        "historical_gap": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Historical Gap",
+          "type": "number"
+        },
+        "provider_disagreement": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Provider Disagreement",
+          "type": "number"
+        },
+        "score": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Score",
+          "type": "number"
+        },
+        "reasons": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Reasons",
+          "type": "array"
+        }
+      },
+      "required": [
+        "scope_id",
+        "uncertainty",
+        "novelty",
+        "coverage_gap",
+        "score"
+      ],
+      "title": "RetrievalPriority",
+      "type": "object"
+    },
+    "SimilarityEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "lexical": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Lexical",
+          "type": "number"
+        },
+        "semantic": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Semantic",
+          "type": "number"
+        },
+        "task": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Task",
+          "type": "number"
+        },
+        "mathematical": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Mathematical",
+          "type": "number"
+        },
+        "operator": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Operator",
+          "type": "number"
+        },
+        "constraint": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Constraint",
+          "type": "number"
+        },
+        "topology": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Topology",
+          "type": "number"
+        },
+        "stochastic": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Stochastic",
+          "type": "number"
+        },
+        "complexity": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Complexity",
+          "type": "number"
+        },
+        "method": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Method",
+          "type": "number"
+        },
+        "citation_connectivity": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Citation Connectivity",
+          "type": "number"
+        },
+        "notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Notes",
+          "type": "array"
+        }
+      },
+      "title": "SimilarityEvidence",
+      "type": "object"
+    },
+    "StratifiedCoverageReport": {
+      "additionalProperties": false,
+      "properties": {
+        "total_works": {
+          "minimum": 0,
+          "title": "Total Works",
+          "type": "integer"
+        },
+        "strata": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Strata",
+          "type": "object"
+        },
+        "provider_counts": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Provider Counts",
+          "type": "object"
+        },
+        "decade_counts": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Decade Counts",
+          "type": "object"
+        },
+        "missing_dimensions": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Missing Dimensions",
+          "type": "object"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "total_works"
+      ],
+      "title": "StratifiedCoverageReport",
+      "type": "object"
+    },
+    "StructureDiscoveryResult": {
+      "additionalProperties": false,
+      "properties": {
+        "problem_count": {
+          "minimum": 0,
+          "title": "Problem Count",
+          "type": "integer"
+        },
+        "pair_count": {
+          "minimum": 0,
+          "title": "Pair Count",
+          "type": "integer"
+        },
+        "similarities": {
+          "items": {
+            "$ref": "#/$defs/MultiViewSimilarity"
+          },
+          "title": "Similarities",
+          "type": "array"
+        },
+        "families": {
+          "items": {
+            "$ref": "#/$defs/ProblemFamily"
+          },
+          "title": "Families",
+          "type": "array"
+        },
+        "relation_hypotheses": {
+          "items": {
+            "$ref": "#/$defs/RelationHypothesis"
+          },
+          "title": "Relation Hypotheses",
+          "type": "array"
+        }
+      },
+      "required": [
+        "problem_count",
+        "pair_count"
+      ],
+      "title": "StructureDiscoveryResult",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "document_intelligence": {
+      "items": {
+        "$ref": "#/$defs/DocumentIntelligence"
+      },
+      "title": "Document Intelligence",
+      "type": "array"
+    },
+    "problem_quality": {
+      "items": {
+        "$ref": "#/$defs/ProblemQualityReport"
+      },
+      "title": "Problem Quality",
+      "type": "array"
+    },
+    "structure_discovery": {
+      "$ref": "#/$defs/StructureDiscoveryResult"
+    },
+    "coverage": {
+      "$ref": "#/$defs/StratifiedCoverageReport"
+    },
+    "priorities": {
+      "items": {
+        "$ref": "#/$defs/RetrievalPriority"
+      },
+      "title": "Priorities",
+      "type": "array"
+    },
+    "feedback": {
+      "$ref": "#/$defs/FeedbackDecision"
+    },
+    "notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Notes",
+      "type": "array"
+    }
+  },
+  "required": [
+    "structure_discovery",
+    "coverage",
+    "feedback"
+  ],
+  "title": "PreQuantumAnalysisResult",
+  "type": "object"
+}

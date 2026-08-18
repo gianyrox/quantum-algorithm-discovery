@@ -1,0 +1,54 @@
+Scientific Discovery v0.11.0 - Gateway-First Research Upgrade
+==============================================================
+
+Base expected: validated scientific-discovery v0.10.0 tree.
+Upgrade type: additive/overlay; no file deletions required.
+
+Architectural rule
+------------------
+All production external scientific acquisition originates through
+x402-research-gateway and is represented/preserved using feed402 provenance.
+Scientific Discovery owns downstream scientific analysis and discovery, not
+provider-specific acquisition policy.
+
+Direct provider adapters from v0.10 remain temporarily in source only for
+migration/parity tests. The active CLI does not expose direct search or direct
+deep-harvest commands, and RetrievalService blocks direct providers unless a
+legacy override is explicitly requested in code. Deterministic fixture
+providers remain allowed for offline tests.
+
+Major changes
+-------------
+- Native feed402/0.3 models for envelopes, citations, rights, assets,
+  retrieval provenance, execution provenance, receipts, and lineage.
+- Strict gateway boundary enforcement for active retrieval and campaigns.
+- Immutable feed402 envelope persistence linked to RetrievalRun/CampaignRun.
+- Alembic revision 0005 adds feed402_envelope provenance storage.
+- Campaigns fingerprint the gateway manifest, capture coverage context, and
+  report feed402 citation/lineage counts.
+- Gateway generic operation invocation allows newly advertised capabilities
+  to be used without adding source-specific clients to Scientific Discovery.
+- Direct-provider CLI paths retired from active v0.11 operation.
+- ADR, roadmap, upgrade, gateway-first, and validation documentation added.
+
+Validation completed in build environment
+-----------------------------------------
+- Python compileall: pass.
+- 103-test suite: passed in file-group validation; affected/new tests pass.
+- v0.11 gateway/feed402 smoke: pass.
+- Alembic SQLite upgrade 0001 -> 0005: pass.
+- CLI help confirms gateway-only active provider/campaign paths.
+
+Ruff and mypy are included in scripts/post_upgrade_v011.sh. They were not
+available in the artifact build container and could not be installed because
+that container has no network access. Run the post-upgrade script in the
+normal development environment to perform those two final checks.
+
+Apply
+-----
+From the scientific-discovery repository root:
+
+    unzip -o scientific_discovery_v0_11_gateway_first_upgrade.zip
+    bash scripts/post_upgrade_v011.sh
+
+See docs/UPGRADE_NOTES_V0.11.md and docs/ADR-001-GATEWAY-FIRST-RESEARCH.md.

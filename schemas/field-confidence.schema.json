@@ -1,0 +1,32 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "field": {
+      "title": "Field",
+      "type": "string"
+    },
+    "confidence": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Confidence",
+      "type": "number"
+    },
+    "evidence_count": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Evidence Count",
+      "type": "integer"
+    },
+    "unresolved": {
+      "default": false,
+      "title": "Unresolved",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "field",
+    "confidence"
+  ],
+  "title": "FieldConfidence",
+  "type": "object"
+}

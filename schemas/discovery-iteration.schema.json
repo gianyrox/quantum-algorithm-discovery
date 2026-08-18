@@ -1,0 +1,212 @@
+{
+  "$defs": {
+    "DiscoveryYield": {
+      "additionalProperties": false,
+      "properties": {
+        "iteration": {
+          "minimum": 1,
+          "title": "Iteration",
+          "type": "integer"
+        },
+        "retrieved": {
+          "minimum": 0,
+          "title": "Retrieved",
+          "type": "integer"
+        },
+        "new_works": {
+          "minimum": 0,
+          "title": "New Works",
+          "type": "integer"
+        },
+        "new_terms": {
+          "default": 0,
+          "minimum": 0,
+          "title": "New Terms",
+          "type": "integer"
+        },
+        "new_concepts": {
+          "default": 0,
+          "minimum": 0,
+          "title": "New Concepts",
+          "type": "integer"
+        },
+        "new_citations": {
+          "default": 0,
+          "minimum": 0,
+          "title": "New Citations",
+          "type": "integer"
+        },
+        "new_problem_signatures": {
+          "default": 0,
+          "minimum": 0,
+          "title": "New Problem Signatures",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "iteration",
+        "retrieved",
+        "new_works"
+      ],
+      "title": "DiscoveryYield",
+      "type": "object"
+    },
+    "FeedbackAction": {
+      "enum": [
+        "continue",
+        "expand_terms",
+        "expand_citations",
+        "add_provider",
+        "target_history",
+        "review_gap",
+        "saturated"
+      ],
+      "title": "FeedbackAction",
+      "type": "string"
+    },
+    "FeedbackDecision": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "$ref": "#/$defs/FeedbackAction"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "priority_scope_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority Scope Id"
+        },
+        "suggested_terms": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Suggested Terms",
+          "type": "array"
+        }
+      },
+      "required": [
+        "action",
+        "reason"
+      ],
+      "title": "FeedbackDecision",
+      "type": "object"
+    },
+    "IterationStatus": {
+      "enum": [
+        "planned",
+        "running",
+        "completed",
+        "saturated",
+        "failed"
+      ],
+      "title": "IterationStatus",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "campaign_id": {
+      "title": "Campaign Id",
+      "type": "string"
+    },
+    "iteration": {
+      "minimum": 1,
+      "title": "Iteration",
+      "type": "integer"
+    },
+    "status": {
+      "$ref": "#/$defs/IterationStatus",
+      "default": "planned"
+    },
+    "started_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Started At"
+    },
+    "completed_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Completed At"
+    },
+    "discovery_yield": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DiscoveryYield"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "feedback": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FeedbackDecision"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "query_plan_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Query Plan Ids",
+      "type": "array"
+    },
+    "retrieval_run_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Retrieval Run Ids",
+      "type": "array"
+    },
+    "notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Notes",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "campaign_id",
+    "iteration"
+  ],
+  "title": "DiscoveryIteration",
+  "type": "object"
+}

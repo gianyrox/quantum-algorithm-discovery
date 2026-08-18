@@ -1,0 +1,129 @@
+{
+  "$defs": {
+    "MathFeatureSet": {
+      "additionalProperties": false,
+      "properties": {
+        "alpha_normalized": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Alpha Normalized"
+        },
+        "commands": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Commands",
+          "type": "array"
+        },
+        "symbols": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Symbols",
+          "type": "array"
+        },
+        "operators": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Operators",
+          "type": "array"
+        },
+        "has_equality": {
+          "default": false,
+          "title": "Has Equality",
+          "type": "boolean"
+        },
+        "has_inequality": {
+          "default": false,
+          "title": "Has Inequality",
+          "type": "boolean"
+        },
+        "has_probability": {
+          "default": false,
+          "title": "Has Probability",
+          "type": "boolean"
+        },
+        "has_matrix_like_structure": {
+          "default": false,
+          "title": "Has Matrix Like Structure",
+          "type": "boolean"
+        }
+      },
+      "title": "MathFeatureSet",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "expression_id": {
+      "title": "Expression Id",
+      "type": "string"
+    },
+    "exact_sha256": {
+      "title": "Exact Sha256",
+      "type": "string"
+    },
+    "alpha_sha256": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Alpha Sha256"
+    },
+    "token_multiset": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Token Multiset",
+      "type": "object"
+    },
+    "operator_signature": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Operator Signature",
+      "type": "array"
+    },
+    "relation_type": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Relation Type"
+    },
+    "tree_depth": {
+      "default": 1,
+      "minimum": 1,
+      "title": "Tree Depth",
+      "type": "integer"
+    },
+    "features": {
+      "$ref": "#/$defs/MathFeatureSet"
+    }
+  },
+  "required": [
+    "expression_id",
+    "exact_sha256",
+    "features"
+  ],
+  "title": "MathematicalFingerprint",
+  "type": "object"
+}

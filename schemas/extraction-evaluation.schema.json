@@ -1,0 +1,49 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "task_family_accuracy": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Task Family Accuracy",
+      "type": "number"
+    },
+    "problem_count_error": {
+      "title": "Problem Count Error",
+      "type": "integer"
+    },
+    "operation_precision": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Operation Precision",
+      "type": "number"
+    },
+    "operation_recall": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Operation Recall",
+      "type": "number"
+    },
+    "structure_precision": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Structure Precision",
+      "type": "number"
+    },
+    "structure_recall": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Structure Recall",
+      "type": "number"
+    }
+  },
+  "required": [
+    "task_family_accuracy",
+    "problem_count_error",
+    "operation_precision",
+    "operation_recall",
+    "structure_precision",
+    "structure_recall"
+  ],
+  "title": "ExtractionEvaluation",
+  "type": "object"
+}

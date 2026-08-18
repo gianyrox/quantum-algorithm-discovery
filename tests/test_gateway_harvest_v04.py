@@ -17,6 +17,7 @@ from discovery.storage.database import (
 
 class FakeGateway:
     name = "x402-research-gateway"
+    boundary_kind = "gateway"
 
     def __init__(self, pages: list[GatewayHarvestPage]) -> None:
         self.pages = deque(pages)

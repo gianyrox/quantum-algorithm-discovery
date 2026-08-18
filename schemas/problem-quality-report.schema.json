@@ -1,0 +1,42 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "problem_id": {
+      "title": "Problem Id",
+      "type": "string"
+    },
+    "completeness": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Completeness",
+      "type": "number"
+    },
+    "evidence_coverage": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Evidence Coverage",
+      "type": "number"
+    },
+    "ambiguity_flags": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Ambiguity Flags",
+      "type": "array"
+    },
+    "missing_high_value_fields": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing High Value Fields",
+      "type": "array"
+    }
+  },
+  "required": [
+    "problem_id",
+    "completeness",
+    "evidence_coverage"
+  ],
+  "title": "ProblemQualityReport",
+  "type": "object"
+}

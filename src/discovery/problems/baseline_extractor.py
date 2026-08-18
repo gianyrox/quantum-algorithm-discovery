@@ -7,6 +7,7 @@ from discovery.core.ids import stable_id
 from discovery.documents.schema import ParsedDocument
 from discovery.documents.text import document_text
 from discovery.problems.enums import EvidenceKind, ExtractionMethod, TaskFamily
+from discovery.problems.evidence import EvidenceSpan, FieldConfidence
 from discovery.problems.schema import MathematicalObject, ProblemInstance
 
 _TASK_PATTERNS: dict[TaskFamily, tuple[str, ...]] = {
@@ -89,6 +90,29 @@ def _evidence_quote(text: str, patterns: tuple[str, ...]) -> str | None:
     return None
 
 
+def _field_span(
+    document: ParsedDocument, field: str, patterns: tuple[str, ...], confidence: float
+) -> EvidenceSpan | None:
+    for section in document.sections:
+        lowered = section.text.casefold()
+        for pattern in patterns:
+            index = lowered.find(pattern.casefold())
+            if index < 0:
+                continue
+            start = max(0, index - 180)
+            end = min(len(section.text), index + len(pattern) + 360)
+            return EvidenceSpan(
+                field=field,
+                section_id=section.id,
+                start_char=start,
+                end_char=end,
+                text=section.text[start:end],
+                confidence=confidence,
+                extraction_rule=f"keyword:{pattern}",
+            )
+    return None
+
+
 class TransparentBaselineProblemExtractor:
     """Low-confidence extraction baseline for pipeline/evaluation plumbing.
 
@@ -97,7 +121,7 @@ class TransparentBaselineProblemExtractor:
     """
 
     name = "transparent-keyword-baseline"
-    version = "0.3"
+    version = "0.10"
 
     def extract(self, document: ParsedDocument) -> list[ProblemInstance]:
         text = document_text(document)
@@ -126,6 +150,16 @@ class TransparentBaselineProblemExtractor:
         for index, (family, patterns) in enumerate(detected[:3]):
             quote = _evidence_quote(text, patterns)
             confidence = min(0.55, 0.20 + 0.05 * len(operations) + 0.04 * len(structures))
+            task_span = _field_span(document, "task_family", patterns, confidence)
+            spans = [task_span] if task_span is not None else []
+            field_confidence = [
+                FieldConfidence(
+                    field="task_family",
+                    confidence=confidence,
+                    evidence_count=len(spans),
+                    unresolved=True,
+                )
+            ]
             problems.append(
                 ProblemInstance(
                     id=stable_id(
@@ -146,6 +180,8 @@ class TransparentBaselineProblemExtractor:
                             note="Rule-based candidate evidence; requires human review.",
                         )
                     ],
+                    evidence_spans=spans,
+                    field_confidence=field_confidence,
                     extraction_method=ExtractionMethod.RULE_BASED,
                     extractor=self.name,
                     extractor_version=self.version,

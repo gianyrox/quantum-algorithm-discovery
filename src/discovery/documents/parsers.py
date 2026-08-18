@@ -6,11 +6,13 @@ import xml.etree.ElementTree as ET
 from html.parser import HTMLParser
 
 from discovery.core.ids import stable_id
+from discovery.documents.references import infer_reference_identifiers
 from discovery.documents.schema import (
     DocumentSection,
     EquationOccurrence,
     FigureOccurrence,
     ParsedDocument,
+    ReferenceOccurrence,
     TableOccurrence,
 )
 
@@ -21,7 +23,7 @@ def _clean_text(value: str) -> str:
 
 class PlainTextParser:
     name = "plain-text"
-    version = "0.3"
+    version = "0.10"
     supported_formats = {"text", "txt", "text/plain", "plain"}
 
     def parse(self, *, work_id: str, asset_id: str, content: bytes) -> ParsedDocument:
@@ -76,7 +78,7 @@ class _TextHTMLParser(HTMLParser):
 
 class SimpleHTMLDocumentParser:
     name = "stdlib-html"
-    version = "0.3"
+    version = "0.10"
     supported_formats = {"html", "text/html"}
 
     def parse(self, *, work_id: str, asset_id: str, content: bytes) -> ParsedDocument:
@@ -113,7 +115,7 @@ def _element_text(element: ET.Element) -> str:
 
 class JATSParser:
     name = "stdlib-jats"
-    version = "0.3"
+    version = "0.10"
     supported_formats = {"jats", "xml", "application/xml", "application/jats+xml"}
 
     def parse(self, *, work_id: str, asset_id: str, content: bytes) -> ParsedDocument:
@@ -122,6 +124,7 @@ class JATSParser:
         equations: list[EquationOccurrence] = []
         figures: list[FigureOccurrence] = []
         tables: list[TableOccurrence] = []
+        references: list[ReferenceOccurrence] = []
 
         section_index = 0
         for element in root.iter():
@@ -198,6 +201,20 @@ class JATSParser:
                         caption=_element_text(caption) if caption is not None else None,
                     )
                 )
+            elif name == "ref":
+                raw_reference = _element_text(element)
+                if raw_reference:
+                    references.append(
+                        ReferenceOccurrence(
+                            id=stable_id(
+                                "reference",
+                                f"{work_id}:{asset_id}:jats:{len(references)}:{raw_reference}",
+                            ),
+                            order=len(references),
+                            raw_text=raw_reference,
+                            identifiers=infer_reference_identifiers(raw_reference),
+                        )
+                    )
 
         if not sections:
             body_text = _element_text(root)
@@ -219,12 +236,13 @@ class JATSParser:
             equations=equations,
             figures=figures,
             tables=tables,
+            references=references,
         )
 
 
 class TEIParser:
     name = "stdlib-tei"
-    version = "0.3"
+    version = "0.10"
     supported_formats = {"tei", "application/tei+xml"}
 
     def parse(self, *, work_id: str, asset_id: str, content: bytes) -> ParsedDocument:
@@ -258,6 +276,24 @@ class TEIParser:
                     text=_element_text(root),
                 )
             )
+        references: list[ReferenceOccurrence] = []
+        for element in root.iter():
+            if _local_name(element.tag) not in {"bibl", "biblStruct"}:
+                continue
+            raw_reference = _element_text(element)
+            if not raw_reference:
+                continue
+            references.append(
+                ReferenceOccurrence(
+                    id=stable_id(
+                        "reference",
+                        f"{work_id}:{asset_id}:tei:{len(references)}:{raw_reference}",
+                    ),
+                    order=len(references),
+                    raw_text=raw_reference,
+                    identifiers=infer_reference_identifiers(raw_reference),
+                )
+            )
         return ParsedDocument(
             work_id=work_id,
             asset_id=asset_id,
@@ -265,6 +301,7 @@ class TEIParser:
             parser=self.name,
             parser_version=self.version,
             sections=sections,
+            references=references,
         )
 
 
@@ -274,11 +311,15 @@ _EQUATION_RE = re.compile(
     re.DOTALL,
 )
 _DISPLAY_MATH_RE = re.compile(r"\\\[(?P<body>.*?)\\\]", re.DOTALL)
+_BIBITEM_RE = re.compile(
+    r"\\bibitem(?:\[[^]]*\])?\{[^}]+\}(?P<body>.*?)(?=\\bibitem|\\end\{thebibliography\}|$)",
+    re.DOTALL,
+)
 
 
 class LatexParser:
     name = "stdlib-latex"
-    version = "0.3"
+    version = "0.10"
     supported_formats = {"tex", "latex", "application/x-tex", "text/x-tex"}
 
     def parse(self, *, work_id: str, asset_id: str, content: bytes) -> ParsedDocument:
@@ -320,6 +361,22 @@ class LatexParser:
                     latex=body,
                 )
             )
+        references: list[ReferenceOccurrence] = []
+        for match in _BIBITEM_RE.finditer(text):
+            raw_reference = _clean_text(match.group("body"))
+            if not raw_reference:
+                continue
+            references.append(
+                ReferenceOccurrence(
+                    id=stable_id(
+                        "reference",
+                        f"{work_id}:{asset_id}:tex:{len(references)}:{raw_reference}",
+                    ),
+                    order=len(references),
+                    raw_text=raw_reference,
+                    identifiers=infer_reference_identifiers(raw_reference),
+                )
+            )
         return ParsedDocument(
             work_id=work_id,
             asset_id=asset_id,
@@ -328,4 +385,5 @@ class LatexParser:
             parser_version=self.version,
             sections=sections,
             equations=equations,
+            references=references,
         )

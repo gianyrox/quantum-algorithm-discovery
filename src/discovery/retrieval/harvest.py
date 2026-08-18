@@ -44,6 +44,7 @@ class HarvestResult(BaseModel):
     query_count: int
     hit_count: int
     unique_work_ids: list[str]
+    retrieval_run_ids: list[str] = Field(default_factory=list)
     citation_edges_seen: int = 0
     assets_seen: int = 0
     stopped_for_saturation: bool = False
@@ -80,6 +81,7 @@ class ResearchHarvestEngine:
         work_ids: set[str] = set()
         seed_identifiers: dict[str, str] = {}
         observations: list[SaturationObservation] = []
+        retrieval_run_ids: list[str] = []
         stopped_for_saturation = False
         for query_index, query in enumerate(batch.queries):
             before_unique = len(work_ids)
@@ -107,6 +109,8 @@ class ResearchHarvestEngine:
                 )
             )
             if checkpoint is not None and checkpoint.status == "completed":
+                if checkpoint.retrieval_run_id is not None:
+                    retrieval_run_ids.append(checkpoint.retrieval_run_id)
                 query_row.status = "completed"
                 query_row.completed_at = query_row.completed_at or datetime.now(UTC)
                 self.session.add(query_row)
@@ -137,6 +141,7 @@ class ResearchHarvestEngine:
                 self.session.flush()
             try:
                 run_id, response = self.retrieval.execute_with_run(query, plan=plan)
+                retrieval_run_ids.append(run_id)
                 responses.append(response)
                 for hit in response.hits:
                     if hit.work is None:
@@ -220,6 +225,7 @@ class ResearchHarvestEngine:
             query_count=len(observations),
             hit_count=sum(item.retrieved for item in observations),
             unique_work_ids=sorted(work_ids),
+            retrieval_run_ids=retrieval_run_ids,
             citation_edges_seen=citation_edges,
             assets_seen=assets_seen,
             stopped_for_saturation=stopped_for_saturation,

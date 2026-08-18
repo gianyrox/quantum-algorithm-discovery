@@ -97,7 +97,7 @@ def test_gateway_uses_well_known_manifest_and_parses_operational_endpoints() -> 
         return httpx.Response(404, request=request)
 
     client = httpx.Client(transport=httpx.MockTransport(handler), base_url="https://gateway.test")
-    gateway = GatewayProvider("https://gateway.test", client=client)
+    gateway = GatewayProvider("https://gateway.test", client=client, strict_feed402=False)
     manifest = gateway.manifest()
     assert manifest.spec == "feed402/0.3"
     assert manifest.operations_for("search")[0].operation_id == "crossref-search"

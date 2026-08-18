@@ -783,3 +783,138 @@ class AssetAcquisitionRow(Base):
     parser_format: Mapped[str | None] = mapped_column(String(100))
     error: Mapped[str | None] = mapped_column(Text)
     payload_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+
+
+class DocumentIntelligenceRow(Base):
+    __tablename__ = "document_intelligence"
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    work_id: Mapped[str] = mapped_column(String(160), index=True)
+    document_id: Mapped[str] = mapped_column(String(160), index=True)
+    analyzer: Mapped[str] = mapped_column(String(160), default="document-intelligence-v010")
+    payload_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
+class ProblemQualityRow(Base):
+    __tablename__ = "problem_quality"
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    problem_id: Mapped[str] = mapped_column(String(160), index=True)
+    evaluator: Mapped[str] = mapped_column(String(160), default="problem-quality-v010")
+    completeness: Mapped[float] = mapped_column(Float)
+    evidence_coverage: Mapped[float] = mapped_column(Float)
+    payload_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
+class MathFingerprintRow(Base):
+    __tablename__ = "math_fingerprint"
+    __table_args__ = (
+        UniqueConstraint("expression_id", "fingerprinter_version", name="uq_math_fingerprint"),
+    )
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    expression_id: Mapped[str] = mapped_column(String(160), index=True)
+    fingerprinter_version: Mapped[str] = mapped_column(String(120), default="0.10")
+    exact_sha256: Mapped[str] = mapped_column(String(64), index=True)
+    alpha_sha256: Mapped[str | None] = mapped_column(String(64), index=True)
+    payload_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
+class StructuralSimilarityRow(Base):
+    __tablename__ = "structural_similarity"
+    __table_args__ = (
+        UniqueConstraint(
+            "problem_a_id",
+            "problem_b_id",
+            "similarity_version",
+            name="uq_structural_similarity",
+        ),
+    )
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    problem_a_id: Mapped[str] = mapped_column(String(160), index=True)
+    problem_b_id: Mapped[str] = mapped_column(String(160), index=True)
+    similarity_version: Mapped[str] = mapped_column(String(120), default="0.10")
+    aggregate_score: Mapped[float] = mapped_column(Float, index=True)
+    structural_score: Mapped[float] = mapped_column(Float, index=True)
+    independence_score: Mapped[float] = mapped_column(Float, index=True)
+    payload_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
+class CrossDomainRelationRow(Base):
+    __tablename__ = "cross_domain_relation"
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    problem_a_id: Mapped[str] = mapped_column(String(160), index=True)
+    problem_b_id: Mapped[str] = mapped_column(String(160), index=True)
+    relation_type: Mapped[str] = mapped_column(String(120), index=True)
+    confidence: Mapped[float] = mapped_column(Float)
+    review_status: Mapped[str] = mapped_column(String(80), default="unreviewed", index=True)
+    payload_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
+class DiscoveryIterationRow(Base):
+    __tablename__ = "discovery_iteration"
+    __table_args__ = (
+        UniqueConstraint("campaign_id", "iteration", name="uq_discovery_iteration"),
+    )
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    campaign_id: Mapped[str] = mapped_column(String(160), index=True)
+    iteration: Mapped[int] = mapped_column(Integer)
+    status: Mapped[str] = mapped_column(String(80), index=True)
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    yield_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+    feedback_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+    payload_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+
+
+class RetrievalFeedbackRow(Base):
+    __tablename__ = "retrieval_feedback"
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    campaign_id: Mapped[str] = mapped_column(String(160), index=True)
+    scope_id: Mapped[str | None] = mapped_column(String(500), index=True)
+    action: Mapped[str] = mapped_column(String(100), index=True)
+    reason: Mapped[str] = mapped_column(Text)
+    payload_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
+class ResearchManifestRow(Base):
+    __tablename__ = "research_manifest"
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    fingerprint: Mapped[str] = mapped_column(String(64), index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    payload_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+
+
+class Feed402EnvelopeRow(Base):
+    """Immutable feed402 response captured at the gateway research boundary."""
+
+    __tablename__ = "feed402_envelope"
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    campaign_run_id: Mapped[str | None] = mapped_column(
+        ForeignKey("campaign_run.id"), index=True
+    )
+    retrieval_run_id: Mapped[str | None] = mapped_column(
+        ForeignKey("retrieval_run.id"), index=True
+    )
+    operation: Mapped[str] = mapped_column(String(200), index=True)
+    spec: Mapped[str | None] = mapped_column(String(80), index=True)
+    merchant: Mapped[str] = mapped_column(String(200), index=True)
+    received_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    request_id: Mapped[str | None] = mapped_column(String(240), index=True)
+    query_fingerprint: Mapped[str | None] = mapped_column(String(240), index=True)
+    response_sha256: Mapped[str | None] = mapped_column(String(240), index=True)
+    citation_count: Mapped[int] = mapped_column(Integer, default=0)
+    lineage_count: Mapped[int] = mapped_column(Integer, default=0)
+    envelope_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)

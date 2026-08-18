@@ -1,0 +1,144 @@
+{
+  "$defs": {
+    "SimilarityEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "lexical": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Lexical",
+          "type": "number"
+        },
+        "semantic": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Semantic",
+          "type": "number"
+        },
+        "task": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Task",
+          "type": "number"
+        },
+        "mathematical": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Mathematical",
+          "type": "number"
+        },
+        "operator": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Operator",
+          "type": "number"
+        },
+        "constraint": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Constraint",
+          "type": "number"
+        },
+        "topology": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Topology",
+          "type": "number"
+        },
+        "stochastic": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Stochastic",
+          "type": "number"
+        },
+        "complexity": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Complexity",
+          "type": "number"
+        },
+        "method": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Method",
+          "type": "number"
+        },
+        "citation_connectivity": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Citation Connectivity",
+          "type": "number"
+        },
+        "notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Notes",
+          "type": "array"
+        }
+      },
+      "title": "SimilarityEvidence",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "problem_a_id": {
+      "title": "Problem A Id",
+      "type": "string"
+    },
+    "problem_b_id": {
+      "title": "Problem B Id",
+      "type": "string"
+    },
+    "evidence": {
+      "$ref": "#/$defs/SimilarityEvidence"
+    },
+    "aggregate_score": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Aggregate Score",
+      "type": "number"
+    },
+    "structural_score": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Structural Score",
+      "type": "number"
+    },
+    "independence_score": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Independence Score",
+      "type": "number"
+    },
+    "explanation": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Explanation",
+      "type": "array"
+    }
+  },
+  "required": [
+    "problem_a_id",
+    "problem_b_id",
+    "evidence",
+    "aggregate_score",
+    "structural_score",
+    "independence_score"
+  ],
+  "title": "MultiViewSimilarity",
+  "type": "object"
+}

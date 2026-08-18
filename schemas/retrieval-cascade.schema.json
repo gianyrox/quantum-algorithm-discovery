@@ -1,0 +1,64 @@
+{
+  "$defs": {
+    "RetrievalCascadeStep": {
+      "additionalProperties": false,
+      "properties": {
+        "stage": {
+          "$ref": "#/$defs/RetrievalStage"
+        },
+        "enabled": {
+          "default": true,
+          "title": "Enabled",
+          "type": "boolean"
+        },
+        "maximum_requests": {
+          "default": 10,
+          "minimum": 0,
+          "title": "Maximum Requests",
+          "type": "integer"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "stage",
+        "reason"
+      ],
+      "title": "RetrievalCascadeStep",
+      "type": "object"
+    },
+    "RetrievalStage": {
+      "enum": [
+        "controlled_vocabulary",
+        "lexical",
+        "historical_terms",
+        "citation_expansion",
+        "semantic",
+        "related_works"
+      ],
+      "title": "RetrievalStage",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "steps": {
+      "items": {
+        "$ref": "#/$defs/RetrievalCascadeStep"
+      },
+      "title": "Steps",
+      "type": "array"
+    },
+    "notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Notes",
+      "type": "array"
+    }
+  },
+  "title": "RetrievalCascade",
+  "type": "object"
+}

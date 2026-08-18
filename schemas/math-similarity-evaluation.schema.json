@@ -1,0 +1,43 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "threshold": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Threshold",
+      "type": "number"
+    },
+    "accuracy": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Accuracy",
+      "type": "number"
+    },
+    "precision": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Precision",
+      "type": "number"
+    },
+    "recall": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Recall",
+      "type": "number"
+    },
+    "evaluated": {
+      "minimum": 0,
+      "title": "Evaluated",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "threshold",
+    "accuracy",
+    "precision",
+    "recall",
+    "evaluated"
+  ],
+  "title": "MathSimilarityEvaluation",
+  "type": "object"
+}

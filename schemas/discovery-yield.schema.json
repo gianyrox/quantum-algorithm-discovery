@@ -1,0 +1,51 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "iteration": {
+      "minimum": 1,
+      "title": "Iteration",
+      "type": "integer"
+    },
+    "retrieved": {
+      "minimum": 0,
+      "title": "Retrieved",
+      "type": "integer"
+    },
+    "new_works": {
+      "minimum": 0,
+      "title": "New Works",
+      "type": "integer"
+    },
+    "new_terms": {
+      "default": 0,
+      "minimum": 0,
+      "title": "New Terms",
+      "type": "integer"
+    },
+    "new_concepts": {
+      "default": 0,
+      "minimum": 0,
+      "title": "New Concepts",
+      "type": "integer"
+    },
+    "new_citations": {
+      "default": 0,
+      "minimum": 0,
+      "title": "New Citations",
+      "type": "integer"
+    },
+    "new_problem_signatures": {
+      "default": 0,
+      "minimum": 0,
+      "title": "New Problem Signatures",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "iteration",
+    "retrieved",
+    "new_works"
+  ],
+  "title": "DiscoveryYield",
+  "type": "object"
+}

@@ -1,0 +1,37 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "discipline": {
+      "default": "unknown",
+      "title": "Discipline",
+      "type": "string"
+    },
+    "decade": {
+      "default": "unknown",
+      "title": "Decade",
+      "type": "string"
+    },
+    "language": {
+      "default": "unknown",
+      "title": "Language",
+      "type": "string"
+    },
+    "document_type": {
+      "default": "unknown",
+      "title": "Document Type",
+      "type": "string"
+    },
+    "provider": {
+      "default": "unknown",
+      "title": "Provider",
+      "type": "string"
+    },
+    "access": {
+      "default": "unknown",
+      "title": "Access",
+      "type": "string"
+    }
+  },
+  "title": "CoverageStratum",
+  "type": "object"
+}

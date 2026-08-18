@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 import json
-from contextlib import ExitStack
 from pathlib import Path
-from typing import Annotated, cast
+from typing import Annotated
 
 import typer
 from pydantic import ValidationError
@@ -57,8 +56,7 @@ from discovery.quantum.matching import baseline_quantum_match
 from discovery.quantum.schema import QuantumAlgorithm
 from discovery.quantum.screening import QuantumScreeningService
 from discovery.retrieval.audit import BufferedRequestObserver
-from discovery.retrieval.coordinator import DirectHarvestCoordinator, MultiProviderHarvestPolicy
-from discovery.retrieval.deep_harvest import DeepHarvestEngine, DeepHarvestPolicy
+from discovery.retrieval.feed402_store import Feed402EnvelopeRepository
 from discovery.retrieval.gateway import GatewayProvider
 from discovery.retrieval.gateway_harvest import (
     GatewayCursorHarvestEngine,
@@ -66,15 +64,9 @@ from discovery.retrieval.gateway_harvest import (
 )
 from discovery.retrieval.harvest import HarvestPolicy, ResearchHarvestEngine
 from discovery.retrieval.models import SearchQuery
-from discovery.retrieval.paging import PagedResearchProvider
 from discovery.retrieval.planning import batch_query_plan
 from discovery.retrieval.registry import ProviderRegistryService
-from discovery.retrieval.runtime import (
-    DirectProviderConfig,
-    ProviderMode,
-    create_direct_provider,
-    create_gateway_provider,
-)
+from discovery.retrieval.runtime import create_gateway_provider
 from discovery.retrieval.saturation import SaturationPolicy
 from discovery.retrieval.service import RetrievalService
 from discovery.review.schema import ReviewDecision
@@ -90,6 +82,7 @@ from discovery.storage.database import (
 from discovery.storage.models import DocumentRow, ProblemInstanceRow, RetrievalRunRow, WorkRow
 from discovery.storage.object_store import LocalContentAddressedStore
 from discovery.storage.repositories import ProblemRepository, WorkRepository
+from discovery.v010_cli import structure_app
 
 app = typer.Typer(
     name="discovery",
@@ -110,7 +103,7 @@ experiment_app = typer.Typer(help="Reproducible experiment tracking.")
 benchmark_app = typer.Typer(help="Benchmark sampling and annotation workflow.")
 coverage_app = typer.Typer(help="Coverage, gaps, and research observability.")
 review_app = typer.Typer(help="Human review events for research objects.")
-provider_app = typer.Typer(help="Gateway and direct-provider capability operations.")
+provider_app = typer.Typer(help="Gateway capability, coverage, identity, and integrity operations.")
 campaign_app = typer.Typer(help="Durable scientific retrieval campaigns.")
 queue_app = typer.Typer(help="Durable local processing queue.")
 
@@ -129,6 +122,7 @@ app.add_typer(review_app, name="review")
 app.add_typer(provider_app, name="provider")
 app.add_typer(campaign_app, name="campaign")
 app.add_typer(queue_app, name="queue")
+app.add_typer(structure_app, name="structure")
 
 
 def _settings(database_url: str | None = None) -> Settings:
@@ -146,20 +140,32 @@ def _factory(
     init_db(engine)
     return settings, engine, make_session_factory(engine)
 
-
-
-def _direct_provider_config(
-    settings: Settings, providers: str | None = None
-) -> DirectProviderConfig:
-    selected = (
-        [item.strip() for item in providers.split(",") if item.strip()]
-        if providers is not None
-        else settings.direct_providers
+def _gateway_provider(
+    settings: Settings,
+    base_url: str,
+    *,
+    observer: BufferedRequestObserver | None = None,
+) -> GatewayProvider:
+    return GatewayProvider(
+        base_url,
+        timeout_seconds=settings.gateway_timeout_seconds,
+        observer=observer,
+        headers=settings.gateway_headers,
+        strict_feed402=settings.gateway_strict_feed402,
     )
-    return DirectProviderConfig(
-        providers=selected,
-        openalex_api_key=settings.openalex_api_key,
-        contact_email=settings.contact_email,
+
+
+def _persist_unscoped_gateway_envelopes(
+    session: Session,
+    gateway: GatewayProvider,
+) -> None:
+    records = gateway.drain_feed402_envelopes()
+    if not records:
+        return
+    Feed402EnvelopeRepository(session).persist_unscoped(
+        records,
+        spec=gateway.manifest().spec,
+        merchant=gateway.name,
     )
 
 
@@ -186,9 +192,7 @@ def doctor(
     gateway_healthy: bool | None = None
     gateway_error: str | None = None
     if resolved_gateway is not None:
-        gateway = GatewayProvider(
-            resolved_gateway, timeout_seconds=settings.gateway_timeout_seconds
-        )
+        gateway = _gateway_provider(settings, resolved_gateway)
         try:
             gateway.manifest()
             gateway_healthy = True
@@ -300,7 +304,7 @@ def search_concept(
     resolved_gateway = gateway_url or settings.gateway_url
     if resolved_gateway is None:
         raise typer.BadParameter("set --gateway or DISCOVERY_GATEWAY_URL")
-    gateway = GatewayProvider(resolved_gateway, timeout_seconds=settings.gateway_timeout_seconds)
+    gateway = _gateway_provider(settings, resolved_gateway)
     try:
         with session_scope(factory) as session:
             plan = OntologyQueryCompiler(session).compile_concept(concept_id)
@@ -592,7 +596,7 @@ def retrieval_manifest(gateway_url: str | None = typer.Option(None, "--gateway")
     resolved = gateway_url or settings.gateway_url
     if resolved is None:
         raise typer.BadParameter("set --gateway or DISCOVERY_GATEWAY_URL")
-    gateway = GatewayProvider(resolved, timeout_seconds=settings.gateway_timeout_seconds)
+    gateway = _gateway_provider(settings, resolved)
     try:
         manifest = gateway.manifest()
     finally:
@@ -611,7 +615,7 @@ def gateway_search(
     resolved_gateway = gateway_url or settings.gateway_url
     if resolved_gateway is None:
         raise typer.BadParameter("set --gateway or DISCOVERY_GATEWAY_URL")
-    gateway = GatewayProvider(resolved_gateway, timeout_seconds=settings.gateway_timeout_seconds)
+    gateway = _gateway_provider(settings, resolved_gateway)
     try:
         with session_scope(factory) as session:
             response = RetrievalService(session, gateway).execute(
@@ -642,7 +646,7 @@ def retrieval_concept(
     resolved_gateway = gateway_url or settings.gateway_url
     if resolved_gateway is None:
         raise typer.BadParameter("set --gateway or DISCOVERY_GATEWAY_URL")
-    gateway = GatewayProvider(resolved_gateway, timeout_seconds=settings.gateway_timeout_seconds)
+    gateway = _gateway_provider(settings, resolved_gateway)
     try:
         with session_scope(factory) as session:
             plan = OntologyQueryCompiler(session).compile_concept(concept_id)
@@ -662,6 +666,7 @@ def retrieval_concept(
                     else None,
                 ),
             )
+            _persist_unscoped_gateway_envelopes(session, gateway)
     finally:
         gateway.close()
     console.print_json(result.model_dump_json(indent=2))
@@ -872,35 +877,6 @@ def process_file(
     console.print_json(result.model_dump_json(indent=2))
 
 
-@provider_app.command("direct-search")
-def provider_direct_search(
-    query: str,
-    providers: Annotated[str | None, typer.Option("--providers")] = None,
-    limit: Annotated[int, typer.Option(min=1, max=1000)] = 25,
-    database_url: Annotated[str | None, typer.Option("--database")] = None,
-) -> None:
-    """Search selected direct scholarly providers and persist canonical works."""
-    settings, _engine, factory = _factory(database_url)
-    audit = BufferedRequestObserver()
-    with session_scope(factory) as session:
-        config = _direct_provider_config(settings, providers)
-        with create_direct_provider(config, observer=audit) as research_provider:
-            response = RetrievalService(session, research_provider).execute(
-                SearchQuery(text=query, limit=limit, providers=config.providers)
-            )
-        audit.drain(
-            session,
-            object_store=LocalContentAddressedStore(settings.object_store_path),
-            persist_response_bodies=True,
-        )
-        payload = {
-            "hits": len(response.hits),
-            "providers": [item.model_dump(mode="json") for item in response.provider_reports],
-            "work_ids": [item.work.id for item in response.hits if item.work is not None],
-        }
-    console.print_json(json.dumps(payload))
-
-
 @provider_app.command("gateway-manifest")
 def provider_gateway_manifest(
     gateway_url: Annotated[str | None, typer.Option("--gateway")] = None,
@@ -916,6 +892,8 @@ def provider_gateway_manifest(
             resolved,
             timeout_seconds=settings.gateway_timeout_seconds,
             observer=audit,
+            headers=settings.gateway_headers,
+            strict_feed402=settings.gateway_strict_feed402,
         ) as provider:
             if not isinstance(provider, GatewayProvider):
                 raise RuntimeError("gateway factory returned an unexpected provider")
@@ -923,6 +901,32 @@ def provider_gateway_manifest(
         audit.drain(session)
         ProviderRegistryService(session).store_gateway_manifest(manifest)
     console.print_json(manifest.model_dump_json(indent=2))
+
+
+@provider_app.command("invoke")
+def provider_invoke(
+    operation_id: str,
+    payload_path: Path,
+    gateway_url: Annotated[str | None, typer.Option("--gateway")] = None,
+    database_url: Annotated[str | None, typer.Option("--database")] = None,
+) -> None:
+    """Invoke any advertised gateway operation and preserve its feed402 envelope."""
+    settings, _engine, factory = _factory(database_url)
+    resolved = gateway_url or settings.gateway_url
+    if resolved is None:
+        raise typer.BadParameter("set --gateway or DISCOVERY_GATEWAY_URL")
+    payload = json.loads(payload_path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise typer.BadParameter("gateway operation payload must be a JSON object")
+    operation_payload = {str(key): value for key, value in payload.items()}
+    with session_scope(factory) as session:
+        gateway = _gateway_provider(settings, resolved)
+        try:
+            envelope = gateway.invoke(operation_id, operation_payload)
+            _persist_unscoped_gateway_envelopes(session, gateway)
+        finally:
+            gateway.close()
+    console.print_json(json.dumps(envelope))
 
 
 @provider_app.command("gateway-sync")
@@ -935,7 +939,7 @@ def provider_gateway_sync(
     if resolved is None:
         raise typer.BadParameter("set --gateway or DISCOVERY_GATEWAY_URL")
     with session_scope(factory) as session:
-        gateway = GatewayProvider(resolved, timeout_seconds=settings.gateway_timeout_seconds)
+        gateway = _gateway_provider(settings, resolved)
         try:
             report = gateway.sync_status()
         finally:
@@ -953,7 +957,7 @@ def provider_gateway_coverage(
     resolved = gateway_url or settings.gateway_url
     if resolved is None:
         raise typer.BadParameter("set --gateway or DISCOVERY_GATEWAY_URL")
-    gateway = GatewayProvider(resolved, timeout_seconds=settings.gateway_timeout_seconds)
+    gateway = _gateway_provider(settings, resolved)
     try:
         params: dict[str, object] = {}
         if field is not None:
@@ -974,12 +978,13 @@ def provider_resolve_identity(
     resolved = gateway_url or settings.gateway_url
     if resolved is None:
         raise typer.BadParameter("set --gateway or DISCOVERY_GATEWAY_URL")
-    gateway = GatewayProvider(resolved, timeout_seconds=settings.gateway_timeout_seconds)
-    try:
-        report = gateway.resolve_identity(identifier)
-    finally:
-        gateway.close()
     with session_scope(factory) as session:
+        gateway = _gateway_provider(settings, resolved)
+        try:
+            report = gateway.resolve_identity(identifier)
+            _persist_unscoped_gateway_envelopes(session, gateway)
+        finally:
+            gateway.close()
         ingest = IdentityGraphService(session).ingest(report)
     console.print_json(
         json.dumps(
@@ -1001,90 +1006,17 @@ def provider_integrity(
     resolved = gateway_url or settings.gateway_url
     if resolved is None:
         raise typer.BadParameter("set --gateway or DISCOVERY_GATEWAY_URL")
-    gateway = GatewayProvider(resolved, timeout_seconds=settings.gateway_timeout_seconds)
-    try:
-        report = gateway.integrity(identifier)
-    finally:
-        gateway.close()
     with session_scope(factory) as session:
+        gateway = _gateway_provider(settings, resolved)
+        try:
+            report = gateway.integrity(identifier)
+            _persist_unscoped_gateway_envelopes(session, gateway)
+        finally:
+            gateway.close()
         count = IntegrityService(session).ingest(report)
     console.print_json(
         json.dumps({"report": report.model_dump(mode="json"), "assertions_persisted": count})
     )
-
-
-@retrieval_app.command("deep-search")
-def retrieval_deep_search(
-    provider_name: str,
-    query: str,
-    pages: Annotated[int, typer.Option("--pages", min=1, max=100000)] = 10,
-    page_size: Annotated[int, typer.Option("--page-size", min=1, max=1000)] = 100,
-    database_url: Annotated[str | None, typer.Option("--database")] = None,
-) -> None:
-    """Cursor/offset harvest one direct provider with resumable page checkpoints."""
-    settings, _engine, factory = _factory(database_url)
-    audit = BufferedRequestObserver()
-    with session_scope(factory) as session:
-        with create_direct_provider(
-            _direct_provider_config(settings, provider_name),
-            observer=audit,
-        ) as provider:
-            if not hasattr(provider, "search_page"):
-                raise typer.BadParameter(f"provider {provider_name!r} does not support paging")
-            paged_provider = cast(PagedResearchProvider, provider)
-            result = DeepHarvestEngine(session, paged_provider).execute(
-                SearchQuery(text=query, limit=page_size, providers=[provider_name]),
-                policy=DeepHarvestPolicy(max_pages=pages),
-            )
-        audit.drain(
-            session,
-            object_store=LocalContentAddressedStore(settings.object_store_path),
-            persist_response_bodies=True,
-        )
-    console.print_json(result.model_dump_json(indent=2))
-
-
-@retrieval_app.command("deep-federated")
-def retrieval_deep_federated(
-    query: str,
-    providers: Annotated[str | None, typer.Option("--providers")] = None,
-    pages_per_provider: Annotated[
-        int, typer.Option("--pages-per-provider", min=1, max=100000)
-    ] = 20,
-    page_size: Annotated[int, typer.Option("--page-size", min=1, max=1000)] = 100,
-    database_url: Annotated[str | None, typer.Option("--database")] = None,
-) -> None:
-    """Run resumable provider-native paging across multiple direct sources."""
-    settings, _engine, factory = _factory(database_url)
-    config = _direct_provider_config(settings, providers)
-    audit = BufferedRequestObserver()
-    with session_scope(factory) as session:
-        with ExitStack() as stack:
-            paged: dict[str, PagedResearchProvider] = {}
-            for provider_name in config.providers:
-                manager = create_direct_provider(
-                    config.model_copy(update={"providers": [provider_name]}),
-                    observer=audit,
-                )
-                provider = stack.enter_context(manager)
-                if not hasattr(provider, "search_page"):
-                    raise typer.BadParameter(
-                        f"provider {provider_name!r} does not support paging"
-                    )
-                paged[provider_name] = cast(PagedResearchProvider, provider)
-            result = DirectHarvestCoordinator(session).execute(
-                SearchQuery(text=query, limit=page_size, providers=config.providers),
-                paged,
-                policy=MultiProviderHarvestPolicy(
-                    max_pages_per_provider=pages_per_provider
-                ),
-            )
-        audit.drain(
-            session,
-            object_store=LocalContentAddressedStore(settings.object_store_path),
-            persist_response_bodies=True,
-        )
-    console.print_json(result.model_dump_json(indent=2))
 
 
 @retrieval_app.command("gateway-harvest")
@@ -1101,7 +1033,7 @@ def retrieval_gateway_harvest(
     payload = json.loads(payload_path.read_text(encoding="utf-8"))
     if not isinstance(payload, dict):
         raise typer.BadParameter("gateway harvest payload must be a JSON object")
-    gateway = GatewayProvider(resolved, timeout_seconds=settings.gateway_timeout_seconds)
+    gateway = _gateway_provider(settings, resolved)
     try:
         with session_scope(factory) as session:
             result = GatewayCursorHarvestEngine(session, gateway).execute(
@@ -1145,35 +1077,25 @@ def campaign_create(
 @campaign_app.command("run")
 def campaign_run(
     campaign_id: str,
-    mode: Annotated[ProviderMode, typer.Option("--mode")] = ProviderMode.DIRECT,
-    providers: Annotated[str | None, typer.Option("--providers")] = None,
     gateway_url: Annotated[str | None, typer.Option("--gateway")] = None,
     database_url: Annotated[str | None, typer.Option("--database")] = None,
 ) -> None:
+    """Run a campaign through the canonical gateway/feed402 boundary."""
     settings, _engine, factory = _factory(database_url)
+    resolved = gateway_url or settings.gateway_url
+    if resolved is None:
+        raise typer.BadParameter("set --gateway or DISCOVERY_GATEWAY_URL")
     audit = BufferedRequestObserver()
     with session_scope(factory) as session:
-        if mode == ProviderMode.DIRECT:
-            manager = create_direct_provider(
-                _direct_provider_config(settings, providers),
-                observer=audit,
-            )
-        else:
-            resolved = gateway_url or settings.gateway_url
-            if resolved is None:
-                raise typer.BadParameter("set --gateway or DISCOVERY_GATEWAY_URL")
-            manager = create_gateway_provider(
-                resolved,
-                timeout_seconds=settings.gateway_timeout_seconds,
-                observer=audit,
-            )
+        manager = create_gateway_provider(
+            resolved,
+            timeout_seconds=settings.gateway_timeout_seconds,
+            observer=audit,
+            headers=settings.gateway_headers,
+            strict_feed402=settings.gateway_strict_feed402,
+        )
         with manager as provider:
-            enrichment = provider if isinstance(provider, GatewayProvider) else None
-            result = CampaignService(session).run(
-                campaign_id,
-                provider,
-                gateway_enrichment=enrichment,
-            )
+            result = CampaignService(session).run(campaign_id, provider)
         audit.drain(
             session,
             object_store=LocalContentAddressedStore(settings.object_store_path),

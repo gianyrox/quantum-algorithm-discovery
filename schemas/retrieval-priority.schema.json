@@ -1,0 +1,63 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "scope_id": {
+      "title": "Scope Id",
+      "type": "string"
+    },
+    "uncertainty": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Uncertainty",
+      "type": "number"
+    },
+    "novelty": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Novelty",
+      "type": "number"
+    },
+    "coverage_gap": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Coverage Gap",
+      "type": "number"
+    },
+    "historical_gap": {
+      "default": 0.0,
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Historical Gap",
+      "type": "number"
+    },
+    "provider_disagreement": {
+      "default": 0.0,
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Provider Disagreement",
+      "type": "number"
+    },
+    "score": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Score",
+      "type": "number"
+    },
+    "reasons": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Reasons",
+      "type": "array"
+    }
+  },
+  "required": [
+    "scope_id",
+    "uncertainty",
+    "novelty",
+    "coverage_gap",
+    "score"
+  ],
+  "title": "RetrievalPriority",
+  "type": "object"
+}
