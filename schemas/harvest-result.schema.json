@@ -1,0 +1,113 @@
+{
+  "$defs": {
+    "SaturationObservation": {
+      "additionalProperties": false,
+      "properties": {
+        "iteration": {
+          "minimum": 1,
+          "title": "Iteration",
+          "type": "integer"
+        },
+        "retrieved": {
+          "minimum": 0,
+          "title": "Retrieved",
+          "type": "integer"
+        },
+        "new_unique_works": {
+          "minimum": 0,
+          "title": "New Unique Works",
+          "type": "integer"
+        },
+        "cumulative_unique_works": {
+          "minimum": 0,
+          "title": "Cumulative Unique Works",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "iteration",
+        "retrieved",
+        "new_unique_works",
+        "cumulative_unique_works"
+      ],
+      "title": "SaturationObservation",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "batch_id": {
+      "title": "Batch Id",
+      "type": "string"
+    },
+    "started_at": {
+      "format": "date-time",
+      "title": "Started At",
+      "type": "string"
+    },
+    "completed_at": {
+      "format": "date-time",
+      "title": "Completed At",
+      "type": "string"
+    },
+    "planned_query_count": {
+      "title": "Planned Query Count",
+      "type": "integer"
+    },
+    "query_count": {
+      "title": "Query Count",
+      "type": "integer"
+    },
+    "hit_count": {
+      "title": "Hit Count",
+      "type": "integer"
+    },
+    "unique_work_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Unique Work Ids",
+      "type": "array"
+    },
+    "citation_edges_seen": {
+      "default": 0,
+      "title": "Citation Edges Seen",
+      "type": "integer"
+    },
+    "assets_seen": {
+      "default": 0,
+      "title": "Assets Seen",
+      "type": "integer"
+    },
+    "stopped_for_saturation": {
+      "default": false,
+      "title": "Stopped For Saturation",
+      "type": "boolean"
+    },
+    "saturation_observations": {
+      "items": {
+        "$ref": "#/$defs/SaturationObservation"
+      },
+      "title": "Saturation Observations",
+      "type": "array"
+    },
+    "errors": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Errors",
+      "type": "array"
+    }
+  },
+  "required": [
+    "batch_id",
+    "started_at",
+    "completed_at",
+    "planned_query_count",
+    "query_count",
+    "hit_count",
+    "unique_work_ids"
+  ],
+  "title": "HarvestResult",
+  "type": "object"
+}

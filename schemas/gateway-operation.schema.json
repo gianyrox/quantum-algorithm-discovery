@@ -1,0 +1,77 @@
+{
+  "additionalProperties": true,
+  "properties": {
+    "operation_id": {
+      "title": "Operation Id",
+      "type": "string"
+    },
+    "capability": {
+      "title": "Capability",
+      "type": "string"
+    },
+    "path": {
+      "title": "Path",
+      "type": "string"
+    },
+    "method": {
+      "default": "POST",
+      "title": "Method",
+      "type": "string"
+    },
+    "tier": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Tier"
+    },
+    "pagination_model": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Pagination Model"
+    },
+    "identifier_schemes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Identifier Schemes",
+      "type": "array"
+    },
+    "content_types": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Content Types",
+      "type": "array"
+    },
+    "input_schema": {
+      "additionalProperties": true,
+      "title": "Input Schema",
+      "type": "object"
+    },
+    "output_schema": {
+      "additionalProperties": true,
+      "title": "Output Schema",
+      "type": "object"
+    }
+  },
+  "required": [
+    "operation_id",
+    "capability",
+    "path"
+  ],
+  "title": "GatewayOperation",
+  "type": "object"
+}

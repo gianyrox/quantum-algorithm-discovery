@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "scientific-discovery"
-version = "0.2.0"
-description = "Cross-disciplinary scientific problem structure discovery infrastructure."
+version = "0.3.0"
+description = "Cross-disciplinary scientific problem structure and quantum opportunity discovery engine."
 requires-python = ">=3.12"
 dependencies = [
     "alembic>=1.13,<2",
@@ -23,6 +23,7 @@ dev = [
     "pytest-cov>=5,<8",
     "ruff>=0.6,<1",
 ]
+postgres = ["psycopg[binary]>=3.2,<4"]
 
 [project.scripts]
 discovery = "discovery.cli:app"

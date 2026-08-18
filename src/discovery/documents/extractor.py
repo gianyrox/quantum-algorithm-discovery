@@ -7,6 +7,7 @@ from discovery.documents.schema import ParsedDocument
 
 class DocumentParser(Protocol):
     name: str
+    version: str
     supported_formats: set[str]
 
     def parse(self, *, work_id: str, asset_id: str, content: bytes) -> ParsedDocument: ...

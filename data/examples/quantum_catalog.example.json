@@ -1,0 +1,9 @@
+{
+  "version": "0.0-example",
+  "description": "Empty example catalog. Populate from a separately researched and provenance-backed quantum target corpus.",
+  "primitives": [],
+  "algorithms": [],
+  "provenance_notes": [
+    "Software examples do not assert scientific coverage of the quantum algorithm literature."
+  ]
+}

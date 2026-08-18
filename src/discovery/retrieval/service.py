@@ -18,6 +18,15 @@ class RetrievalService:
         self.corpus = CorpusService(session)
 
     def execute(self, query: SearchQuery, *, plan: QueryPlan | None = None) -> SearchResponse:
+        _, response = self.execute_with_run(query, plan=plan)
+        return response
+
+    def execute_with_run(
+        self,
+        query: SearchQuery,
+        *,
+        plan: QueryPlan | None = None,
+    ) -> tuple[str, SearchResponse]:
         run_id = str(uuid4())
         run = RetrievalRunRow(
             id=run_id,
@@ -34,7 +43,16 @@ class RetrievalService:
             for hit in response.hits:
                 work_id: str | None = None
                 if hit.work is not None:
-                    work_id = self.corpus.works.upsert(hit.work).id
+                    work = hit.work
+                    if hit.provenance is not None:
+                        work = work.model_copy(
+                            update={"provenance": [*work.provenance, hit.provenance]}
+                        )
+                    row = self.corpus.works.upsert(work)
+                    work_id = row.id
+                    if work.id != work_id:
+                        work = work.model_copy(update={"id": work_id})
+                    hit.work = work
                 self.session.add(
                     RetrievalHitRow(
                         retrieval_run_id=run_id,
@@ -55,7 +73,7 @@ class RetrievalService:
                 report.model_dump(mode="json") for report in response.provider_reports
             ]
             self.session.flush()
-            return response
+            return run_id, response
         except Exception:
             run.status = "failed"
             run.completed_at = datetime.now(UTC)

@@ -16,8 +16,18 @@ class FixtureProvider:
 
     name = "fixture"
 
-    def __init__(self, hits: list[RetrievalHit] | None = None) -> None:
+    def __init__(
+        self,
+        hits: list[RetrievalHit] | None = None,
+        *,
+        references: dict[str, CitationResponse] | None = None,
+        cited_by: dict[str, CitationResponse] | None = None,
+        assets: dict[str, AssetResponse] | None = None,
+    ) -> None:
         self._hits = hits or []
+        self._references = references or {}
+        self._cited_by = cited_by or {}
+        self._assets = assets or {}
 
     def search(self, query: SearchQuery) -> SearchResponse:
         return SearchResponse(query=query, hits=self._hits[: query.limit])
@@ -29,10 +39,16 @@ class FixtureProvider:
         return FetchResponse(provider=self.name, work=None)
 
     def references(self, identifier: str) -> CitationResponse:
-        raise CapabilityUnavailable("fixture provider has no citation fixture")
+        if identifier not in self._references:
+            raise CapabilityUnavailable("fixture provider has no references fixture for identifier")
+        return self._references[identifier]
 
     def cited_by(self, identifier: str) -> CitationResponse:
-        raise CapabilityUnavailable("fixture provider has no citation fixture")
+        if identifier not in self._cited_by:
+            raise CapabilityUnavailable("fixture provider has no cited-by fixture for identifier")
+        return self._cited_by[identifier]
 
     def assets(self, identifier: str) -> AssetResponse:
-        raise CapabilityUnavailable("fixture provider has no asset fixture")
+        if identifier not in self._assets:
+            raise CapabilityUnavailable("fixture provider has no asset fixture for identifier")
+        return self._assets[identifier]

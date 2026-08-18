@@ -1,0 +1,49 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "precision_at_k": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Precision At K",
+      "type": "number"
+    },
+    "recall_at_k": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Recall At K",
+      "type": "number"
+    },
+    "reciprocal_rank": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Reciprocal Rank",
+      "type": "number"
+    },
+    "ndcg_at_k": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Ndcg At K",
+      "type": "number"
+    },
+    "retrieved": {
+      "minimum": 0,
+      "title": "Retrieved",
+      "type": "integer"
+    },
+    "relevant_total": {
+      "minimum": 0,
+      "title": "Relevant Total",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "precision_at_k",
+    "recall_at_k",
+    "reciprocal_rank",
+    "ndcg_at_k",
+    "retrieved",
+    "relevant_total"
+  ],
+  "title": "RetrievalMetrics",
+  "type": "object"
+}

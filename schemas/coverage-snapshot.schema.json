@@ -1,0 +1,72 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "scope": {
+      "title": "Scope",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "metrics": {
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "string"
+          }
+        ]
+      },
+      "title": "Metrics",
+      "type": "object"
+    },
+    "task_families": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Task Families",
+      "type": "object"
+    },
+    "retrieval_providers": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Retrieval Providers",
+      "type": "object"
+    },
+    "publication_years": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Publication Years",
+      "type": "object"
+    },
+    "gaps": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Gaps",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "scope",
+    "created_at",
+    "metrics"
+  ],
+  "title": "CoverageSnapshot",
+  "type": "object"
+}

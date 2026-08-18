@@ -462,3 +462,157 @@ class ExperimentRunRow(Base):
     metrics_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
     artifacts_json: Mapped[list[dict[str, Any]]] = mapped_column(JSON, default=list, nullable=False)
     notes: Mapped[str | None] = mapped_column(Text)
+
+
+class ResearchObjectRelationRow(Base):
+    __tablename__ = "research_object_relation"
+    __table_args__ = (
+        UniqueConstraint(
+            "subject_type",
+            "subject_id",
+            "relation_type",
+            "object_type",
+            "object_id",
+            "provider",
+            name="uq_research_object_relation",
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    subject_type: Mapped[str] = mapped_column(String(100), index=True)
+    subject_id: Mapped[str] = mapped_column(String(200), index=True)
+    relation_type: Mapped[str] = mapped_column(String(180), index=True)
+    native_relation_type: Mapped[str | None] = mapped_column(String(300))
+    object_type: Mapped[str] = mapped_column(String(100), index=True)
+    object_id: Mapped[str] = mapped_column(String(200), index=True)
+    provider: Mapped[str] = mapped_column(String(120), index=True)
+    retrieved_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    payload_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+
+
+class RetrievalQueryRow(Base):
+    __tablename__ = "retrieval_query"
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    batch_id: Mapped[str | None] = mapped_column(String(160), index=True)
+    plan_id: Mapped[str | None] = mapped_column(String(160), index=True)
+    query_text: Mapped[str] = mapped_column(Text)
+    provider_scope_json: Mapped[list[str]] = mapped_column(JSON, default=list, nullable=False)
+    filters_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+    status: Mapped[str] = mapped_column(String(80), default="pending", index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class HarvestCheckpointRow(Base):
+    __tablename__ = "harvest_checkpoint"
+    __table_args__ = (UniqueConstraint("batch_id", "query_index", name="uq_harvest_checkpoint"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    batch_id: Mapped[str] = mapped_column(String(160), index=True)
+    query_index: Mapped[int] = mapped_column(Integer)
+    query_text: Mapped[str] = mapped_column(Text)
+    status: Mapped[str] = mapped_column(String(80), default="pending", index=True)
+    retrieval_run_id: Mapped[str | None] = mapped_column(String(160), index=True)
+    unique_work_count: Mapped[int] = mapped_column(Integer, default=0)
+    error: Mapped[str | None] = mapped_column(Text)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
+class DocumentParseRunRow(Base):
+    __tablename__ = "document_parse_run"
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    work_id: Mapped[str] = mapped_column(String(160), index=True)
+    asset_id: Mapped[str] = mapped_column(String(160), index=True)
+    parser: Mapped[str] = mapped_column(String(160), index=True)
+    parser_version: Mapped[str | None] = mapped_column(String(120))
+    status: Mapped[str] = mapped_column(String(80), index=True)
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    warnings_json: Mapped[list[str]] = mapped_column(JSON, default=list, nullable=False)
+
+
+class ProblemExtractionRunRow(Base):
+    __tablename__ = "problem_extraction_run"
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    work_id: Mapped[str] = mapped_column(String(160), index=True)
+    document_id: Mapped[str | None] = mapped_column(String(160), index=True)
+    extractor: Mapped[str] = mapped_column(String(200), index=True)
+    extractor_version: Mapped[str | None] = mapped_column(String(120))
+    status: Mapped[str] = mapped_column(String(80), index=True)
+    problem_count: Mapped[int] = mapped_column(Integer, default=0)
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    notes_json: Mapped[list[str]] = mapped_column(JSON, default=list, nullable=False)
+
+
+class ReviewEventRow(Base):
+    __tablename__ = "review_event"
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    object_type: Mapped[str] = mapped_column(String(100), index=True)
+    object_id: Mapped[str] = mapped_column(String(160), index=True)
+    reviewer_id: Mapped[str] = mapped_column(String(160), index=True)
+    decision: Mapped[str] = mapped_column(String(80), index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    notes: Mapped[str | None] = mapped_column(Text)
+    payload_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+
+
+class UnknownVocabularyCandidateRow(Base):
+    __tablename__ = "unknown_vocabulary_candidate"
+    __table_args__ = (
+        UniqueConstraint("normalized_term", "corpus_scope", name="uq_unknown_vocab_candidate"),
+    )
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    term: Mapped[str] = mapped_column(String(1000), index=True)
+    normalized_term: Mapped[str] = mapped_column(String(1000), index=True)
+    corpus_scope: Mapped[str] = mapped_column(String(200), default="default", index=True)
+    frequency: Mapped[int] = mapped_column(Integer, default=0)
+    document_frequency: Mapped[int] = mapped_column(Integer, default=0)
+    score: Mapped[float] = mapped_column(Float, default=0.0, index=True)
+    status: Mapped[str] = mapped_column(String(80), default="candidate", index=True)
+    evidence_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+
+
+class CoverageSnapshotRow(Base):
+    __tablename__ = "coverage_snapshot"
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    scope: Mapped[str] = mapped_column(String(200), index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    metrics_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    gaps_json: Mapped[list[dict[str, Any]]] = mapped_column(JSON, default=list, nullable=False)
+
+
+class QuantumScreeningRunRow(Base):
+    __tablename__ = "quantum_screening_run"
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    method: Mapped[str] = mapped_column(String(200), index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    parameters_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+
+
+class AlgorithmProposalRow(Base):
+    __tablename__ = "algorithm_proposal"
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    target_problem_family_id: Mapped[str] = mapped_column(String(160), index=True)
+    status: Mapped[str] = mapped_column(String(80), index=True)
+    title: Mapped[str] = mapped_column(String(1000))
+    payload_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
+class ProposalEvaluationRow(Base):
+    __tablename__ = "proposal_evaluation"
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    proposal_id: Mapped[str] = mapped_column(String(160), index=True)
+    evaluator: Mapped[str] = mapped_column(String(200), index=True)
+    payload_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)

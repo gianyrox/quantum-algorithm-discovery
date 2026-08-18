@@ -1,0 +1,85 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "problem_id": {
+      "title": "Problem Id",
+      "type": "string"
+    },
+    "task_family": {
+      "title": "Task Family",
+      "type": "string"
+    },
+    "mathematical_objects": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Mathematical Objects",
+      "type": "array"
+    },
+    "operators": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Operators",
+      "type": "array"
+    },
+    "operations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Operations",
+      "type": "array"
+    },
+    "constraints": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Constraints",
+      "type": "array"
+    },
+    "structures": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Structures",
+      "type": "array"
+    },
+    "methods": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Methods",
+      "type": "array"
+    },
+    "access_model": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Access Model"
+    },
+    "stochasticity": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Stochasticity"
+    }
+  },
+  "required": [
+    "problem_id",
+    "task_family"
+  ],
+  "title": "ProblemSignature",
+  "type": "object"
+}

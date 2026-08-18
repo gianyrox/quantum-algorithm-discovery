@@ -1,0 +1,72 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "title": "Version",
+      "type": "string"
+    },
+    "database_healthy": {
+      "title": "Database Healthy",
+      "type": "boolean"
+    },
+    "works": {
+      "minimum": 0,
+      "title": "Works",
+      "type": "integer"
+    },
+    "problems": {
+      "minimum": 0,
+      "title": "Problems",
+      "type": "integer"
+    },
+    "concepts": {
+      "minimum": 0,
+      "title": "Concepts",
+      "type": "integer"
+    },
+    "retrieval_runs": {
+      "minimum": 0,
+      "title": "Retrieval Runs",
+      "type": "integer"
+    },
+    "gateway_configured": {
+      "default": false,
+      "title": "Gateway Configured",
+      "type": "boolean"
+    },
+    "gateway_healthy": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Gateway Healthy"
+    },
+    "gateway_error": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Gateway Error"
+    }
+  },
+  "required": [
+    "version",
+    "database_healthy",
+    "works",
+    "problems",
+    "concepts",
+    "retrieval_runs"
+  ],
+  "title": "DoctorReport",
+  "type": "object"
+}

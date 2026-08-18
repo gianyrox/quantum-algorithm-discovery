@@ -1,0 +1,730 @@
+{
+  "$defs": {
+    "Asset": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "representation": {
+          "title": "Representation",
+          "type": "string"
+        },
+        "provider": {
+          "title": "Provider",
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        },
+        "mime_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mime Type"
+        },
+        "availability": {
+          "default": "unknown",
+          "title": "Availability",
+          "type": "string"
+        },
+        "rights": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RightsStatement"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "checksum": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Checksum"
+        }
+      },
+      "required": [
+        "id",
+        "representation",
+        "provider"
+      ],
+      "title": "Asset",
+      "type": "object"
+    },
+    "DocumentSection": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "section_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Section Type"
+        },
+        "order": {
+          "minimum": 0,
+          "title": "Order",
+          "type": "integer"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "parent_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Id"
+        }
+      },
+      "required": [
+        "id",
+        "order",
+        "text"
+      ],
+      "title": "DocumentSection",
+      "type": "object"
+    },
+    "EquationOccurrence": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "section_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Section Id"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label"
+        },
+        "latex": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Latex"
+        },
+        "mathml": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mathml"
+        },
+        "surrounding_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Surrounding Text"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "EquationOccurrence",
+      "type": "object"
+    },
+    "FigureOccurrence": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "section_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Section Id"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label"
+        },
+        "caption": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Caption"
+        },
+        "asset_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Asset Id"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "FigureOccurrence",
+      "type": "object"
+    },
+    "ParsedDocument": {
+      "additionalProperties": false,
+      "properties": {
+        "work_id": {
+          "title": "Work Id",
+          "type": "string"
+        },
+        "asset_id": {
+          "title": "Asset Id",
+          "type": "string"
+        },
+        "source_format": {
+          "title": "Source Format",
+          "type": "string"
+        },
+        "parser": {
+          "title": "Parser",
+          "type": "string"
+        },
+        "parser_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parser Version"
+        },
+        "sections": {
+          "items": {
+            "$ref": "#/$defs/DocumentSection"
+          },
+          "title": "Sections",
+          "type": "array"
+        },
+        "equations": {
+          "items": {
+            "$ref": "#/$defs/EquationOccurrence"
+          },
+          "title": "Equations",
+          "type": "array"
+        },
+        "figures": {
+          "items": {
+            "$ref": "#/$defs/FigureOccurrence"
+          },
+          "title": "Figures",
+          "type": "array"
+        },
+        "tables": {
+          "items": {
+            "$ref": "#/$defs/TableOccurrence"
+          },
+          "title": "Tables",
+          "type": "array"
+        },
+        "provenance": {
+          "items": {
+            "$ref": "#/$defs/ProvenanceRecord"
+          },
+          "title": "Provenance",
+          "type": "array"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "work_id",
+        "asset_id",
+        "source_format",
+        "parser"
+      ],
+      "title": "ParsedDocument",
+      "type": "object"
+    },
+    "ProvenanceRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "provider": {
+          "title": "Provider",
+          "type": "string"
+        },
+        "source_identifier": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Identifier"
+        },
+        "retrieved_at": {
+          "format": "date-time",
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "provider_release": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider Release"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Request Id"
+        },
+        "query_fingerprint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Query Fingerprint"
+        },
+        "provider_request_fingerprint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider Request Fingerprint"
+        },
+        "response_sha256": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Response Sha256"
+        },
+        "software": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SoftwareIdentity"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "raw_record_sha256": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Raw Record Sha256"
+        }
+      },
+      "required": [
+        "provider"
+      ],
+      "title": "ProvenanceRecord",
+      "type": "object"
+    },
+    "RightsStatement": {
+      "additionalProperties": false,
+      "description": "Rights as observed, never inferred from access alone.",
+      "properties": {
+        "metadata_license": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata License"
+        },
+        "content_license": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content License"
+        },
+        "redistribution": {
+          "default": "unknown",
+          "title": "Redistribution",
+          "type": "string"
+        },
+        "tdm": {
+          "default": "unknown",
+          "title": "Tdm",
+          "type": "string"
+        },
+        "model_training": {
+          "default": "unknown",
+          "title": "Model Training",
+          "type": "string"
+        },
+        "retention": {
+          "default": "unknown",
+          "title": "Retention",
+          "type": "string"
+        },
+        "terms_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Terms Url"
+        },
+        "retrieved_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Retrieved At"
+        }
+      },
+      "title": "RightsStatement",
+      "type": "object"
+    },
+    "SoftwareIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "software": {
+          "title": "Software",
+          "type": "string"
+        },
+        "software_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Software Version"
+        },
+        "git_commit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Git Commit"
+        }
+      },
+      "required": [
+        "software"
+      ],
+      "title": "SoftwareIdentity",
+      "type": "object"
+    },
+    "StoredObject": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "title": "Key",
+          "type": "string"
+        },
+        "sha256": {
+          "title": "Sha256",
+          "type": "string"
+        },
+        "size": {
+          "minimum": 0,
+          "title": "Size",
+          "type": "integer"
+        },
+        "path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Path"
+        },
+        "media_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Media Type"
+        }
+      },
+      "required": [
+        "key",
+        "sha256",
+        "size"
+      ],
+      "title": "StoredObject",
+      "type": "object"
+    },
+    "TableOccurrence": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "section_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Section Id"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label"
+        },
+        "caption": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Caption"
+        },
+        "structured_data": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "title": "Structured Data",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "TableOccurrence",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "work_id": {
+      "title": "Work Id",
+      "type": "string"
+    },
+    "asset": {
+      "$ref": "#/$defs/Asset"
+    },
+    "stored_object": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/StoredObject"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "document": {
+      "$ref": "#/$defs/ParsedDocument"
+    }
+  },
+  "required": [
+    "work_id",
+    "asset",
+    "document"
+  ],
+  "title": "DocumentIngestionResult",
+  "type": "object"
+}

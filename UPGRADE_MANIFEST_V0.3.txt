@@ -1,0 +1,59 @@
+scientific-discovery v0.3 comprehensive operational research engine
+====================================================================
+
+Purpose
+-------
+Build as much of the downstream scientific-discovery engine as is useful
+before large-scale corpus execution, while preserving the research method:
+field-native scientific retrieval first, computational problem structure
+second, cross-domain structural discovery third, quantum screening only after.
+
+Major software delivered
+------------------------
+- feed402/x402-research-gateway client boundary and manifest discovery
+- bounded ontology-driven query planning and replayable query batches
+- query/run persistence, resumable harvest checkpoints, optional audited saturation stopping
+- conservative canonical work persistence, identifiers, authorship, assets, provenance
+- citation and provider-native relation persistence
+- v0.1 seed ontology ingestion plus native OBO, SKOS RDF/XML, and normalized JSONL ingestion
+- release-aware native vocabulary provenance without semantic strengthening
+- unknown-vocabulary mining from observed corpus language
+- rights-aware asset acquisition and content-addressed local object storage
+- plain text, HTML, JATS, TEI, and LaTeX document parsers
+- document parse-run audit records
+- equation/math feature extraction and multi-view math persistence
+- transparent low-confidence ProblemInstance extraction baseline
+- problem extraction-run audit records
+- normalized problem evidence, mathematical object, and method relations
+- deterministic local embedding baseline and exact vector search
+- hybrid structural similarity, graph statistics, co-citation, bibliographic coupling
+- cross-domain candidate generation and hypothesis persistence
+- candidate ProblemFamily construction and persistence support
+- versioned quantum catalog, unresolved structural screening, advantage checklist
+- AI algorithm-proposal/evaluation interfaces and persistence
+- retrieval, agreement, and representation-completeness evaluation
+- benchmark workflow, review events, experiments, coverage snapshots, doctor command
+- Alembic revision 0002 and expanded JSON schema registry
+
+Explicit boundaries
+-------------------
+- No quantum relevance is used to prune the general scientific corpus.
+- Automatic problem extraction is a baseline, not scientific ground truth.
+- Structural similarity is a candidate generator, not equivalence.
+- Quantum matches remain unresolved without classical/access/dequantization/end-to-end review.
+- Asset discovery is not permission; fetching requires explicit machine-readable rights.
+- The package does not fabricate an authoritative quantum-algorithm catalog.
+- Source-specific provider transport stays primarily in x402-research-gateway.
+
+Validation performed in build environment
+-----------------------------------------
+- Python compileall: passed
+- pytest: 51 passed
+- v0.3 end-to-end smoke script: passed
+- Alembic upgrade through revision 0002: passed
+- ontology v0.1 smoke import: 2,215 disciplines / 2,706 concepts / 7,149 terms
+- line-length and unused-import static checks: clean
+
+Ruff and mypy are intentionally re-run by scripts/post_upgrade_v03.sh in the
+user's development environment because those binaries are not installed in
+the build sandbox.

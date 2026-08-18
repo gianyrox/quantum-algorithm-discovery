@@ -1,0 +1,32 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "work_id": {
+      "title": "Work Id",
+      "type": "string"
+    },
+    "document_id": {
+      "title": "Document Id",
+      "type": "string"
+    },
+    "equation_count": {
+      "minimum": 0,
+      "title": "Equation Count",
+      "type": "integer"
+    },
+    "problem_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Problem Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "work_id",
+    "document_id",
+    "equation_count"
+  ],
+  "title": "DocumentProcessingResult",
+  "type": "object"
+}

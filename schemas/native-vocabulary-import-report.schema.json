@@ -1,0 +1,34 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "source_id": {
+      "title": "Source Id",
+      "type": "string"
+    },
+    "release": {
+      "title": "Release",
+      "type": "string"
+    },
+    "concepts_added": {
+      "default": 0,
+      "title": "Concepts Added",
+      "type": "integer"
+    },
+    "terms_added": {
+      "default": 0,
+      "title": "Terms Added",
+      "type": "integer"
+    },
+    "relations_added": {
+      "default": 0,
+      "title": "Relations Added",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "source_id",
+    "release"
+  ],
+  "title": "NativeVocabularyImportReport",
+  "type": "object"
+}

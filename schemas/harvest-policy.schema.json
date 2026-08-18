@@ -1,0 +1,80 @@
+{
+  "$defs": {
+    "SaturationPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "minimum_iterations": {
+          "default": 3,
+          "minimum": 1,
+          "title": "Minimum Iterations",
+          "type": "integer"
+        },
+        "window": {
+          "default": 3,
+          "minimum": 1,
+          "title": "Window",
+          "type": "integer"
+        },
+        "novelty_threshold": {
+          "default": 0.03,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Novelty Threshold",
+          "type": "number"
+        }
+      },
+      "title": "SaturationPolicy",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "expand_references": {
+      "default": false,
+      "title": "Expand References",
+      "type": "boolean"
+    },
+    "expand_cited_by": {
+      "default": false,
+      "title": "Expand Cited By",
+      "type": "boolean"
+    },
+    "discover_assets": {
+      "default": false,
+      "title": "Discover Assets",
+      "type": "boolean"
+    },
+    "citation_seed_limit": {
+      "default": 25,
+      "maximum": 1000,
+      "minimum": 0,
+      "title": "Citation Seed Limit",
+      "type": "integer"
+    },
+    "citation_edge_limit": {
+      "default": 250,
+      "maximum": 10000,
+      "minimum": 0,
+      "title": "Citation Edge Limit",
+      "type": "integer"
+    },
+    "saturation": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SaturationPolicy"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "stop_on_error": {
+      "default": false,
+      "title": "Stop On Error",
+      "type": "boolean"
+    }
+  },
+  "title": "HarvestPolicy",
+  "type": "object"
+}

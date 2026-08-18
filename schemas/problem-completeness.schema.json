@@ -1,0 +1,40 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "problem_id": {
+      "title": "Problem Id",
+      "type": "string"
+    },
+    "filled_fields": {
+      "minimum": 0,
+      "title": "Filled Fields",
+      "type": "integer"
+    },
+    "expected_fields": {
+      "minimum": 1,
+      "title": "Expected Fields",
+      "type": "integer"
+    },
+    "score": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Score",
+      "type": "number"
+    },
+    "missing_high_value_fields": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing High Value Fields",
+      "type": "array"
+    }
+  },
+  "required": [
+    "problem_id",
+    "filled_fields",
+    "expected_fields",
+    "score"
+  ],
+  "title": "ProblemCompleteness",
+  "type": "object"
+}

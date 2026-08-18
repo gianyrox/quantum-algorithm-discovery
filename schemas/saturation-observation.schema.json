@@ -1,0 +1,33 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "iteration": {
+      "minimum": 1,
+      "title": "Iteration",
+      "type": "integer"
+    },
+    "retrieved": {
+      "minimum": 0,
+      "title": "Retrieved",
+      "type": "integer"
+    },
+    "new_unique_works": {
+      "minimum": 0,
+      "title": "New Unique Works",
+      "type": "integer"
+    },
+    "cumulative_unique_works": {
+      "minimum": 0,
+      "title": "Cumulative Unique Works",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "iteration",
+    "retrieved",
+    "new_unique_works",
+    "cumulative_unique_works"
+  ],
+  "title": "SaturationObservation",
+  "type": "object"
+}

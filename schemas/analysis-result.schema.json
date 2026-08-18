@@ -1,0 +1,227 @@
+{
+  "$defs": {
+    "CrossDomainCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "problem_a_id": {
+          "title": "Problem A Id",
+          "type": "string"
+        },
+        "problem_b_id": {
+          "title": "Problem B Id",
+          "type": "string"
+        },
+        "field_a": {
+          "title": "Field A",
+          "type": "string"
+        },
+        "field_b": {
+          "title": "Field B",
+          "type": "string"
+        },
+        "similarity": {
+          "$ref": "#/$defs/SimilarityEvidence"
+        },
+        "shared_structures": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Shared Structures",
+          "type": "array"
+        },
+        "important_differences": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Important Differences",
+          "type": "array"
+        },
+        "known_cross_field_connection": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Known Cross Field Connection"
+        },
+        "historical_connection": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Historical Connection"
+        },
+        "possible_independent_rediscovery": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Possible Independent Rediscovery"
+        },
+        "candidate_score": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Candidate Score",
+          "type": "number"
+        },
+        "review_status": {
+          "default": "unreviewed",
+          "title": "Review Status",
+          "type": "string"
+        },
+        "evidence": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "problem_a_id",
+        "problem_b_id",
+        "field_a",
+        "field_b",
+        "similarity",
+        "candidate_score"
+      ],
+      "title": "CrossDomainCandidate",
+      "type": "object"
+    },
+    "SimilarityEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "lexical": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Lexical",
+          "type": "number"
+        },
+        "semantic": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Semantic",
+          "type": "number"
+        },
+        "task": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Task",
+          "type": "number"
+        },
+        "mathematical": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Mathematical",
+          "type": "number"
+        },
+        "operator": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Operator",
+          "type": "number"
+        },
+        "constraint": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Constraint",
+          "type": "number"
+        },
+        "topology": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Topology",
+          "type": "number"
+        },
+        "stochastic": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Stochastic",
+          "type": "number"
+        },
+        "complexity": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Complexity",
+          "type": "number"
+        },
+        "method": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Method",
+          "type": "number"
+        },
+        "citation_connectivity": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Citation Connectivity",
+          "type": "number"
+        },
+        "notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Notes",
+          "type": "array"
+        }
+      },
+      "title": "SimilarityEvidence",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "similarity_run_id": {
+      "title": "Similarity Run Id",
+      "type": "string"
+    },
+    "pair_count": {
+      "minimum": 0,
+      "title": "Pair Count",
+      "type": "integer"
+    },
+    "candidates": {
+      "items": {
+        "$ref": "#/$defs/CrossDomainCandidate"
+      },
+      "title": "Candidates",
+      "type": "array"
+    }
+  },
+  "required": [
+    "similarity_run_id",
+    "pair_count"
+  ],
+  "title": "AnalysisResult",
+  "type": "object"
+}

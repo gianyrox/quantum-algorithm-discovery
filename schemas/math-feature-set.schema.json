@@ -1,0 +1,60 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "alpha_normalized": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Alpha Normalized"
+    },
+    "commands": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Commands",
+      "type": "array"
+    },
+    "symbols": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Symbols",
+      "type": "array"
+    },
+    "operators": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Operators",
+      "type": "array"
+    },
+    "has_equality": {
+      "default": false,
+      "title": "Has Equality",
+      "type": "boolean"
+    },
+    "has_inequality": {
+      "default": false,
+      "title": "Has Inequality",
+      "type": "boolean"
+    },
+    "has_probability": {
+      "default": false,
+      "title": "Has Probability",
+      "type": "boolean"
+    },
+    "has_matrix_like_structure": {
+      "default": false,
+      "title": "Has Matrix Like Structure",
+      "type": "boolean"
+    }
+  },
+  "title": "MathFeatureSet",
+  "type": "object"
+}

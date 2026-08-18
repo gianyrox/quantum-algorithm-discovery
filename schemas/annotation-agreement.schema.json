@@ -1,0 +1,30 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "task_family_agreement": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Task Family Agreement",
+      "type": "number"
+    },
+    "operation_jaccard": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Operation Jaccard",
+      "type": "number"
+    },
+    "structure_jaccard": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Structure Jaccard",
+      "type": "number"
+    }
+  },
+  "required": [
+    "task_family_agreement",
+    "operation_jaccard",
+    "structure_jaccard"
+  ],
+  "title": "AnnotationAgreement",
+  "type": "object"
+}

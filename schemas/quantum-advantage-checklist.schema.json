@@ -1,0 +1,63 @@
+{
+  "$defs": {
+    "CheckStatus": {
+      "enum": [
+        "pass",
+        "fail",
+        "unknown",
+        "not_applicable"
+      ],
+      "title": "CheckStatus",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Explicit separation between structural fit and useful quantum advantage.",
+  "properties": {
+    "input_representation": {
+      "$ref": "#/$defs/CheckStatus",
+      "default": "unknown"
+    },
+    "access_model": {
+      "$ref": "#/$defs/CheckStatus",
+      "default": "unknown"
+    },
+    "state_preparation": {
+      "$ref": "#/$defs/CheckStatus",
+      "default": "unknown"
+    },
+    "data_loading": {
+      "$ref": "#/$defs/CheckStatus",
+      "default": "unknown"
+    },
+    "output_readout": {
+      "$ref": "#/$defs/CheckStatus",
+      "default": "unknown"
+    },
+    "classical_baseline": {
+      "$ref": "#/$defs/CheckStatus",
+      "default": "unknown"
+    },
+    "dequantization": {
+      "$ref": "#/$defs/CheckStatus",
+      "default": "unknown"
+    },
+    "end_to_end_complexity": {
+      "$ref": "#/$defs/CheckStatus",
+      "default": "unknown"
+    },
+    "noise_and_hardware": {
+      "$ref": "#/$defs/CheckStatus",
+      "default": "unknown"
+    },
+    "evidence": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence",
+      "type": "array"
+    }
+  },
+  "title": "QuantumAdvantageChecklist",
+  "type": "object"
+}

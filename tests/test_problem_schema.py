@@ -34,3 +34,40 @@ def test_unknown_fields_are_rejected() -> None:
 
     with pytest.raises(ValidationError):
         ProblemInstance.model_validate(payload)
+
+
+def test_problem_repository_normalizes_evidence_math_and_methods(tmp_path) -> None:
+    from discovery.core.evidence import Evidence
+    from discovery.problems.enums import EvidenceKind, ExtractionMethod, TaskFamily
+    from discovery.problems.schema import MathematicalObject, ScientificMethod
+    from discovery.storage.database import (
+        create_database_engine,
+        init_db,
+        make_session_factory,
+        session_scope,
+    )
+    from discovery.storage.models import ProblemEvidenceRow, ProblemMathRow, ProblemMethodRow
+    from discovery.storage.repositories import ProblemRepository
+
+    engine = create_database_engine(f"sqlite:///{tmp_path / 'problem-normalized.db'}")
+    init_db(engine)
+    factory = make_session_factory(engine)
+    problem = ProblemInstance(
+        id="normalized-problem",
+        source_work_id="work-1",
+        natural_language_statement="Solve a sparse linear system.",
+        task_family=TaskFamily.LINEAR_SYSTEM,
+        mathematical_objects=[MathematicalObject(name="A", object_type="matrix")],
+        known_methods=[ScientificMethod(name="CG", method_type="iterative")],
+        evidence=[Evidence(kind=EvidenceKind.OTHER, source_identifier="source")],
+        extraction_method=ExtractionMethod.HUMAN,
+        extractor="test",
+        confidence=1.0,
+    )
+    with session_scope(factory) as session:
+        repository = ProblemRepository(session)
+        repository.upsert(problem)
+        repository.upsert(problem)
+        assert session.query(ProblemEvidenceRow).count() == 1
+        assert session.query(ProblemMathRow).count() == 1
+        assert session.query(ProblemMethodRow).count() == 1

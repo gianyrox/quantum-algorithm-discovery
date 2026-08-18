@@ -1,0 +1,84 @@
+{
+  "additionalProperties": false,
+  "description": "Loss-minimizing normalized view of one source vocabulary concept.",
+  "properties": {
+    "native_id": {
+      "title": "Native Id",
+      "type": "string"
+    },
+    "preferred_label": {
+      "title": "Preferred Label",
+      "type": "string"
+    },
+    "alternate_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Alternate Labels",
+      "type": "array"
+    },
+    "historical_labels": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Historical Labels",
+      "type": "array"
+    },
+    "broader_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Broader Ids",
+      "type": "array"
+    },
+    "narrower_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Narrower Ids",
+      "type": "array"
+    },
+    "related_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Related Ids",
+      "type": "array"
+    },
+    "definition": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Definition"
+    },
+    "deprecated": {
+      "default": false,
+      "title": "Deprecated",
+      "type": "boolean"
+    },
+    "replaced_by_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Replaced By Ids",
+      "type": "array"
+    },
+    "native_payload": {
+      "additionalProperties": true,
+      "title": "Native Payload",
+      "type": "object"
+    }
+  },
+  "required": [
+    "native_id",
+    "preferred_label"
+  ],
+  "title": "NativeVocabularyRecord",
+  "type": "object"
+}

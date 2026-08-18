@@ -1,0 +1,42 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "term": {
+      "title": "Term",
+      "type": "string"
+    },
+    "frequency": {
+      "minimum": 1,
+      "title": "Frequency",
+      "type": "integer"
+    },
+    "document_frequency": {
+      "minimum": 1,
+      "title": "Document Frequency",
+      "type": "integer"
+    },
+    "score": {
+      "minimum": 0,
+      "title": "Score",
+      "type": "number"
+    },
+    "corpus_scope": {
+      "default": "default",
+      "title": "Corpus Scope",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "term",
+    "frequency",
+    "document_frequency",
+    "score"
+  ],
+  "title": "UnknownVocabularyCandidate",
+  "type": "object"
+}
