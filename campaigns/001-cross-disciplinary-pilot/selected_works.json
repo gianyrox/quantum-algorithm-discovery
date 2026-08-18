@@ -1,0 +1,301 @@
+{
+  "campaign": "001-cross-disciplinary-pilot",
+  "experiment_id": "0d6e3df9-2e3c-423e-8a5f-b66cf7d763e1",
+  "selection_schema_version": 1,
+  "generated_at_utc": "2026-08-18T20:42:18.579572+00:00",
+  "source_snapshot": "campaigns/001-cross-disciplinary-pilot/corpus_snapshot.json",
+  "source_snapshot_sha256": "9e7a0f8c36b59c0f3c0731cbefaf4f692510eb1e82db52b015f4db346a573d13",
+  "source_work_count": 66,
+  "selection_count": 24,
+  "quantum_blind": true,
+  "works": [
+    {
+      "id": "76b6d85f-e140-5dc9-ad69-8b1d2af61784",
+      "title": "Seeing through the CO2 plume: joint inversion-segmentation of the Sleipner 4D Seismic Dataset",
+      "abstract": null,
+      "publication_year": 2023,
+      "work_type": null,
+      "primary_language": null,
+      "metadata": {
+        "gateway_provider": "arxiv-search"
+      },
+      "stratum": "seismic_inverse"
+    },
+    {
+      "id": "8bb94a4f-ad07-52bc-bdec-7f6a05fc399d",
+      "title": "Seismic full-waveform inversion of the crust-mantle structure beneath China and adjacent regions",
+      "abstract": null,
+      "publication_year": 2023,
+      "work_type": null,
+      "primary_language": null,
+      "metadata": {
+        "gateway_provider": "core-search"
+      },
+      "stratum": "seismic_inverse"
+    },
+    {
+      "id": "23d748d4-7082-5d52-bfb9-caf756f10773",
+      "title": "Integrated inversion of subsurface velocity structures using wave equation tomography and full waveform inversion",
+      "abstract": null,
+      "publication_year": 2012,
+      "work_type": null,
+      "primary_language": null,
+      "metadata": {
+        "gateway_provider": "crossref-search"
+      },
+      "stratum": "seismic_inverse"
+    },
+    {
+      "id": "3002f011-c92c-5da0-b75d-e67c5e680dc1",
+      "title": "Fluctuations and Correlations in Lattice Models for Predator-Prey Interaction",
+      "abstract": null,
+      "publication_year": 2005,
+      "work_type": null,
+      "primary_language": null,
+      "metadata": {
+        "gateway_provider": "arxiv-search"
+      },
+      "stratum": "ecology_dynamics"
+    },
+    {
+      "id": "6c9e6393-2c16-51a9-9414-6715927aafd1",
+      "title": "Evaluating the Fidelity of Data-Driven Predator-Prey Models: A Dynamical Systems Analysis",
+      "abstract": null,
+      "publication_year": 2024,
+      "work_type": null,
+      "primary_language": null,
+      "metadata": {
+        "gateway_provider": "crossref-search"
+      },
+      "stratum": "ecology_dynamics"
+    },
+    {
+      "id": "b2478a19-a5f0-5de8-ae5f-4d2db984da71",
+      "title": "Dynamics of a discrete-time predator-prey model with exponential prey growth and saturated response.",
+      "abstract": null,
+      "publication_year": 2026,
+      "work_type": null,
+      "primary_language": null,
+      "metadata": {
+        "gateway_provider": "epmc-search"
+      },
+      "stratum": "ecology_dynamics"
+    },
+    {
+      "id": "3dbbccb7-5f3d-50c7-ab49-a18910f45e48",
+      "title": "featureCounts: An efficient general-purpose program for assigning sequence reads to genomic features",
+      "abstract": null,
+      "publication_year": 2013,
+      "work_type": null,
+      "primary_language": null,
+      "metadata": {
+        "gateway_provider": "arxiv-search"
+      },
+      "stratum": "genomics_sequence"
+    },
+    {
+      "id": "87321f66-2463-5566-bd49-00aa3444235f",
+      "title": "Probabilistic arithmetic automata : applications of a stochastic computational framework in biological sequence analysis",
+      "abstract": null,
+      "publication_year": 2009,
+      "work_type": null,
+      "primary_language": null,
+      "metadata": {
+        "gateway_provider": "core-search"
+      },
+      "stratum": "genomics_sequence"
+    },
+    {
+      "id": "eb938cd0-76cd-5226-abf2-0be150bbe7e4",
+      "title": "Sequence alignment, mutual information, and dissimilarity measures for constructing phylogenies",
+      "abstract": null,
+      "publication_year": 2011,
+      "work_type": null,
+      "primary_language": null,
+      "metadata": {
+        "gateway_provider": "core-search"
+      },
+      "stratum": "genomics_sequence"
+    },
+    {
+      "id": "41955dff-e557-558c-959b-fdc741ca3cf1",
+      "title": "Multiscale Modeling and Computation of 3D Incompressible Turbulent Flows",
+      "abstract": null,
+      "publication_year": 2012,
+      "work_type": null,
+      "primary_language": null,
+      "metadata": {
+        "gateway_provider": "core-search"
+      },
+      "stratum": "fluid_pde"
+    },
+    {
+      "id": "b4ce9ded-256a-59ec-a7e7-b4d642dd4677",
+      "title": "Direct numerical simulation of a homogeneous turbulent reacting flow",
+      "abstract": null,
+      "publication_year": 1988,
+      "work_type": null,
+      "primary_language": null,
+      "metadata": {
+        "gateway_provider": "crossref-search"
+      },
+      "stratum": "fluid_pde"
+    },
+    {
+      "id": "01520b8b-1f72-579d-85bd-30f01d612331",
+      "title": "Fast automated adjoints for spectral PDE solvers.",
+      "abstract": null,
+      "publication_year": 2026,
+      "work_type": null,
+      "primary_language": null,
+      "metadata": {
+        "gateway_provider": "epmc-search"
+      },
+      "stratum": "fluid_pde"
+    },
+    {
+      "id": "c1ade54f-f6ce-5612-b5ea-cb818d2f5135",
+      "title": "Stability and resource allocation in project planning.",
+      "abstract": null,
+      "publication_year": null,
+      "work_type": null,
+      "primary_language": null,
+      "metadata": {
+        "gateway_provider": "core-search"
+      },
+      "stratum": "operations_research"
+    },
+    {
+      "id": "e26ebb51-a87e-5fd6-8359-2780213d734e",
+      "title": "Resource Allocation and Scheduling based on Emergent behaviours in Multi-Agent Scenarios",
+      "abstract": null,
+      "publication_year": 2015,
+      "work_type": null,
+      "primary_language": null,
+      "metadata": {
+        "gateway_provider": "crossref-search"
+      },
+      "stratum": "operations_research"
+    },
+    {
+      "id": "4d6c589a-1c8a-56d6-936c-3d9f2384f9c1",
+      "title": "A Cooperative Game-Theoretic Framework for Crew Scheduling Across Demand Channels",
+      "abstract": null,
+      "publication_year": 2026,
+      "work_type": null,
+      "primary_language": null,
+      "metadata": {
+        "gateway_provider": "epmc-search"
+      },
+      "stratum": "operations_research"
+    },
+    {
+      "id": "77746206-6b17-5b4a-8975-54a4aeb2a37f",
+      "title": "Parameter estimation for the stochastic SIS epidemic model",
+      "abstract": null,
+      "publication_year": 2014,
+      "work_type": null,
+      "primary_language": null,
+      "metadata": {
+        "gateway_provider": "core-search"
+      },
+      "stratum": "epidemiology_inference"
+    },
+    {
+      "id": "0c5fc45a-a418-52c8-bd1e-987175a1c3fd",
+      "title": "Neural Posterior Estimation for Stochastic Epidemic Modeling",
+      "abstract": null,
+      "publication_year": 2024,
+      "work_type": null,
+      "primary_language": null,
+      "metadata": {
+        "gateway_provider": "datacite-search"
+      },
+      "stratum": "epidemiology_inference"
+    },
+    {
+      "id": "21b5db5b-b9c2-52ba-a021-05d1d0b63906",
+      "title": "Efficient sequential Bayesian inference for state-space epidemic models using ensemble data assimilation.",
+      "abstract": null,
+      "publication_year": 2026,
+      "work_type": null,
+      "primary_language": null,
+      "metadata": {
+        "gateway_provider": "epmc-search"
+      },
+      "stratum": "epidemiology_inference"
+    },
+    {
+      "id": "d4e4def5-869e-5fc7-a94c-23d5153c860d",
+      "title": "Phase-Field Modeling of Microstructure Evolution in Nuclear Materials",
+      "abstract": null,
+      "publication_year": 2018,
+      "work_type": null,
+      "primary_language": null,
+      "metadata": {
+        "gateway_provider": "crossref-search"
+      },
+      "stratum": "materials_microstructure"
+    },
+    {
+      "id": "ba76004d-180e-5f06-a530-f8038f3fc0c8",
+      "title": "Advances in Metal Microstructure Simulation and Analysis.",
+      "abstract": null,
+      "publication_year": 2026,
+      "work_type": null,
+      "primary_language": null,
+      "metadata": {
+        "gateway_provider": "epmc-search"
+      },
+      "stratum": "materials_microstructure"
+    },
+    {
+      "id": "b2578d01-6435-5dc3-9838-db741be622ab",
+      "title": "Random Heterogeneous Materials: Microstructure and Macroscopic Properties",
+      "abstract": null,
+      "publication_year": 2002,
+      "work_type": null,
+      "primary_language": null,
+      "metadata": {
+        "gateway_provider": "openalex-works"
+      },
+      "stratum": "materials_microstructure"
+    },
+    {
+      "id": "25022745-401e-5678-b74e-f66494a6210a",
+      "title": "Parameter estimation in nonlinear AR–GARCH models",
+      "abstract": null,
+      "publication_year": null,
+      "work_type": null,
+      "primary_language": null,
+      "metadata": {
+        "gateway_provider": "core-search"
+      },
+      "stratum": "econometrics"
+    },
+    {
+      "id": "b1d4eddf-7368-5002-92fe-af0549ca152d",
+      "title": "Estimation of Econometric Models with Measurement Errors",
+      "abstract": null,
+      "publication_year": 1990,
+      "work_type": null,
+      "primary_language": null,
+      "metadata": {
+        "gateway_provider": "crossref-search"
+      },
+      "stratum": "econometrics"
+    },
+    {
+      "id": "8b45c7e6-01cb-5af5-a01c-a329ca3af4d8",
+      "title": "Time series aggregation for optimization: One-size-fits-all?",
+      "abstract": null,
+      "publication_year": 2022,
+      "work_type": null,
+      "primary_language": null,
+      "metadata": {
+        "gateway_provider": "arxiv-search"
+      },
+      "stratum": "econometrics"
+    }
+  ]
+}
