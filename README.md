@@ -1,6 +1,8 @@
-# Scientific Discovery
+# Quantum Algorithm Discovery
 
-Research software for discovering recurring computational and mathematical problem structures across scientific disciplines.
+Active pilot research project on AI-guided quantum algorithm discovery.
+
+`scientific-discovery` is the research engine used to retrieve scientific work, extract computational problem structure, compare recurring structures across disciplines, and later evaluate those structures against quantum algorithms.
 
 ## Research objective
 
@@ -18,6 +20,16 @@ The system deliberately keeps four stages separate:
 4. **Quantum target search** — compare reviewed problem families with known quantum algorithms and primitives while independently checking access assumptions, classical baselines, input/output cost, state preparation, readout, dequantization, resources, and end-to-end feasibility.
 
 Quantum relevance does not bias construction of the general scientific corpus.
+
+## Current experiment
+
+**Campaign 001 — Cross-Disciplinary Pilot**
+
+Status: active.
+
+The pilot uses 24 frozen works across eight sampling strata. It is quantum-blind. The current run tests retrieval provenance, identity resolution, asset discovery, document acquisition, problem extraction, mathematical representation, and structural comparison.
+
+Failures are recorded before repair unless they block the experiment.
 
 ## v0.11 gateway-first research boundary
 

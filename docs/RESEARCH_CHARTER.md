@@ -1,4 +1,4 @@
-# Scientific Discovery Research Charter
+# Quantum Algorithm Discovery Research Charter
 
 ## Primary research question
 
@@ -110,8 +110,8 @@ The intended research pipeline is:
 
 ## Current milestone
 
-The current milestone is:
+**Campaign 001 — Cross-Disciplinary Pilot**
 
-**v0.1 — Scientific Problem Representation Core**
+The current goal is to test the pre-quantum pipeline on a frozen 24-work cross-disciplinary sample and record retrieval, identity, asset, parsing, problem-extraction, mathematics, and structural-comparison failures.
 
-The immediate goal is to determine whether computational problems from very different scientific fields can be represented consistently enough to support rigorous cross-domain comparison.
+v0.11 is complete. v0.12 will use Campaign 001 results to define the benchmark and repair priorities.

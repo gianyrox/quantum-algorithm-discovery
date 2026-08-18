@@ -1,13 +1,15 @@
-# Scientific Discovery roadmap
+# Quantum Algorithm Discovery roadmap
 
 ## Current sequence
 
 ```text
 v0.10  PRE-QUANTUM STRUCTURE ENGINE                 COMPLETE
   |
-v0.11  GATEWAY-FIRST / FEED402 RESEARCH BOUNDARY   CURRENT
+v0.11  GATEWAY-FIRST / FEED402 RESEARCH BOUNDARY   COMPLETE
   |
-v0.12  REAL-CORPUS BENCHMARK + FAILURE REPAIR
+Campaign 001  CROSS-DISCIPLINARY PILOT              ACTIVE
+  |
+v0.12  REAL-CORPUS BENCHMARK + FAILURE REPAIR       NEXT
   |
 v0.13  MEDIUM-SCALE CROSS-DISCIPLINARY CAMPAIGNS
   |
@@ -15,7 +17,9 @@ v0.14  VALIDATED PROBLEM FAMILIES + CANDIDATE DISCOVERY
   |
 freeze pre-quantum discovery system
   |
-separate quantum mapping and algorithm-discovery research
+quantum mapping
+  |
+AI-guided algorithm discovery
 ```
 
 ## v0.11 exit criteria
