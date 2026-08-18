@@ -39,11 +39,12 @@ class WorkRepository:
         return self.session.scalar(stmt)
 
     def upsert(self, work: Work) -> WorkRow:
-        existing: WorkRow | None = None
-        for identifier in work.identifiers:
-            existing = self.find_by_identifier(identifier.scheme.value, identifier.value)
-            if existing is not None:
-                break
+        existing: WorkRow | None = self.session.get(WorkRow, work.id)
+        if existing is None:
+            for identifier in work.identifiers:
+                existing = self.find_by_identifier(identifier.scheme.value, identifier.value)
+                if existing is not None:
+                    break
 
         now = datetime.now(UTC)
         work_id = existing.id if existing else work.id
